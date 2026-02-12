@@ -64,7 +64,7 @@ _detect_volume_root() {
         return 1
     fi
 
-    for p in /runpod-volume /workspace /mnt /volume /data /root; do
+    for p in /workspace /mnt /volume /data /root; do
         if [ -d "${p}/models/ditto" ]; then
             echo "${p}"
             return 0
