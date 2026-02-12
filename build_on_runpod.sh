@@ -34,25 +34,21 @@ echo "============================================"
 echo "  AiVatar Worker — Docker Build on RunPod"
 echo "============================================"
 
-# ── Step 1: Install Docker ──
+# ── Step 1: Install buildah (daemonless image builder) ──
+# RunPod pods are containers — Docker daemon cannot run inside them.
+# buildah builds OCI images without a daemon.
 echo ""
-echo "=== Step 1/6: Installing Docker ==="
-if ! command -v docker &> /dev/null; then
+echo "=== Step 1/6: Installing buildah ==="
+if ! command -v buildah &> /dev/null; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -qq
-    apt-get install -y -qq ca-certificates curl gnupg lsb-release git
-
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    chmod a+r /etc/apt/keyrings/docker.gpg
-
-    UBUNTU_CODENAME="$(. /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME})"
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${UBUNTU_CODENAME} stable" > /etc/apt/sources.list.d/docker.list
-
-    apt-get update -qq
-    apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin
+    apt-get install -y -qq buildah git fuse-overlayfs
+    # Configure buildah for rootless/container usage
+    mkdir -p /etc/containers
+    echo '[storage]' > /etc/containers/storage.conf
+    echo 'driver = "vfs"' >> /etc/containers/storage.conf
 fi
-echo "Docker: $(docker --version)"
+echo "buildah: $(buildah --version)"
 
 _detect_volume_root() {
     if [ -n "${VOLUME_PATH}" ]; then
@@ -87,7 +83,7 @@ _detect_volume_root() {
 echo ""
 echo "=== Step 2/6: Docker Hub Login ==="
 echo "Enter your Docker Hub access token when prompted:"
-docker login -u ${DOCKER_USER}
+buildah login -u ${DOCKER_USER} docker.io
 
 # ── Step 3: Generate worker source code ──
 echo ""
@@ -864,20 +860,20 @@ du -sh ${BUILD_DIR}
 du -sh ${BUILD_DIR}/models/ditto/ 2>/dev/null
 ls -la ${BUILD_DIR}/models/ditto/
 
-# ── Step 5: Build Docker image ──
+# ── Step 5: Build image with buildah (daemonless) ──
 echo ""
-echo "=== Step 5/6: Building Docker image ==="
+echo "=== Step 5/6: Building image with buildah ==="
 echo "This may take 10-20 minutes..."
 cd ${BUILD_DIR}
-docker build -t ${FULL_IMAGE} .
+buildah bud -t ${FULL_IMAGE} .
 
 echo ""
-echo "Image built: $(docker images ${FULL_IMAGE} --format '{{.Size}}')"
+echo "Image built successfully."
 
 # ── Step 6: Push to Docker Hub ──
 echo ""
 echo "=== Step 6/6: Pushing to Docker Hub ==="
-docker push ${FULL_IMAGE}
+buildah push ${FULL_IMAGE} docker://docker.io/${FULL_IMAGE}
 
 echo ""
 echo "============================================"
