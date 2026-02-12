@@ -26,6 +26,10 @@ IMAGE_TAG="latest"
 FULL_IMAGE="${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
 BUILD_DIR="/tmp/aivatar-build"
 
+# Optional override if your RunPod pod mounts the network volume somewhere other than /runpod-volume.
+# Example: VOLUME_PATH=/workspace ./build_on_runpod.sh
+VOLUME_PATH="${VOLUME_PATH:-}"
+
 echo "============================================"
 echo "  AiVatar Worker — Docker Build on RunPod"
 echo "============================================"
@@ -34,10 +38,50 @@ echo "============================================"
 echo ""
 echo "=== Step 1/6: Installing Docker ==="
 if ! command -v docker &> /dev/null; then
-    apt-get update -qq && apt-get install -y -qq sudo curl git
-    curl -fsSL https://get.docker.com -o /tmp/get-docker.sh && sudo sh /tmp/get-docker.sh
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y -qq ca-certificates curl gnupg lsb-release git
+
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    chmod a+r /etc/apt/keyrings/docker.gpg
+
+    UBUNTU_CODENAME="$(. /etc/os-release && echo ${UBUNTU_CODENAME:-$VERSION_CODENAME})"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${UBUNTU_CODENAME} stable" > /etc/apt/sources.list.d/docker.list
+
+    apt-get update -qq
+    apt-get install -y -qq docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin
 fi
 echo "Docker: $(docker --version)"
+
+_detect_volume_root() {
+    if [ -n "${VOLUME_PATH}" ]; then
+        if [ -d "${VOLUME_PATH}/models/ditto" ]; then
+            echo "${VOLUME_PATH}"
+            return 0
+        fi
+        echo ""
+        return 1
+    fi
+
+    for p in /runpod-volume /workspace /mnt /volume /data /root; do
+        if [ -d "${p}/models/ditto" ]; then
+            echo "${p}"
+            return 0
+        fi
+    done
+
+    # Last resort: limited-depth search.
+    local found
+    found="$(find / -maxdepth 5 -type d -path '*/models/ditto' 2>/dev/null | head -n 1)"
+    if [ -n "${found}" ]; then
+        echo "$(dirname "$(dirname "${found}")")"
+        return 0
+    fi
+
+    echo ""
+    return 1
+}
 
 # ── Step 2: Docker Hub login ──
 echo ""
@@ -726,7 +770,11 @@ async def _publish_video(mp4_path, livekit_token, livekit_url):
     height, width = first_frame.shape[0], first_frame.shape[1]
 
     room = rtc.Room()
-    await room.connect(livekit_url, livekit_token)
+    await room.connect(
+        livekit_url,
+        livekit_token,
+        options=rtc.RoomOptions(auto_subscribe=True),
+    )
 
     video_source = rtc.VideoSource(width, height)
     track = rtc.LocalVideoTrack.create_video_track("aivatar-video", video_source)
@@ -781,25 +829,29 @@ echo "Worker source code generated: $(find ${BUILD_DIR} -type f | wc -l) files"
 echo ""
 echo "=== Step 4/6: Copying models from network volume ==="
 
-# Verify network volume
-if [ ! -d "/runpod-volume/models/ditto" ]; then
-    echo "ERROR: /runpod-volume/models/ditto not found!"
-    echo "Make sure the network volume 'aivatar-models' is attached."
+VOLUME_ROOT="$(_detect_volume_root)"
+if [ -z "${VOLUME_ROOT}" ]; then
+    echo "ERROR: Could not find the network volume mount containing models/ditto."
+    echo "Run:  ls -la / | head"
+    echo "and:  mount | head -n 50"
+    echo "Then rerun with: VOLUME_PATH=/path ./build_on_runpod.sh"
     exit 1
 fi
 
+echo "Using volume mount: ${VOLUME_ROOT}"
+
 mkdir -p ${BUILD_DIR}/models/ditto
 echo "Copying ditto_cfg..."
-cp -r /runpod-volume/models/ditto/ditto_cfg ${BUILD_DIR}/models/ditto/
+cp -r "${VOLUME_ROOT}/models/ditto/ditto_cfg" ${BUILD_DIR}/models/ditto/
 
 echo "Copying TRT engines..."
-cp -r /runpod-volume/models/ditto/ditto_trt_ada ${BUILD_DIR}/models/ditto/ 2>/dev/null && echo "  Ada TRT: OK" || echo "  Ada TRT: not found (skipped)"
-cp -r /runpod-volume/models/ditto/ditto_trt_Ampere_Plus ${BUILD_DIR}/models/ditto/ 2>/dev/null && echo "  Ampere TRT: OK" || echo "  Ampere TRT: not found (skipped)"
-cp -r /runpod-volume/models/ditto/ditto_onnx ${BUILD_DIR}/models/ditto/ 2>/dev/null && echo "  ONNX: OK" || echo "  ONNX: not found (skipped)"
+cp -r "${VOLUME_ROOT}/models/ditto/ditto_trt_ada" ${BUILD_DIR}/models/ditto/ 2>/dev/null && echo "  Ada TRT: OK" || echo "  Ada TRT: not found (skipped)"
+cp -r "${VOLUME_ROOT}/models/ditto/ditto_trt_Ampere_Plus" ${BUILD_DIR}/models/ditto/ 2>/dev/null && echo "  Ampere TRT: OK" || echo "  Ampere TRT: not found (skipped)"
+cp -r "${VOLUME_ROOT}/models/ditto/ditto_onnx" ${BUILD_DIR}/models/ditto/ 2>/dev/null && echo "  ONNX: OK" || echo "  ONNX: not found (skipped)"
 
 echo "Copying ditto-talkinghead repo..."
-if [ -d "/runpod-volume/ditto-talkinghead" ]; then
-    cp -r /runpod-volume/ditto-talkinghead ${BUILD_DIR}/ditto-talkinghead
+if [ -d "${VOLUME_ROOT}/ditto-talkinghead" ]; then
+    cp -r "${VOLUME_ROOT}/ditto-talkinghead" ${BUILD_DIR}/ditto-talkinghead
     echo "  ditto-talkinghead: OK"
 else
     echo "  Not on volume — cloning from GitHub..."
