@@ -1,8 +1,8 @@
 import requests
 import time
 
-ENDPOINT_ID = "3bf1pni45wmekd"
-API_KEY = "rpa_ZL21MEA61FDUHLGGBS59K1JSW1NXYK5AAUC5C6BR1edrgx"
+ENDPOINT_ID = ""
+API_KEY = ""
 BASE_URL = f"https://api.runpod.ai/v2/{ENDPOINT_ID}"
 
 HEADERS = {
