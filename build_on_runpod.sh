@@ -42,8 +42,14 @@ echo "=== Step 1/6: Installing buildah ==="
 if ! command -v buildah &> /dev/null; then
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -qq
-    apt-get install -y -qq buildah git fuse-overlayfs
-    # Configure buildah for rootless/container usage
+    apt-get install -y -qq software-properties-common git
+    # buildah is not in Ubuntu Focal default repos; add the Kubic repo
+    . /etc/os-release
+    echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" > /etc/apt/sources.list.d/devel:kubic.list
+    curl -fsSL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | gpg --dearmor -o /etc/apt/trusted.gpg.d/kubic.gpg
+    apt-get update -qq
+    apt-get install -y -qq buildah fuse-overlayfs
+    # Configure buildah for container usage (no fuse/overlay available)
     mkdir -p /etc/containers
     echo '[storage]' > /etc/containers/storage.conf
     echo 'driver = "vfs"' >> /etc/containers/storage.conf
