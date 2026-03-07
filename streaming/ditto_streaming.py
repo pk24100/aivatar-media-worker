@@ -45,6 +45,7 @@ class DittoStreamingEngine:
         fps: int = 25,
         queue_size: int = 200,
         chunksize: Tuple[int, int, int] = (3, 5, 2),
+        model_instance: Optional[object] = None,
     ):
         self.model_root = model_root
         self.source_path = source_path
@@ -64,7 +65,12 @@ class DittoStreamingEngine:
             **kwargs,
         )
         self._stream_module = stream_module
-        self._sdk = stream_module.StreamSDK(self.cfg_path, self.data_root)
+        
+        if model_instance:
+            self._sdk = model_instance
+        else:
+            self._sdk = stream_module.StreamSDK(self.cfg_path, self.data_root)
+            
         output_path = tempfile.mktemp(suffix=".mp4")
         self._sdk.setup(
             source_path,
