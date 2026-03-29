@@ -1,85 +1,60 @@
+import os
+import sys
 import asyncio
-import queue
+import logging
 
-class DittoModelPool:
-    def __init__(self, pool_size=3, model_root="/app/models/ditto"):
-        self.pool_size = pool_size
-        self.model_root = model_root
-        self.pool = queue.Queue(maxsize=pool_size)
-        
-        # We don't initialize the stream engines completely here because 
-        # StreamSDK requires a specific `source_image` and `output_path` during its `.setup()` call.
-        # However, we can preload the heavy neural network weights into VRAM by initializing 
-        # the base StreamSDK classes without calling setup yet.
-        self.initialize_pool()
+# Add SoulX-FlashHead to Python path
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "SoulX-FlashHead"))
+from flash_head.inference import get_pipeline
 
-    def initialize_pool(self):
-        """
-        Preload multiple independent instances of the Ditto model into VRAM.
-        Note: The actual `setup()` must be called per-session since it binds to a specific source image.
-        """
-        import os
-        import sys
+logger = logging.getLogger(__name__)
+
+class FlashHeadModelPool:
+    def __init__(self, size=3, ckpt_dir=None, wav2vec_dir=None):
+        self.size = size
+        self.pool = asyncio.Queue(maxsize=size)
         
-        repo_path = os.getenv("DITTO_REPO_PATH", "/app/ditto-talkinghead")
-        if repo_path not in sys.path:
-            sys.path.insert(0, repo_path)
+        self.ckpt_dir = ckpt_dir or os.getenv("FLASHHEAD_CKPT_DIR", "/app/models/SoulX-FlashHead-1_3B")
+        self.wav2vec_dir = wav2vec_dir or os.getenv("WAV2VEC_DIR", "/app/models/wav2vec2-base-960h")
+        self.model_type = "lite"
+        
+        # Verify models exist
+        if not os.path.exists(self.ckpt_dir):
+            raise FileNotFoundError(f"FlashHead checkpoint directory not found: {self.ckpt_dir}")
+        if not os.path.exists(self.wav2vec_dir):
+            raise FileNotFoundError(f"Wav2Vec directory not found: {self.wav2vec_dir}")
             
-        try:
-            import stream_pipeline_online as stream_module
-        except ImportError as e:
-            print(f"Warning: Could not import stream_pipeline_online: {e}")
-            return
+        logger.info(f"Initializing FlashHead pool of size {size}")
 
-        cfg_path = self._resolve_cfg_path()
-        data_root = self._resolve_data_root()
-
-        for i in range(self.pool_size):
+        # Initialize pool - each pipeline is standalone (avatar prepared per-session)
+        for i in range(size):
             try:
-                # Instantiate the base SDK, which loads the TRT engines/weights into VRAM
-                sdk_instance = stream_module.StreamSDK(cfg_path, data_root)
-                self.pool.put(sdk_instance)
-                print(f"Initialized Ditto pool instance {i+1}/{self.pool_size}")
+                # Assuming single GPU setup
+                world_size = 1
+                logger.info(f"Loading pipeline {i+1}/{size}...")
+                pipeline = get_pipeline(world_size, self.ckpt_dir, self.model_type, self.wav2vec_dir)
+                
+                # Store pipeline only (avatar prepared per-session)
+                self.pool.put_nowait(pipeline)
+                logger.info(f"Pipeline {i+1} loaded successfully.")
             except Exception as e:
-                print(f"Failed to initialize Ditto instance {i}: {e}")
+                logger.error(f"Failed to load pipeline {i+1}: {e}")
+                raise
 
     async def acquire(self):
-        """Async method to get a free model instance from the pool."""
-        while self.pool.empty():
-            await asyncio.sleep(0.1)
-        return self.pool.get()
+        """Acquire a pipeline from the pool. Blocks if pool is empty."""
+        logger.debug(f"Attempting to acquire pipeline. Available: {self.pool.qsize()}")
+        pipeline = await self.pool.get()
+        logger.debug(f"Pipeline acquired. Remaining: {self.pool.qsize()}")
+        return pipeline
 
-    def release(self, model_instance):
-        """Return the model instance to the pool."""
-        # Optional: Add any cleanup/reset logic here before returning to pool
-        self.pool.put(model_instance)
-
-    def _resolve_cfg_path(self) -> str:
-        import os
-        online_cfg = os.path.join(self.model_root, "ditto_cfg", "v0.4_hubert_cfg_trt_online.pkl")
-        if os.path.isfile(online_cfg):
-            return online_cfg
-        fallback_cfg = os.path.join(self.model_root, "ditto_cfg", "v0.4_hubert_cfg_trt.pkl")
-        if os.path.isfile(fallback_cfg):
-            return fallback_cfg
-        raise FileNotFoundError("Ditto config not found.")
-
-    def _resolve_data_root(self) -> str:
-        import os
-        import torch
-        if torch.cuda.is_available():
-            major, minor = torch.cuda.get_device_capability()
-            if (major, minor) >= (8, 9):
-                preferred = "ditto_trt_ada"
-            else:
-                preferred = "ditto_trt_Ampere_Plus"
-            preferred_path = os.path.join(self.model_root, preferred)
-            if os.path.isdir(preferred_path) and len(os.listdir(preferred_path)) > 0:
-                return preferred_path
-
-        candidates = ["ditto_trt_Ampere_Plus", "ditto_trt_ada", "ditto_trt_3090", "ditto_trt_custom", "ditto_onnx", "ditto_pytorch"]
-        for candidate in candidates:
-            path = os.path.join(self.model_root, candidate)
-            if os.path.isdir(path):
-                return path
-        raise FileNotFoundError("Ditto model directory not found.")
+    def release(self, pipeline):
+        """Release a pipeline back to the pool."""
+        try:
+            self.pool.put_nowait(pipeline)
+            logger.debug(f"Pipeline released. Available: {self.pool.qsize()}")
+        except asyncio.QueueFull:
+            logger.error("Attempted to release pipeline to full pool. This shouldn't happen.")
+            
+    def get_available_count(self):
+        return self.pool.qsize()

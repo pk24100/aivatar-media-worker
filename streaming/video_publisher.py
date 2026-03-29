@@ -40,6 +40,43 @@ class VideoPublisher:
             await asyncio.sleep(frame_interval)
         await self._cleanup()
 
+    async def publish_from_state_manager(self, state_manager):
+        """
+        Publishes frames continuously at the target FPS.
+        Pulls frames from the state manager which handles Live/Idle transitions.
+        """
+        frame_interval = 1.0 / float(self.fps)
+        while True:
+            # get_next_frame handles its own queue logic and transitions,
+            # so we just poll it at our target framerate
+            frame = await asyncio.to_thread(state_manager.get_next_frame)
+            
+            if frame is None:
+                # If even the fallback fails, we can either wait or break
+                # Usually we want to keep the track alive, but if it returns None 
+                # it means neither live nor idle frames are available
+                await asyncio.sleep(frame_interval)
+                continue
+                
+            await self._ensure_track(frame)
+            await self._send_frame(frame)
+            
+            # Fast-forward through old live frames if we're falling behind
+            if state_manager.state.value == "live":
+                while state_manager.live_frame_queue.qsize() > 0:
+                    try:
+                        next_frame = state_manager.live_frame_queue.get_nowait()
+                        if next_frame is not None:
+                            frame = next_frame
+                            await self._send_frame(frame)
+                    except Exception:
+                        break
+                        
+            await asyncio.sleep(frame_interval)
+            
+        # We likely won't hit this unless explicitly cancelled, but good for cleanup
+        await self._cleanup()
+
     async def _ensure_track(self, frame: np.ndarray):
         if self.track is not None:
             return

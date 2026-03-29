@@ -12,6 +12,10 @@ class WebsocketIngestionServer:
         self.active_sessions: Dict[str, asyncio.Queue] = {}
         self._server: Optional[websockets.serve] = None
 
+    @property
+    def is_running(self) -> bool:
+        return self._server is not None
+
     def register_session(self, session_id: str, token: str) -> asyncio.Queue:
         """Register a new session to receive audio, returning its queue and saving the expected token."""
         if session_id not in self.active_sessions:
@@ -55,7 +59,7 @@ class WebsocketIngestionServer:
             async for message in websocket:
                 if isinstance(message, bytes):
                     # It's raw audio data (PCM or similar depending on client config)
-                    # We put it into the session's queue for processing by the Ditto engine
+                    # We put it into the session's queue for processing by the streaming engine
                     await audio_queue.put(message)
                 else:
                     logger.debug(f"Received non-binary message on session {session_id}: {message}")
@@ -69,6 +73,9 @@ class WebsocketIngestionServer:
 
     async def start(self):
         """Start the WebSocket server in the background."""
+        if self._server is not None:
+            logger.info("WebSocket ingestion server already running.")
+            return
         logger.info(f"Starting WebSocket ingestion server on ws://{self.host}:{self.port}")
         self._server = await websockets.serve(self._handle_connection, self.host, self.port)
         
@@ -77,6 +84,7 @@ class WebsocketIngestionServer:
         if self._server:
             self._server.close()
             await self._server.wait_closed()
+            self._server = None
             logger.info("WebSocket ingestion server stopped.")
 
 # Global instance

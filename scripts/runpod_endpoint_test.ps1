@@ -1,5 +1,5 @@
 # RunPod Endpoint Test Script
-# Tests the Ditto TalkingHead Serverless endpoint
+# Tests the SoulX-FlashHead Lite serverless endpoint
 # Usage: .\runpod_endpoint_test.ps1 -EndpointId "your-endpoint-id" -RunPodToken "your-api-key"
 
 param(
@@ -20,6 +20,18 @@ param(
     
     [Parameter(Mandatory=$false)]
     [string]$RoomName = "test_room_123"
+    ,
+    [Parameter(Mandatory=$false)]
+    [string]$SessionId = "test-session-123"
+    ,
+    [Parameter(Mandatory=$false)]
+    [string]$IngestionMethod = "websocket"
+    ,
+    [Parameter(Mandatory=$false)]
+    [string]$LivekitToken = "test-livekit-token"
+    ,
+    [Parameter(Mandatory=$false)]
+    [string]$LivekitUrl = "wss://example.livekit.cloud"
 )
 
 $Headers = @{
@@ -30,6 +42,7 @@ $Headers = @{
 Write-Host "=== RunPod Endpoint Test ===" -ForegroundColor Cyan
 Write-Host "Endpoint ID: $EndpointId" -ForegroundColor White
 Write-Host "Test Mode: $TestMode" -ForegroundColor White
+Write-Host "Ingestion Method: $IngestionMethod" -ForegroundColor White
 Write-Host ""
 
 # Test 1: Health Check (GET endpoint info)
@@ -51,9 +64,14 @@ Write-Host "Test 2: Streaming Inference Test..." -ForegroundColor Yellow
 $StreamingPayload = @{
     input = @{
         mode = "streaming"
+        streaming = $true
         roomName = $RoomName
-        audioUrl = $AudioUrl
-        sourceImageUrl = $ImageUrl
+        sessionId = $SessionId
+        livekitToken = $LivekitToken
+        customLivekitUrl = $LivekitUrl
+        ingestionMethod = $IngestionMethod
+        sourceImage = $ImageUrl
+        ingestionToken = "smoke-test-token"
     }
 }
 
@@ -98,35 +116,15 @@ try {
 
 Write-Host ""
 
-# Test 3: Batch Inference Test (if streaming not needed)
-Write-Host "Test 3: Batch/Offline Inference Test..." -ForegroundColor Yellow
-$BatchPayload = @{
-    input = @{
-        mode = "batch"
-        audioUrl = $AudioUrl
-        sourceImageUrl = $ImageUrl
-        outputFormat = "mp4"
-    }
-}
-
-try {
-    Write-Host "  Sending batch request..." -ForegroundColor Gray
-    $response = Invoke-RestMethod -Method Post -Uri "https://api.runpod.ai/v2/$EndpointId/run" -Headers $Headers -Body ($BatchPayload | ConvertTo-Json -Depth 10)
-    Write-Host "  Job ID: $($response.id)" -ForegroundColor Green
-    Write-Host "  Status: $($response.status)" -ForegroundColor Green
-} catch {
-    Write-Warning "Batch test failed: $_"
-}
-
-Write-Host ""
 Write-Host "=== Tests Complete ===" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "API Endpoint: https://api.runpod.ai/v2/$EndpointId/run" -ForegroundColor White
+Write-Host "Expected websocket ingestion URL: wss://$EndpointId.proxy.runpod.net:8765/$SessionId?token=smoke-test-token" -ForegroundColor White
 Write-Host ""
 Write-Host "Example curl command:" -ForegroundColor White
 Write-Host @"
 curl -X POST "https://api.runpod.ai/v2/$EndpointId/run" `
   -H "Authorization: Bearer $RunPodToken" `
   -H "Content-Type: application/json" `
-  -d '{"input":{"mode":"streaming","roomName":"$RoomName","audioUrl":"$AudioUrl","sourceImageUrl":"$ImageUrl"}}'
+  -d '{"input":{"mode":"streaming","streaming":true,"roomName":"$RoomName","sessionId":"$SessionId","livekitToken":"$LivekitToken","customLivekitUrl":"$LivekitUrl","ingestionMethod":"$IngestionMethod","sourceImage":"$ImageUrl","ingestionToken":"smoke-test-token"}}'
 "@ -ForegroundColor Green

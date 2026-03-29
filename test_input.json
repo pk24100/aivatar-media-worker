@@ -1,9 +1,0 @@
-{
-  "input": {
-    "sourceImage": "/runpod-volume/models/ditto/test/avatar.png",
-    "audioPath": "/runpod-volume/models/ditto/test/audio.wav",
-    "roomName": "test_room_123",
-    "livekitToken": "test_token",
-    "mode": "offline"
-  }
-}

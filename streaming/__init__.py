@@ -1,1 +1,1 @@
-# Streaming utilities for LiveKit + Ditto integration.
+# Streaming utilities for LiveKit + FlashHead integration.

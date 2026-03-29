@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "Starting AIVatar serverless worker..."
+echo "Starting AiVatar worker in ${AIVATAR_RUNTIME_MODE:-serverless} mode..."
 python3 -u handler.py

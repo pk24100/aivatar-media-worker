@@ -1,35 +1,43 @@
 import asyncio
+import contextlib
 import os
-from typing import Optional, Tuple
 
 from livekit import rtc
 
-from streaming.audio_chunker import AudioChunker
-from streaming.audio_subscriber import AudioSubscriber
-from streaming.ditto_streaming import DittoStreamingEngine
+from streaming.flashhead_streaming import FlashHeadStreamingEngine
 from streaming.video_publisher import VideoPublisher
-
-
-def _parse_chunksize(value: Optional[str]) -> Tuple[int, int, int]:
-    if not value:
-        return (3, 5, 2)
-    parts = [int(part.strip()) for part in value.split(",") if part.strip()]
-    if len(parts) != 3:
-        raise ValueError("DITTO_CHUNKSIZE must have 3 comma-separated ints, e.g. 3,5,2")
-    return tuple(parts)
+from streaming.audio_subscriber import AudioSubscriber
+from streaming.websocket_server import ws_server
+from streaming.sip_handler import SipAudioSubscriber
+from streaming.state_manager import StreamStateManager
+from streaming.idle_video import IdleVideoLoop
 
 
 async def run_streaming_session(
     room_name: str,
     livekit_token: str,
     livekit_url: str,
-    model_root: str,
-    source_image: str,
-    model_instance: Optional[object] = None,
+    pipeline: any,
+    source_image: str = None,
     ingestion_method: str = "livekit",
-    session_id: str = "",
-    ingestion_token: str = "",
+    session_id: str = None,
+    ingestion_token: str = None,
+    idle_video_url: str = None
 ):
+    """
+    Run a streaming session with FlashHead Lite model.
+    
+    Args:
+        room_name: LiveKit room name
+        livekit_token: LiveKit token for authentication
+        livekit_url: LiveKit server URL
+        pipeline: FlashHeadPipeline instance from the model pool
+        source_image: URL or path to the avatar/source image
+        ingestion_method: Audio ingestion method (livekit, websocket, sip)
+        session_id: Unique session identifier
+        ingestion_token: Token for websocket ingestion
+        idle_video_url: URL for idle video loop
+    """
     room = rtc.Room()
     await room.connect(
         livekit_url,
@@ -37,27 +45,46 @@ async def run_streaming_session(
         options=rtc.RoomOptions(auto_subscribe=True),
     )
 
-    sample_rate = int(os.getenv("AUDIO_SAMPLE_RATE", "16000"))
+    # We will read sample_rate from the engine's model params instead of env
     num_channels = int(os.getenv("AUDIO_CHANNELS", "1"))
     chunk_timeout = float(os.getenv("AUDIO_SUBSCRIBE_TIMEOUT", "15"))
-    chunksize = _parse_chunksize(os.getenv("DITTO_CHUNKSIZE"))
+    idle_timeout_ms = int(os.getenv("IDLE_TIMEOUT_MS", "500"))
 
-    engine = DittoStreamingEngine(
-        model_root=model_root,
-        source_path=source_image,
-        chunksize=chunksize,
-        model_instance=model_instance,
-    )
-    chunker = AudioChunker(sample_rate=sample_rate, chunksize=chunksize)
-
-    fps = int(os.getenv("LIVEKIT_PUBLISH_FPS", "25"))
-    publisher = VideoPublisher(room, fps=fps)
-    publish_task = asyncio.create_task(publisher.publish_from_queue(engine.frame_queue))
-
+    engine = None
+    publish_task = None
     try:
+        # Create FlashHead engine with pipeline and avatar image
+        if not source_image:
+            raise ValueError("source_image is required for FlashHead streaming")
+
+        engine = FlashHeadStreamingEngine(
+            pipeline=pipeline,
+            avatar_image_path=source_image
+        )
+
+        sample_rate = engine.sample_rate
+
+        # Initialize idle video loop if URL provided
+        idle_loop = None
+        if idle_video_url:
+            idle_loop = IdleVideoLoop(idle_video_url)
+
+        state_manager = StreamStateManager(
+            live_frame_queue=engine.frame_queue,
+            idle_video=idle_loop,
+            idle_timeout_ms=idle_timeout_ms
+        )
+
+        fps = engine.tgt_fps
+        publisher = VideoPublisher(room, fps=fps)
+        publish_task = asyncio.create_task(publisher.publish_from_state_manager(state_manager))
+
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
             import numpy as np
+            import librosa
+            import io
+            import soundfile as sf
             
             # Register the session with the WS server
             audio_queue = ws_server.register_session(session_id, ingestion_token)
@@ -69,17 +96,19 @@ async def run_streaming_session(
                     # End of stream signaled
                     break
                     
-                # Convert bytes to numpy array (assuming raw 16kHz PCM int16 for now)
-                # In a real app, you'd likely want to handle different encodings (e.g. mp3/wav)
-                # using librosa or soundfile in memory, but assuming PCM for raw performance
-                audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-                
-                # Make it 2D (time, channels)
-                if len(audio_array.shape) == 1:
-                    audio_array = audio_array[:, np.newaxis]
-                    
-                for chunk in chunker.add_samples(audio_array):
-                    await asyncio.to_thread(engine.run_chunk, chunk)
+                # Robust audio decoding and resampling to match model expectations
+                try:
+                    # sf.read handles WAV, FLAC, OGG, etc. and gives float32
+                    audio_array, sr_in = sf.read(io.BytesIO(audio_bytes))
+                    if len(audio_array.shape) > 1:
+                        audio_array = audio_array.mean(axis=1) # mix down to mono
+                    if sr_in != sample_rate:
+                        audio_array = librosa.resample(audio_array, orig_sr=sr_in, target_sr=sample_rate)
+                except Exception:
+                    # Fallback if raw PCM is sent without headers
+                    audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+
+                await asyncio.to_thread(engine.run_chunk, audio_array)
                     
         elif ingestion_method == "sip":
             from streaming.sip_handler import SipAudioSubscriber
@@ -102,8 +131,7 @@ async def run_streaming_session(
                 audio_array = await audio_queue.get()
                 if audio_array is None:
                     break
-                for chunk in chunker.add_samples(audio_array):
-                    await asyncio.to_thread(engine.run_chunk, chunk)
+                await asyncio.to_thread(engine.run_chunk, audio_array)
                     
         else:
             # Default LiveKit ingestion (Client frontend)
@@ -118,16 +146,18 @@ async def run_streaming_session(
                 audio = await subscriber.read()
                 if audio is None:
                     break
-                for chunk in chunker.add_samples(audio):
-                    await asyncio.to_thread(engine.run_chunk, chunk)
+                await asyncio.to_thread(engine.run_chunk, audio)
 
-        # Flush remaining chunks
-        for chunk in chunker.flush():
-            await asyncio.to_thread(engine.run_chunk, chunk)
-
-        await asyncio.to_thread(engine.close)
-        await publish_task
+        await asyncio.to_thread(engine.flush)
+        while not engine.frame_queue.empty():
+            await asyncio.sleep(0.05)
     finally:
+        if engine is not None:
+            await asyncio.to_thread(engine.close)
+        if publish_task is not None:
+            publish_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await publish_task
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
             ws_server.unregister_session(session_id)

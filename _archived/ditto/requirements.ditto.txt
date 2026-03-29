@@ -1,0 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+runpod
+torch
+torchvision
+torchaudio
+onnxruntime-gpu
+librosa
+tqdm
+filetype
+imageio
+imageio-ffmpeg
+opencv-python-headless
+scikit-image
+cython
+numpy==2.0.1
+cuda-python
+polygraphy
+colored
+livekit
+soundfile
+requests

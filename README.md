@@ -2,31 +2,45 @@
 
 ## Overview
 
-The media worker runs Ditto-based avatar inference and feeds the resulting video into LiveKit rooms. It supports both offline (audio + image → mp4 → LiveKit) and streaming sessions and is packaged for Runpod Serverless deployments.
+The media worker runs **SoulX-FlashHead Lite** avatar inference and feeds the resulting video into LiveKit rooms. It supports **streaming-only** sessions and is packaged for RunPod Serverless deployments.
 
 ## Layout
 
 ```
 aivatar-media-worker/
-├── handler.py                # Runpod entry handler
+├── handler.py                # RunPod entry handler
 ├── entrypoint.sh            # container entrypoint
-├── Dockerfile               # GPU-enabled container for Runpod
+├── Dockerfile               # GPU-enabled container for RunPod
 ├── requirements.txt         # Python deps
-├── livekit_test.py          # Local LiveKit publishing smoke test
-├── test_runpod_endpoint.py   # Runpod endpoint exerciser
 ├── scripts/                 # Build + deployment helpers
+│   ├── build_on_runpod.sh
+│   └── download_models.sh
 ├── streaming/               # LiveKit session logic
-├── utils/                   # Ditto runner + LiveKit publishing helpers
-├── models/                  # Ditto weights/config (ditto subdirectories)
-├── ditto-talkinghead/       # upstream Ditto repo (core, scripts, example)
+│   ├── stream_processor.py
+│   ├── flashhead_streaming.py
+│   ├── websocket_server.py
+│   └── ...
+├── utils/                   # FlashHead model pool + helpers
+│   └── model_pool.py
+├── models/                  # FlashHead weights/config
+│   ├── SoulX-FlashHead-1_3B/
+│   └── wav2vec2-base-960h/
+├── SoulX-FlashHead/         # upstream FlashHead repo (core only)
+│   └── flash_head/
+│       ├── inference.py
+│       ├── configs/
+│       ├── src/
+│       ├── audio_analysis/
+│       ├── ltx_video/
+│       └── utils/
 └── .env                     # runtime config (should stay private)
 ```
 
 ## Requirements
 
-- Python 3.11+ (or 3.10 with backports); `pip install -r requirements.txt`.
-- CUDA 12+ GPU (NVIDIA) for TensorRT weights; fallback to ONNX/PyTorch subdirectories when TenorFlow is not available.
-- `runpod` client for Serverless handler (`runpod==0.17` is pinned transitively).
+- Python 3.11+; `pip install -r requirements.txt`.
+- CUDA 12+ GPU (NVIDIA) RTX 4090 recommended for 3 concurrent streams.
+- `runpod` client for Serverless handler (`runpod>=1.6.2`).
 
 ## Setup
 
@@ -35,42 +49,43 @@ aivatar-media-worker/
    pip install -r requirements.txt
    ```
 2. Create a `.env` (copy from `.env.example` or keep `.env` private) and set:
-   - `MODEL_ROOT` (defaults to `/app/models/ditto`)
-   - `DITTO_REPO_PATH` (defaults to `/app/ditto-talkinghead`)
+   - `FLASHHEAD_CKPT_DIR` (defaults to `/app/models/SoulX-FlashHead-1_3B`)
+   - `WAV2VEC_DIR` (defaults to `/app/models/wav2vec2-base-960h`)
+   - `FLASHHEAD_REPO_PATH` (defaults to `/app/SoulX-FlashHead`)
    - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`
-   - `LIVEKIT_ROOM`, `LIVEKIT_TOKEN` when exercising streaming locally
-   - `RUNPOD_KEY` if you invoke Runpod APIs from helper scripts
-3. Build or provision the Ditto model bundles under `models/ditto/<variant>` before running inference. Use `scripts/convert_trt_ada.sh` to rebuild CUDA-accelerated bundles if needed.
+3. Download models using `scripts/download_models.sh` before building Docker image.
 
 ## Running
 
-- `python handler.py` (also invoked by `entrypoint.sh` / Dockerfile) boots the Runpod Serverless workflow.
-  - `_verify_models()` inspects `MODEL_ROOT/ditto_cfg` and chooses the best TRT/ONNX/PyTorch directory.
-  - Offline mode requires `audioPath` + `sourceImage`; it writes a temp mp4 and calls `utils.livekit_publisher.publish_video_to_livekit`.
-  - Streaming mode requires `roomName`, `livekitToken`, `sourceImage`, and `LIVEKIT_URL`; it runs `streaming.stream_processor.run_streaming_session`.
-- `scripts/build_on_runpod.sh` packages the repo + models for Runpod artifacts.
-- `scripts/runpod_serverless_setup.ps1` / `runpod_endpoint_test.ps1` are PowerShell helpers for Azure/Runpod pipelines.
-- Use `livekit_test.py` or `streaming/ditto_streaming.py` for manual end-to-end verification.
+- `python handler.py` (also invoked by `entrypoint.sh` / Dockerfile) boots the RunPod Serverless workflow.
+  - `_verify_models()` checks that FlashHead and Wav2Vec2 model directories exist.
+  - **Streaming-only mode** requires `roomName`, `livekitToken`, `sourceImage`, and `LIVEKIT_URL`; it runs `streaming.stream_processor.run_streaming_session`.
+  - The worker maintains a `MODEL_POOL` of 3 concurrent FlashHead instances for parallel stream processing.
+- `scripts/build_on_runpod.sh` builds and pushes the Docker image to Docker Hub.
+- `scripts/download_models.sh` downloads FlashHead Lite and Wav2Vec2 models locally before building.
 
 ## Streaming & Utilities
 
-- `streaming/stream_processor.py` orchestrates LiveKit connections, audio chunking, and Ditto inference loops.
-- `streaming/video_publisher.py`, `audio_chunker.py`, and `audio_subscriber.py` separate media-side logic for LiveKit clients.
-- `utils/ditto_runner.py` wraps inference commands (audio + image → video) and exposes `run_ditto_inference`.
-- `utils/livekit_publisher.py` publishes generated mp4s into LiveKit rooms via the SDK or REST bridge.
+- `streaming/stream_processor.py` orchestrates LiveKit connections and FlashHead streaming sessions.
+- `streaming/flashhead_streaming.py` contains `FlashHeadStreamingEngine` for real-time video generation from audio chunks.
+- `streaming/websocket_server.py` handles server-to-server WebSocket audio ingestion with token authentication.
+- `streaming/audio_subscriber.py` and `sip_handler.py` handle LiveKit audio subscription and SIP ingestion.
+- `utils/model_pool.py` manages a pool of 3 FlashHead pipeline instances for concurrent stream processing.
+- `streaming/video_publisher.py` publishes generated video frames to LiveKit rooms.
+- `streaming/state_manager.py` handles transitions between live generation and idle video loops.
 
 ## Scripts & Model Assets
 
-- `scripts/convert_trt_ada.sh` regenerates TensorRT-optimized weights under `models/ditto/ditto_trt_ada`.
-- `scripts/build_on_runpod.sh` builds the GPU container, zips the bundle, and uploads it to Runpod storage.
-- `scripts/runpod_serverless_setup.ps1` and `runpod_endpoint_test.ps1` orchestrate deployment tests on Windows/build pipelines.
-- `models/ditto/` mirrors the Ditto repo’s expected layout; drop your `.onnx`, `.pt`, or `.plan` files into the appropriate subfolder.
-- `ditto-talkinghead/` contains the original Ditto inference scripts and can be referenced if additional tooling or examples are required; stay on the pinned commit (`environment.yaml` lists the pinned versions).
+- `scripts/download_models.sh` downloads FlashHead Lite (~6.11GB) and Wav2Vec2-base-960h (~360MB) from Hugging Face.
+- `scripts/build_on_runpod.sh` builds the GPU container and pushes to Docker Hub.
+- `models/SoulX-FlashHead-1_3B/` contains the FlashHead Lite model weights, VAE, and config.
+- `models/wav2vec2-base-960h/` contains the Wav2Vec2 audio encoder for feature extraction.
+- `SoulX-FlashHead/flash_head/` contains the core inference code (trimmed to runtime essentials only).
 
 ## Tests
 
-- `livekit_test.py` publishes a hardcoded synthetic clip to a LiveKit room (requires env vars).
-- `test_runpod_endpoint.py` exercises `handler.py` by simulating Runpod input, so keep it trimmed to your latest endpoints.
+- Manual testing via dashboard and API calls.
+- End-to-end testing via LiveKit room connections.
 
 ## License
 

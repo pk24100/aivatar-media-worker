@@ -10,7 +10,7 @@ class SipAudioSubscriber:
     """
     Handles audio ingestion specifically from SIP trunks connected via LiveKit.
     When a SIP participant dials into the room, LiveKit publishes an audio track.
-    This class subscribes to that track and routes it to the Ditto engine queue.
+    This class subscribes to that track and routes it to the streaming engine queue.
     """
     def __init__(
         self,
@@ -84,7 +84,7 @@ class SipAudioSubscriber:
                 # Convert to float32 and scale
                 audio = data.astype(np.float32) / 32768.0
                 
-                # Ensure 2D shape (time, channels) for AudioChunker
+                # Ensure 2D shape (time, channels) for downstream consumers
                 if len(audio.shape) == 1:
                     audio = audio[:, np.newaxis]
                     
