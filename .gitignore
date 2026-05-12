@@ -1,5 +1,7 @@
 # Model weights (large files, download via scripts/download_models.sh)
-models/
+/models/
+!/SoulX-FlashHead/flash_head/ltx_video/models/
+!/SoulX-FlashHead/flash_head/ltx_video/models/**
 
 # Python
 __pycache__/
