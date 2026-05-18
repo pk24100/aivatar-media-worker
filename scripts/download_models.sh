@@ -12,9 +12,9 @@ cd "${PROJECT_ROOT}"
 echo "=== Downloading AiVatar Models ==="
 echo ""
 
-# Check if huggingface-cli is installed
-if ! command -v huggingface-cli &> /dev/null; then
-    echo "huggingface-cli not found. Installing..."
+# Check if hf CLI is installed
+if ! command -v hf &> /dev/null; then
+    echo "hf CLI not found. Installing..."
     pip3 install -U "huggingface_hub[cli]"
 fi
 
@@ -25,7 +25,7 @@ mkdir -p models
 echo "1. Downloading SoulX-FlashHead-1_3B (FlashHead Lite)..."
 echo "   This is ~6.11GB, may take several minutes..."
 mkdir -p models/SoulX-FlashHead-1_3B
-huggingface-cli download Soul-AILab/SoulX-FlashHead-1_3B \
+hf download Soul-AILab/SoulX-FlashHead-1_3B \
     --local-dir ./models/SoulX-FlashHead-1_3B
 echo "   Done!"
 
@@ -33,7 +33,7 @@ echo "   Done!"
 echo ""
 echo "2. Downloading wav2vec2-base-960h..."
 mkdir -p models/wav2vec2-base-960h
-huggingface-cli download facebook/wav2vec2-base-960h \
+hf download facebook/wav2vec2-base-960h \
     --local-dir ./models/wav2vec2-base-960h
 echo "   Done!"
 
