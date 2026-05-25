@@ -1,6 +1,9 @@
 runpod>=1.6.2
-livekit>=0.18.2
-livekit-api>=0.8.2
+# livekit-rtc / livekit-api jumped to 1.x in late 2025; 0.18.x is no longer compatible
+# with current LiveKit Cloud signaling protocol. Pin to >=1.0 to get the current Room API
+# (incl. connection_state property and ConnectionState.CONN_DISCONNECTED enum).
+livekit>=1.0.0
+livekit-api>=1.0.0
 numpy>=1.26.4
 websockets>=12.0
 librosa>=0.10.1
@@ -16,10 +19,16 @@ PyYAML>=6.0
 ftfy>=6.1.1
 einops>=0.7.0
 diffusers>=0.34.0
-transformers==4.57.3
+# transformers 4.57.3 hard pin is from Nov 2025 and conflicts with newer accelerate/
+# diffusers. Allow current 4.x line so pip can resolve a compatible set against the
+# NGC base image's bundled torch.
+transformers>=4.57,<5
 tokenizers>=0.20.3
 accelerate>=1.8.1
-xformers==0.0.31
+# xformers 0.0.31 only ships wheels for torch <=2.7. NGC pytorch:26.02-py3 bundles a
+# newer torch tied to CUDA 13.1.1, so xformers must be unpinned (or omitted; the
+# SoulX-FlashHead attention path also has a native PyTorch SDPA fallback).
+xformers
 xfuser>=0.4.3
 loguru
 easydict

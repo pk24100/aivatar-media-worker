@@ -162,5 +162,8 @@ async def run_streaming_session(
             from streaming.websocket_server import ws_server
             ws_server.unregister_session(session_id)
             
-        if room.connected:
+        # livekit-rtc 1.x: Room exposes `connection_state` (enum) -- the old
+        # `room.connected` boolean was removed. See:
+        # https://docs.livekit.io/reference/python/livekit/rtc/room.html
+        if room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
             await room.disconnect()

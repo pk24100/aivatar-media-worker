@@ -1,5 +1,10 @@
 FROM nvcr.io/nvidia/pytorch:26.02-py3
 
+# NGC PyTorch 26.02 ships CUDA 13.1.1 with a matched torch + triton + transformer-engine.
+# Do NOT override torch with the public wheel index (e.g. cu128) -- doing so installs a
+# Triton that has no PTX table for CUDA 13.1 and breaks torch.compile() at runtime with
+# "Triton only support CUDA 10.0 or higher, but got CUDA version: 13.1".
+
 RUN apt-get update && apt-get install -y \
     git git-lfs ffmpeg libsndfile1 wget ca-certificates \
     && rm -rf /var/lib/apt/lists/*
@@ -7,10 +12,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 COPY requirements.txt /app/requirements.txt
+# Install ninja first (build dep for flash-attn). Then install flash-attn against the
+# image's bundled torch (no --index-url, no version pin). flash-attn install is best-
+# effort: SoulX-FlashHead falls back to PyTorch SDPA if flash-attn isn't importable.
 RUN pip3 install --upgrade pip && \
-    pip3 install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu128 && \
     pip3 install ninja && \
-    pip3 install flash_attn==2.8.0.post2 --no-build-isolation && \
+    (pip3 install flash-attn --no-build-isolation || \
+     echo "flash-attn install failed; falling back to PyTorch SDPA at runtime") && \
     pip3 install --no-cache-dir -r /app/requirements.txt
 
 COPY handler.py /app/handler.py

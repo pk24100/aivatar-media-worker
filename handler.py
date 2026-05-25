@@ -164,7 +164,7 @@ async def pod_health(_request):
     return web.json_response({
         "ok": True,
         "status": "healthy",
-        "runtimeMode": "pod",
+        "runtimeMode": WORKER_RUNTIME_MODE,
         "activeSessions": len(_active_sessions),
         "availablePipelines": model_pool.get_available_count(),
     })
@@ -175,11 +175,21 @@ async def pod_ready(_request):
     return web.json_response({
         "ready": ready,
         "status": "READY" if ready else "STARTING",
-        "runtimeMode": "pod",
+        "runtimeMode": WORKER_RUNTIME_MODE,
         "poolSize": WORKER_POOL_SIZE,
         "availablePipelines": model_pool.get_available_count(),
         "activeSessions": len(_active_sessions),
     }, status=200 if ready else 503)
+
+
+async def app_ping(_request):
+    if ws_server.is_running:
+        return web.json_response({
+            "status": "healthy",
+            "runtimeMode": WORKER_RUNTIME_MODE,
+        })
+
+    return web.Response(status=204)
 
 
 async def pod_session_start(request):
@@ -201,14 +211,82 @@ async def pod_session_end(request):
     return web.json_response(payload, status=status)
 
 
+async def pod_session_status(request):
+    session_id = request.match_info.get("session_id")
+    task = _active_sessions.get(session_id)
+
+    if task is None:
+        return web.json_response({
+            "status": "NOT_FOUND",
+            "sessionId": session_id,
+        })
+
+    if task.done():
+        if task.cancelled():
+            return web.json_response({
+                "status": "CANCELLED",
+                "sessionId": session_id,
+            })
+
+        error = task.exception()
+        if error is not None:
+            return web.json_response({
+                "status": "FAILED",
+                "sessionId": session_id,
+                "error": str(error),
+            })
+
+        return web.json_response({
+            "status": "COMPLETED",
+            "sessionId": session_id,
+            "output": task.result(),
+        })
+
+    return web.json_response({
+        "status": "RUNNING",
+        "sessionId": session_id,
+    })
+
+
+async def app_websocket_ingest(request):
+    session_id = request.match_info.get("session_id")
+    session_state = ws_server.active_sessions.get(session_id)
+    if session_state is None:
+        raise web.HTTPNotFound(text="Unknown session ID")
+
+    provided_token = request.query.get("token")
+    expected_token = session_state.get("token")
+    if expected_token and provided_token != expected_token:
+        raise web.HTTPUnauthorized(text="Unauthorized: Invalid Token")
+
+    audio_queue = session_state["queue"]
+    websocket = web.WebSocketResponse()
+    await websocket.prepare(request)
+
+    try:
+        async for message in websocket:
+            if message.type == web.WSMsgType.BINARY:
+                await audio_queue.put(message.data)
+            elif message.type == web.WSMsgType.ERROR:
+                break
+    finally:
+        await audio_queue.put(None)
+
+    return websocket
+
+
 async def run_pod_app():
     await _ensure_ws_server_started()
 
     app = web.Application()
+    app.router.add_get('/ping', app_ping)
+    app.router.add_get('/health', pod_health)
     app.router.add_get('/healthz', pod_health)
     app.router.add_get('/readyz', pod_ready)
     app.router.add_post('/sessions/start', pod_session_start)
     app.router.add_post('/sessions/{session_id}/end', pod_session_end)
+    app.router.add_get('/sessions/{session_id}/status', pod_session_status)
+    app.router.add_get('/ws/{session_id}', app_websocket_ingest)
 
     runner = web.AppRunner(app)
     await runner.setup()
@@ -224,7 +302,7 @@ async def run_pod_app():
 
 
 if __name__ == "__main__":
-    if WORKER_RUNTIME_MODE == "pod":
+    if WORKER_RUNTIME_MODE in {"pod", "load_balancer", "serverless_lb", "lb"}:
         asyncio.run(run_pod_app())
     else:
         runpod.serverless.start({

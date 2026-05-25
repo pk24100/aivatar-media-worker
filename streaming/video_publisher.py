@@ -107,5 +107,8 @@ class VideoPublisher:
         self.video_source.capture_frame(video_frame)
 
     async def _cleanup(self):
-        if self.room and self.room.connected:
+        # livekit-rtc 1.x removed the `room.connected` boolean; check the
+        # `connection_state` enum instead. See:
+        # https://docs.livekit.io/reference/python/livekit/rtc/room.html
+        if self.room and self.room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
             await self.room.disconnect()
