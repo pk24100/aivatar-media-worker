@@ -18,8 +18,9 @@ $StorageSku           = "Premium_LRS"
 $SwapSizeGb           = 8
 $SshPrivateKeyPath    = "$HOME\.ssh\id_rsa"
 
-$RepoUrl              = "https://github.com/<owner>/<repo>.git"
-$RepoDirectoryName    = "<repo>"
+$RepoUrl              = "https://github.com/pk24100/aivatar-media-worker.git"
+$RepoBranch           = "test1"
+$RepoDirectoryName    = "aivatar-media-worker"
 $WorkRoot             = "/home/$AdminUser/work"
 $ProjectSubdirectory  = "aivatar-media-worker"
 $DockerImageTag       = "pk24100/aivatar-worker:flashhead-lite-v2"
@@ -175,8 +176,8 @@ if [ -d "$RepoDirectoryName" ]; then
   rm -rf "$RepoDirectoryName"
 fi
 
-git clone "$RepoUrl"
-cd "$RepoDirectoryName/$ProjectSubdirectory"
+git clone -b "$RepoBranch" "$RepoUrl"
+cd "$RepoDirectoryName"
 
 test -f SoulX-FlashHead/flash_head/ltx_video/models/autoencoders/causal_video_autoencoder.py && echo "FlashHead source package OK"
 
