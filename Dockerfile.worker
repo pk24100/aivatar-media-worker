@@ -1,0 +1,33 @@
+# Thin worker-overlay image.
+#
+# This image reuses an already-published worker image as its base, so the
+# expensive layers (NGC torch, compiled flash-attn, SoulX-FlashHead source,
+# baked model weights) are NOT rebuilt. It only re-copies the small app layer
+# (handler.py, entrypoint.sh, streaming/, utils/).
+#
+# Use this for frequent worker-logic changes (e.g. streaming/ fixes) that do
+# not touch dependencies, FlashHead source, or model weights. Building/pushing
+# this overlay needs no GPU and only uploads the changed app layers, so it is
+# laptop-friendly once the base image has been pulled once.
+#
+# Build (linux/amd64 for RunPod):
+#   cd aivatar-media-worker
+#   docker build -f Dockerfile.worker -t pk24100/aivatar-worker:flashhead-lite-v2 .
+#   docker push pk24100/aivatar-worker:flashhead-lite-v2
+#
+# Override the base with --build-arg BASE_IMAGE=... when you cut a dedicated
+# base tag (e.g. pk24100/aivatar-worker-base:flashhead-lite-v1).
+
+ARG BASE_IMAGE=pk24100/aivatar-worker:flashhead-lite-v2
+FROM ${BASE_IMAGE}
+
+WORKDIR /app
+
+COPY handler.py /app/handler.py
+COPY entrypoint.sh /app/entrypoint.sh
+COPY streaming /app/streaming
+COPY utils /app/utils
+
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["python3", "-u", "handler.py"]
