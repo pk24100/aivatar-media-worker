@@ -6,6 +6,7 @@ from livekit import rtc
 
 from streaming.flashhead_streaming import FlashHeadStreamingEngine
 from streaming.video_publisher import VideoPublisher
+from streaming.audio_publisher import AudioPublisher
 from streaming.audio_subscriber import AudioSubscriber
 from streaming.websocket_server import ws_server
 from streaming.sip_handler import SipAudioSubscriber
@@ -52,6 +53,7 @@ async def run_streaming_session(
 
     engine = None
     publish_task = None
+    audio_publisher = None
     try:
         # Create FlashHead engine with pipeline and avatar image
         if not source_image:
@@ -78,6 +80,16 @@ async def run_streaming_session(
         fps = engine.tgt_fps
         publisher = VideoPublisher(room, fps=fps)
         publish_task = asyncio.create_task(publisher.publish_from_state_manager(state_manager))
+
+        # Republish the ingested audio to LiveKit so subscribers hear speech in
+        # sync with the lip-synced video. Without this, the viewer sees the
+        # avatar's mouth move but hears nothing -- the input audio is consumed
+        # by FlashHead and never reaches the room.
+        audio_publisher = AudioPublisher(
+            room=room,
+            sample_rate=sample_rate,
+            num_channels=num_channels,
+        )
 
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
@@ -108,6 +120,20 @@ async def run_streaming_session(
                     # Fallback if raw PCM is sent without headers
                     audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
 
+                # Tee the audio to LiveKit first (low cost, lets subscribers hear
+                # speech), then drive FlashHead. capture_frame rate-limits to
+                # realtime, but we still drive the engine on a thread so model
+                # inference doesn't block the audio publish loop.
+                if audio_publisher is not None:
+                    try:
+                        await audio_publisher.push_audio(audio_array)
+                    except Exception as exc:
+                        # Don't kill the whole session if audio republish fails;
+                        # video lip-sync still works.
+                        import logging as _logging
+                        _logging.getLogger("stream_processor").warning(
+                            "AudioPublisher push failed: %s", exc
+                        )
                 await asyncio.to_thread(engine.run_chunk, audio_array)
                     
         elif ingestion_method == "sip":
@@ -131,6 +157,14 @@ async def run_streaming_session(
                 audio_array = await audio_queue.get()
                 if audio_array is None:
                     break
+                if audio_publisher is not None:
+                    try:
+                        await audio_publisher.push_audio(audio_array)
+                    except Exception as exc:
+                        import logging as _logging
+                        _logging.getLogger("stream_processor").warning(
+                            "AudioPublisher push failed (sip): %s", exc
+                        )
                 await asyncio.to_thread(engine.run_chunk, audio_array)
                     
         else:
@@ -146,6 +180,9 @@ async def run_streaming_session(
                 audio = await subscriber.read()
                 if audio is None:
                     break
+                # For native LiveKit ingestion the publisher track already exists
+                # in the room, so re-publishing would duplicate. Skip push_audio
+                # in this branch -- subscribers can already hear the source.
                 await asyncio.to_thread(engine.run_chunk, audio)
 
         await asyncio.to_thread(engine.flush)
@@ -158,6 +195,9 @@ async def run_streaming_session(
             publish_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await publish_task
+        if audio_publisher is not None:
+            with contextlib.suppress(Exception):
+                await audio_publisher.aclose()
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
             ws_server.unregister_session(session_id)

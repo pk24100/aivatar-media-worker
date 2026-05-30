@@ -44,37 +44,42 @@ class VideoPublisher:
         """
         Publishes frames continuously at the target FPS.
         Pulls frames from the state manager which handles Live/Idle transitions.
+
+        Pacing rule: emit AT MOST one frame per 1/fps interval. If the inference
+        pipeline produces frames in bursts and the live queue grows behind us, we
+        drop the older frames and keep only the freshest one for the next tick --
+        we never burst-send queued frames back-to-back (that was the legacy
+        behaviour and caused the avatar to talk far faster than the audio).
         """
         frame_interval = 1.0 / float(self.fps)
         while True:
-            # get_next_frame handles its own queue logic and transitions,
-            # so we just poll it at our target framerate
+            # get_next_frame handles Live/Idle selection. We always pull exactly
+            # one frame per tick so the output cadence stays locked at self.fps.
             frame = await asyncio.to_thread(state_manager.get_next_frame)
-            
+
             if frame is None:
-                # If even the fallback fails, we can either wait or break
-                # Usually we want to keep the track alive, but if it returns None 
-                # it means neither live nor idle frames are available
+                # Neither live nor idle frames available right now; keep the
+                # publish loop ticking at the target rate.
                 await asyncio.sleep(frame_interval)
                 continue
-                
-            await self._ensure_track(frame)
-            await self._send_frame(frame)
-            
-            # Fast-forward through old live frames if we're falling behind
+
+            # Catch-up: if the live queue has grown while we were busy, discard
+            # stale frames and keep only the freshest one. We do NOT publish the
+            # discarded frames -- that's the bug we're fixing.
             if state_manager.state.value == "live":
-                while state_manager.live_frame_queue.qsize() > 0:
+                while True:
                     try:
-                        next_frame = state_manager.live_frame_queue.get_nowait()
-                        if next_frame is not None:
-                            frame = next_frame
-                            await self._send_frame(frame)
+                        candidate = state_manager.live_frame_queue.get_nowait()
                     except Exception:
                         break
-                        
+                    if candidate is not None:
+                        frame = candidate
+
+            await self._ensure_track(frame)
+            await self._send_frame(frame)
             await asyncio.sleep(frame_interval)
-            
-        # We likely won't hit this unless explicitly cancelled, but good for cleanup
+
+        # Unreachable unless the task is cancelled, but here for safety.
         await self._cleanup()
 
     async def _ensure_track(self, frame: np.ndarray):

@@ -55,8 +55,21 @@ function Wait-ForSsh {
 
     $start = Get-Date
     while (((Get-Date) - $start).TotalSeconds -lt $TimeoutSeconds) {
-        ssh -i $KeyPath -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 "$UserName@$HostName" "echo ssh-ready" 2>$null | Out-Null
-        if ($LASTEXITCODE -eq 0) {
+        $sshArgs = "-i `"$KeyPath`" -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 `"$UserName@$HostName`" `"echo ssh-ready`""
+        $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $processInfo.FileName = "ssh"
+        $processInfo.Arguments = $sshArgs
+        $processInfo.UseShellExecute = $false
+        $processInfo.RedirectStandardOutput = $true
+        $processInfo.RedirectStandardError = $true
+        $processInfo.CreateNoWindow = $true
+
+        $process = New-Object System.Diagnostics.Process
+        $process.StartInfo = $processInfo
+        [void]$process.Start()
+        $process.WaitForExit()
+
+        if ($process.ExitCode -eq 0) {
             return
         }
         Start-Sleep -Seconds 10
@@ -149,15 +162,12 @@ Write-Host "Step 5: Waiting for SSH to become available..." -ForegroundColor Yel
 Wait-ForSsh -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath
 Write-Host "  SSH is ready." -ForegroundColor Green
 
-Write-Host "Step 6-10: Running remote Linux setup and model download..." -ForegroundColor Yellow
+Write-Host "Step 6-13: Running remote Linux setup, Docker Buildx setup, and model download..." -ForegroundColor Yellow
 $RemoteScript = @"
 set -euo pipefail
 
 sudo apt-get update
-sudo apt-get install -y docker.io git git-lfs python3-pip
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo usermod -aG docker $AdminUser
+sudo apt-get install -y git git-lfs python3-pip ca-certificates curl
 
 if [ ! -f /swapfile ]; then
   sudo fallocate -l ${SwapSizeGb}G /swapfile
@@ -169,7 +179,7 @@ free -h
 
 git lfs install
 sudo mkdir -p "$WorkRoot"
-sudo chown -R $AdminUser:$AdminUser "$WorkRoot"
+sudo chown -R ${AdminUser}:${AdminUser} "$WorkRoot"
 
 cd "$WorkRoot"
 if [ -d "$RepoDirectoryName" ]; then
@@ -181,7 +191,39 @@ cd "$RepoDirectoryName"
 
 test -f SoulX-FlashHead/flash_head/ltx_video/models/autoencoders/causal_video_autoencoder.py && echo "FlashHead source package OK"
 
-sudo python3 -m pip install -U "huggingface_hub[cli]" --break-system-packages
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do
+  sudo apt-get remove -y "$pkg" || true
+done
+
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable docker || true
+sudo systemctl start docker || true
+sudo usermod -aG docker $AdminUser
+
+sudo systemctl daemon-reload
+sudo systemctl restart containerd
+sudo systemctl restart docker
+sudo systemctl status docker.service --no-pager -l
+
+sg docker -c 'docker version'
+sg docker -c 'docker buildx version'
+sg docker -c 'docker buildx ls'
+
+if sg docker -c 'docker buildx inspect aivatar-builder >/dev/null 2>&1'; then
+  sg docker -c 'docker buildx use aivatar-builder'
+else
+  sg docker -c 'docker buildx create --name aivatar-builder --use'
+fi
+sg docker -c 'docker buildx inspect --bootstrap'
+
+sudo python3 -m pip install -U "huggingface_hub[cli]"
 chmod +x scripts/download_models.sh
 ./scripts/download_models.sh
 rm -rf models/SoulX-FlashHead-1_3B/Model_Pro || true
@@ -191,7 +233,8 @@ if [ -d models/wav2vec2-base-960h ]; then
   du -sh models/wav2vec2-base-960h
 fi
 
-echo "REMOTE_PROJECT_DIR=$WorkRoot/$RepoDirectoryName/$ProjectSubdirectory"
+echo "REMOTE_PROJECT_DIR=$WorkRoot/$RepoDirectoryName"
+echo "BUILDX_BUILDER=aivatar-builder"
 "@
 Invoke-RemoteScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $RemoteScript
 
@@ -202,10 +245,13 @@ Write-Host "SSH into the VM for manual Step 12 onwards:" -ForegroundColor White
 Write-Host "  ssh -i `"$SshPrivateKeyPath`" $AdminUser@$VmPublicIp" -ForegroundColor Green
 Write-Host ""
 Write-Host "Then run:" -ForegroundColor White
-Write-Host "  cd $WorkRoot/$RepoDirectoryName/$ProjectSubdirectory" -ForegroundColor Green
+Write-Host "  cd $WorkRoot/$RepoDirectoryName" -ForegroundColor Green
+Write-Host "  newgrp docker" -ForegroundColor Green
+Write-Host "  docker version" -ForegroundColor Green
+Write-Host "  docker buildx use aivatar-builder" -ForegroundColor Green
 Write-Host "  docker login" -ForegroundColor Green
-Write-Host "  docker build --platform linux/amd64 -t $DockerImageTag ." -ForegroundColor Green
-Write-Host "  docker push $DockerImageTag" -ForegroundColor Green
+Write-Host "  docker buildx build --platform linux/amd64 -t $DockerImageTag --cache-from type=registry,ref=pk24100/aivatar-worker:buildcache --cache-to type=registry,ref=pk24100/aivatar-worker:buildcache,mode=max --push ." -ForegroundColor Green
 Write-Host ""
 Write-Host "Cleanup when finished:" -ForegroundColor White
 Write-Host "  az group delete --name $ResourceGroup --yes --no-wait" -ForegroundColor Green
+
