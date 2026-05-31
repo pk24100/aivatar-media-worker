@@ -109,6 +109,27 @@ function Invoke-RemoteScript {
     }
 }
 
+function Invoke-RemoteInteractiveScript {
+    param(
+        [string]$HostName,
+        [string]$UserName,
+        [string]$KeyPath,
+        [string]$ScriptContent
+    )
+
+    $tempFile = [System.IO.Path]::GetTempFileName()
+    try {
+        Set-Content -Path $tempFile -Value $ScriptContent -NoNewline
+        Get-Content -Path $tempFile -Raw | ssh -tt -i $KeyPath -o StrictHostKeyChecking=accept-new "$UserName@$HostName" "bash -s"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Remote interactive script failed on $HostName"
+        }
+    }
+    finally {
+        Remove-Item -Path $tempFile -ErrorAction SilentlyContinue
+    }
+}
+
 Require-Command -CommandName "az"
 Require-Command -CommandName "ssh"
 
@@ -241,18 +262,25 @@ Invoke-RemoteScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPriv
 Write-Host ""
 Write-Host "=== Setup Complete ===" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "SSH into the VM for the manual overlay build and push:" -ForegroundColor White
-Write-Host "  ssh -i `"$SshPrivateKeyPath`" $AdminUser@$VmPublicIp" -ForegroundColor Green
+Write-Host "Starting remote Docker login and overlay build/push..." -ForegroundColor Yellow
+Write-Host "Complete the Docker device-code login in your browser when prompted." -ForegroundColor White
+
+$BuildScript = @"
+set -euo pipefail
+
+cd "$WorkRoot/$RepoDirectoryName"
+
+sg docker -c 'docker version'
+sg docker -c 'docker buildx use aivatar-builder'
+sg docker -c 'docker login'
+sg docker -c 'docker buildx build --platform linux/amd64 -f $WorkerDockerfile -t $DockerImageTag --push .'
+"@
+Invoke-RemoteInteractiveScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $BuildScript
+
 Write-Host ""
-Write-Host "Then run:" -ForegroundColor White
-Write-Host "  cd $WorkRoot/$RepoDirectoryName" -ForegroundColor Green
-Write-Host "  newgrp docker" -ForegroundColor Green
-Write-Host "  docker version" -ForegroundColor Green
-Write-Host "  docker buildx use aivatar-builder" -ForegroundColor Green
-Write-Host "  docker login" -ForegroundColor Green
-Write-Host "  docker buildx build --platform linux/amd64 -f $WorkerDockerfile -t $DockerImageTag --push ." -ForegroundColor Green
+Write-Host "Remote overlay build and push completed." -ForegroundColor Green
 Write-Host ""
-Write-Host "The overlay build pulls the ~17.5 GB base on Azure (not your laptop) and only" -ForegroundColor White
+Write-Host "The overlay build pulls the ~17.5 GB base on Azure  and only" -ForegroundColor White
 Write-Host "uploads the small changed app layers, since the base layers already exist on Docker Hub." -ForegroundColor White
 Write-Host ""
 Write-Host "Cleanup when finished:" -ForegroundColor White

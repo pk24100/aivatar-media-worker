@@ -39,6 +39,7 @@ class FlashHeadStreamingEngine:
         self.audio_context = deque([0.0] * self.cached_audio_samples, maxlen=self.cached_audio_samples)
         self.pending_audio = deque()
         self.frame_queue = Queue()
+        self.audio_queue = Queue()
         self._prepared = False
         self._temp_avatar_path = None
 
@@ -106,6 +107,9 @@ class FlashHeadStreamingEngine:
             video = video[self.motion_frames_num:]
             for i in range(video.shape[0]):
                 self.frame_queue.put_nowait(video[i].cpu().numpy().astype(np.uint8))
+            # Pair the audio slice with its video frames so the publisher
+            # can emit them together for lip-sync.
+            self.audio_queue.put_nowait(human_speech_array)
 
     def run_chunk(self, audio_data: np.ndarray):
         if not self._prepared:
@@ -126,6 +130,8 @@ class FlashHeadStreamingEngine:
         self.audio_context.clear()
         while not self.frame_queue.empty():
             self.frame_queue.get_nowait()
+        while not self.audio_queue.empty():
+            self.audio_queue.get_nowait()
         if self._temp_avatar_path and os.path.exists(self._temp_avatar_path):
             os.remove(self._temp_avatar_path)
         self._temp_avatar_path = None

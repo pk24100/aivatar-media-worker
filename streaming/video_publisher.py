@@ -63,18 +63,6 @@ class VideoPublisher:
                 await asyncio.sleep(frame_interval)
                 continue
 
-            # Catch-up: if the live queue has grown while we were busy, discard
-            # stale frames and keep only the freshest one. We do NOT publish the
-            # discarded frames -- that's the bug we're fixing.
-            if state_manager.state.value == "live":
-                while True:
-                    try:
-                        candidate = state_manager.live_frame_queue.get_nowait()
-                    except Exception:
-                        break
-                    if candidate is not None:
-                        frame = candidate
-
             await self._ensure_track(frame)
             await self._send_frame(frame)
             await asyncio.sleep(frame_interval)

@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import logging
 import os
 
 from livekit import rtc
@@ -12,6 +13,26 @@ from streaming.websocket_server import ws_server
 from streaming.sip_handler import SipAudioSubscriber
 from streaming.state_manager import StreamStateManager
 from streaming.idle_video import IdleVideoLoop
+
+_logger = logging.getLogger("stream_processor")
+
+
+async def _audio_publish_loop(engine, audio_publisher):
+    """
+    Consumes audio slices from engine.audio_queue and pushes them to
+    LiveKit exactly when the matching video frames are ready.  This
+    keeps audio and video lip-synced: the viewer hears the audio at
+    the same moment the avatar's mouth moves.
+    """
+    while True:
+        audio_chunk = await asyncio.to_thread(engine.audio_queue.get)
+        if audio_chunk is None:
+            # Sentinel — stream is over.
+            break
+        try:
+            await audio_publisher.push_audio(audio_chunk)
+        except Exception as exc:
+            _logger.warning("AudioPublisher push failed: %s", exc)
 
 
 async def run_streaming_session(
@@ -53,6 +74,7 @@ async def run_streaming_session(
 
     engine = None
     publish_task = None
+    audio_publish_task = None
     audio_publisher = None
     try:
         # Create FlashHead engine with pipeline and avatar image
@@ -91,6 +113,14 @@ async def run_streaming_session(
             num_channels=num_channels,
         )
 
+        # For websocket and SIP ingestion the audio must be re-published to
+        # the LiveKit room.  We pull from engine.audio_queue (which is fed
+        # in lock-step with video frames) so A-V stays synchronised.
+        if ingestion_method in ("websocket", "sip"):
+            audio_publish_task = asyncio.create_task(
+                _audio_publish_loop(engine, audio_publisher)
+            )
+
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
             import numpy as np
@@ -120,20 +150,9 @@ async def run_streaming_session(
                     # Fallback if raw PCM is sent without headers
                     audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
 
-                # Tee the audio to LiveKit first (low cost, lets subscribers hear
-                # speech), then drive FlashHead. capture_frame rate-limits to
-                # realtime, but we still drive the engine on a thread so model
-                # inference doesn't block the audio publish loop.
-                if audio_publisher is not None:
-                    try:
-                        await audio_publisher.push_audio(audio_array)
-                    except Exception as exc:
-                        # Don't kill the whole session if audio republish fails;
-                        # video lip-sync still works.
-                        import logging as _logging
-                        _logging.getLogger("stream_processor").warning(
-                            "AudioPublisher push failed: %s", exc
-                        )
+                # Audio is NOT pushed here any more — it is enqueued inside
+                # engine.run_chunk → _process_available_audio and consumed
+                # by _audio_publish_loop, keeping A-V synchronised.
                 await asyncio.to_thread(engine.run_chunk, audio_array)
                     
         elif ingestion_method == "sip":
@@ -157,14 +176,7 @@ async def run_streaming_session(
                 audio_array = await audio_queue.get()
                 if audio_array is None:
                     break
-                if audio_publisher is not None:
-                    try:
-                        await audio_publisher.push_audio(audio_array)
-                    except Exception as exc:
-                        import logging as _logging
-                        _logging.getLogger("stream_processor").warning(
-                            "AudioPublisher push failed (sip): %s", exc
-                        )
+                # Audio is NOT pushed here any more — same as websocket branch.
                 await asyncio.to_thread(engine.run_chunk, audio_array)
                     
         else:
@@ -189,6 +201,18 @@ async def run_streaming_session(
         while not engine.frame_queue.empty():
             await asyncio.sleep(0.05)
     finally:
+        # Enqueue the audio sentinel BEFORE closing the engine so the
+        # _audio_publish_loop can drain any remaining audio and then exit
+        # cleanly.  Without this, the task blocks forever on queue.get().
+        if engine is not None:
+            engine.audio_queue.put_nowait(None)
+
+        # Wait for the audio publish task to finish (it will exit after
+        # consuming the None sentinel).
+        if audio_publish_task is not None:
+            with contextlib.suppress(asyncio.CancelledError):
+                await audio_publish_task
+
         if engine is not None:
             await asyncio.to_thread(engine.close)
         if publish_task is not None:
