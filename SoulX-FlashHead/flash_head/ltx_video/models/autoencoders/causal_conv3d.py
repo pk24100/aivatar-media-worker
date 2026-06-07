@@ -61,8 +61,6 @@ class CausalConv3d(nn.Module):
         x = self.conv(x)
         return x
 
-    @property
-    def weight(self):
     # Expose the underlying convolution weight tensor.
     @property
     def weight(self):
