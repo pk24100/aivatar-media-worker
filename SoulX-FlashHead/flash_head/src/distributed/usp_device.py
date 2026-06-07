@@ -4,12 +4,14 @@ import datetime
 import torch
 import torch.distributed as dist
 
+# Compute Ulysses and ring parallel degrees from world size and head count.
 def get_parallel_degree(world_size, num_heads):
     # ulysses_degree is faster, and must be a divisor of num_heads
     ulysses_degree = math.gcd(world_size, num_heads)
     ring_degree = world_size // ulysses_degree
     return ulysses_degree, ring_degree
 
+# Initialize the distributed device for sequence parallelism if needed.
 def get_device(ulysses_degree, ring_degree):
     if ulysses_degree > 1 or ring_degree > 1:
         from xfuser.core.distributed import (

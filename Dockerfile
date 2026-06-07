@@ -27,7 +27,6 @@ COPY streaming /app/streaming
 COPY utils /app/utils
 COPY SoulX-FlashHead /app/SoulX-FlashHead
 
-COPY models/SoulX-FlashHead-1_3B /app/models/SoulX-FlashHead-1_3B
 COPY models/wav2vec2-base-960h /app/models/wav2vec2-base-960h
 
 RUN chmod +x /app/entrypoint.sh

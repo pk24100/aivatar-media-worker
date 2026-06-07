@@ -44,6 +44,7 @@ Output the enhanced prompt only.
 """
 
 
+# Convert a normalized torch tensor to a PIL Image.
 def tensor_to_pil(tensor):
     # Ensure tensor is in range [-1, 1]
     assert tensor.min() >= -1 and tensor.max() <= 1
@@ -61,6 +62,7 @@ def tensor_to_pil(tensor):
     return Image.fromarray(numpy_image)
 
 
+# Enhance a user prompt with cinematic details using an LLM.
 def generate_cinematic_prompt(
     image_caption_model,
     image_caption_processor,
@@ -110,6 +112,7 @@ def generate_cinematic_prompt(
     return prompts
 
 
+# Extract the first frame from each item in a conditioning batch.
 def _get_first_frames_from_conditioning_item(conditioning_item) -> List[Image.Image]:
     frames_tensor = conditioning_item.media_item
     return [
@@ -118,6 +121,7 @@ def _get_first_frames_from_conditioning_item(conditioning_item) -> List[Image.Im
     ]
 
 
+# Generate a text-to-video enhanced prompt with a system prompt.
 def _generate_t2v_prompt(
     prompt_enhancer_model,
     prompt_enhancer_tokenizer,
@@ -148,6 +152,7 @@ def _generate_t2v_prompt(
     )
 
 
+# Generate an image-to-video enhanced prompt using image captions.
 def _generate_i2v_prompt(
     image_caption_model,
     image_caption_processor,
@@ -185,6 +190,7 @@ def _generate_i2v_prompt(
     )
 
 
+# Generate captions for a list of images using a vision-language model.
 def _generate_image_captions(
     image_caption_model,
     image_caption_processor,
@@ -208,6 +214,7 @@ def _generate_image_captions(
     return image_caption_processor.batch_decode(generated_ids, skip_special_tokens=True)
 
 
+# Generate and decode text completions from a language model.
 def _generate_and_decode_prompts(
     prompt_enhancer_model, prompt_enhancer_tokenizer, model_inputs, max_new_tokens: int
 ) -> List[str]:

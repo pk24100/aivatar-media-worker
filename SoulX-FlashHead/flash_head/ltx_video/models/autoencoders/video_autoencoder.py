@@ -19,8 +19,10 @@ from flash_head.ltx_video.models.autoencoders.vae import AutoencoderKLWrapper
 logger = logging.get_logger(__name__)
 
 
+# Video VAE wrapper that loads pretrained checkpoints and manages encoder/decoder blocks.
 class VideoAutoencoder(AutoencoderKLWrapper):
     @classmethod
+    # Load a pretrained VideoAutoencoder from a local checkpoint directory.
     def from_pretrained(
         cls,
         pretrained_model_name_or_path: Optional[Union[str, os.PathLike]],
@@ -58,6 +60,7 @@ class VideoAutoencoder(AutoencoderKLWrapper):
         return video_vae
 
     @staticmethod
+    # Instantiate a VideoAutoencoder from a configuration dictionary.
     def from_config(config):
         assert (
             config["_class_name"] == "VideoAutoencoder"
@@ -109,6 +112,7 @@ class VideoAutoencoder(AutoencoderKLWrapper):
         )
 
     @property
+    # Return the current model configuration as a namespace.
     def config(self):
         return SimpleNamespace(
             _class_name="VideoAutoencoder",
@@ -139,14 +143,17 @@ class VideoAutoencoder(AutoencoderKLWrapper):
         return self.dims != 2
 
     @property
+    # Return the overall spatial downscale factor of the encoder.
     def downscale_factor(self):
         return self.encoder.downsample_factor
 
+    # Serialize the model configuration to a JSON string.
     def to_json_string(self) -> str:
         import json
 
         return json.dumps(self.config.__dict__)
 
+    # Load a state dict with renamed keys to match the model architecture.
     def load_state_dict(self, state_dict: Mapping[str, Any], strict: bool = True):
         model_keys = set(name for name, _ in self.named_parameters())
 
@@ -171,6 +178,7 @@ class VideoAutoencoder(AutoencoderKLWrapper):
 
         super().load_state_dict(converted_state_dict, strict=strict)
 
+    # Return the final output layer of the decoder.
     def last_layer(self):
         if hasattr(self.decoder, "conv_out"):
             if isinstance(self.decoder.conv_out, nn.Sequential):
@@ -297,6 +305,7 @@ class Encoder(nn.Module):
         self.gradient_checkpointing = False
 
     @property
+    # Return the overall spatial downscale factor of the encoder.
     def downscale_factor(self):
         return (
             2
@@ -310,6 +319,7 @@ class Encoder(nn.Module):
             * self.patch_size
         )
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(
         self, sample: torch.FloatTensor, return_features=False
     ) -> torch.FloatTensor:
@@ -476,6 +486,7 @@ class Decoder(nn.Module):
 
         self.gradient_checkpointing = False
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(self, sample: torch.FloatTensor, target_shape) -> torch.FloatTensor:
         r"""The forward method of the `Decoder` class."""
         assert target_shape is not None, "target_shape must be provided"
@@ -514,6 +525,7 @@ class Decoder(nn.Module):
         return sample
 
 
+# Encoder block that applies multiple ResnetBlock3D layers with optional downsampling.
 class DownEncoderBlock3D(nn.Module):
     def __init__(
         self,
@@ -557,6 +569,7 @@ class DownEncoderBlock3D(nn.Module):
         else:
             self.downsample = Identity()
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(
         self, hidden_states: torch.FloatTensor, downsample_in_time
     ) -> torch.FloatTensor:
@@ -618,6 +631,7 @@ class UNetMidBlock3D(nn.Module):
             ]
         )
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(self, hidden_states: torch.FloatTensor) -> torch.FloatTensor:
         for resnet in self.res_blocks:
             hidden_states = resnet(hidden_states)
@@ -625,6 +639,7 @@ class UNetMidBlock3D(nn.Module):
         return hidden_states
 
 
+# Decoder block that applies multiple ResnetBlock3D layers with optional upsampling.
 class UpDecoderBlock3D(nn.Module):
     def __init__(
         self,
@@ -668,6 +683,7 @@ class UpDecoderBlock3D(nn.Module):
 
         self.resolution_idx = resolution_idx
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(
         self, hidden_states: torch.FloatTensor, upsample_in_time=True
     ) -> torch.FloatTensor:
@@ -679,6 +695,7 @@ class UpDecoderBlock3D(nn.Module):
         return hidden_states
 
 
+# Residual block with two causal 3D convolutions and optional noise injection.
 class ResnetBlock3D(nn.Module):
     r"""
     A Resnet block.
@@ -743,6 +760,7 @@ class ResnetBlock3D(nn.Module):
             else nn.Identity()
         )
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(
         self,
         input_tensor: torch.FloatTensor,
@@ -770,6 +788,7 @@ class ResnetBlock3D(nn.Module):
         return output_tensor
 
 
+# Downsample 3D tensors using strided convolution or average pooling.
 class Downsample3D(nn.Module):
     def __init__(
         self,
@@ -793,6 +812,7 @@ class Downsample3D(nn.Module):
             padding=padding,
         )
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(self, x, downsample_in_time=True):
         conv = self.conv
         if self.padding == 0:
@@ -809,6 +829,7 @@ class Downsample3D(nn.Module):
         return conv(x)
 
 
+# Upsample 3D tensors using interpolation followed by convolution.
 class Upsample3D(nn.Module):
     """
     An upsampling layer for 3D tensors of shape (B, C, D, H, W).
@@ -825,6 +846,7 @@ class Upsample3D(nn.Module):
             dims, channels, out_channels, kernel_size=3, padding=1, bias=True
         )
 
+    # Forward pass through res blocks and optional downsampling.
     def forward(self, x, upsample_in_time):
         if self.dims == 2:
             x = functional.interpolate(
@@ -865,6 +887,7 @@ class Upsample3D(nn.Module):
         return self.conv(x)
 
 
+# Rearrange spatial/temporal dimensions into channel patches.
 def patchify(x, patch_size_hw, patch_size_t=1, add_channel_padding=False):
     if patch_size_hw == 1 and patch_size_t == 1:
         return x
@@ -903,6 +926,7 @@ def patchify(x, patch_size_hw, patch_size_t=1, add_channel_padding=False):
     return x
 
 
+# Reverse the patchify operation to restore spatial/temporal dimensions.
 def unpatchify(x, patch_size_hw, patch_size_t=1, add_channel_padding=False):
     if patch_size_hw == 1 and patch_size_t == 1:
         return x
@@ -931,6 +955,7 @@ def unpatchify(x, patch_size_hw, patch_size_t=1, add_channel_padding=False):
     return x
 
 
+# Generate a default VideoAutoencoder configuration dictionary.
 def create_video_autoencoder_config(
     latent_channels: int = 4,
 ):
@@ -955,6 +980,7 @@ def create_video_autoencoder_config(
     return config
 
 
+# Generate a VideoAutoencoder config with 4x4x4 patchify settings.
 def create_video_autoencoder_pathify4x4x4_config(
     latent_channels: int = 4,
 ):
@@ -976,6 +1002,7 @@ def create_video_autoencoder_pathify4x4x4_config(
     return config
 
 
+# Generate a VideoAutoencoder config with 4x4 patchify settings.
 def create_video_autoencoder_pathify4x4_config(
     latent_channels: int = 4,
 ):
@@ -994,6 +1021,7 @@ def create_video_autoencoder_pathify4x4_config(
     return config
 
 
+# Verify that patchify and unpatchify are inverse operations.
 def test_vae_patchify_unpatchify():
     import torch
 
@@ -1003,6 +1031,7 @@ def test_vae_patchify_unpatchify():
     assert torch.allclose(x, x_unpatched)
 
 
+# Run a forward/backward demo on the VideoAutoencoder.
 def demo_video_autoencoder_forward_backward():
     # Configuration for the VideoAutoencoder
     config = create_video_autoencoder_pathify4x4x4_config()

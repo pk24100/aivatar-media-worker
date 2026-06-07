@@ -1,3 +1,4 @@
+# Convert a nested dictionary into a hashable tuple for config lookup.
 def make_hashable_key(dict_key):
     def convert_value(value):
         if isinstance(value, list):

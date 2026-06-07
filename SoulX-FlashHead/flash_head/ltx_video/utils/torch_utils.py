@@ -14,12 +14,15 @@ def append_dims(x: torch.Tensor, target_dims: int) -> torch.Tensor:
     return x[(...,) + (None,) * dims_to_append]
 
 
+# Placeholder identity module that returns inputs unchanged.
 class Identity(nn.Module):
     """A placeholder identity operator that is argument-insensitive."""
 
+    # Initialize the identity module (arguments are ignored).
     def __init__(self, *args, **kwargs) -> None:  # pylint: disable=unused-argument
         super().__init__()
 
     # pylint: disable=unused-argument
+    # Return the input tensor unchanged.
     def forward(self, x: torch.Tensor, *args, **kwargs) -> torch.Tensor:
         return x

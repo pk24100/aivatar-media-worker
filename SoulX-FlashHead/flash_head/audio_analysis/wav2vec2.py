@@ -10,6 +10,7 @@ class Wav2Vec2Model(Wav2Vec2Model):
     def __init__(self, config: Wav2Vec2Config):
         super().__init__(config)
 
+    # Extract audio features and encode them with optional masking and attention.
     def forward(
         self,
         input_values,
@@ -64,6 +65,7 @@ class Wav2Vec2Model(Wav2Vec2Model):
         )
 
 
+    # Extract raw audio features and interpolate to the target sequence length.
     def feature_extract(
         self,
         input_values,
@@ -75,6 +77,7 @@ class Wav2Vec2Model(Wav2Vec2Model):
 
         return extract_features
 
+    # Encode pre-extracted audio features through projection and encoder layers.
     def encode(
         self,
         extract_features,

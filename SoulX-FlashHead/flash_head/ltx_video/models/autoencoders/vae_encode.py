@@ -93,6 +93,7 @@ def vae_encode(
     return latents
 
 
+# Decode latent tensors back into images or videos.
 def vae_decode(
     latents: Tensor,
     vae: AutoencoderKL,
@@ -135,6 +136,7 @@ def vae_decode(
     return images
 
 
+# Internal helper to run VAE decoding with optional target shape and timestep.
 def _run_decoder(
     latents: Tensor,
     vae: AutoencoderKL,
@@ -172,6 +174,7 @@ def _run_decoder(
     return image
 
 
+# Compute the temporal and spatial downscale factors of the given VAE.
 def get_vae_size_scale_factor(vae: AutoencoderKL) -> float:
     # if isinstance(vae, CausalVideoAutoencoder):
     if True: #True是为了兼容fsdp包裹之后的模型
@@ -221,6 +224,7 @@ def latent_to_pixel_coords(
     return pixel_coords
 
 
+# Convert latent coordinates to pixel coordinates using known scale factors.
 def latent_to_pixel_coords_from_factors(
     latent_coords: Tensor, scale_factors: Tuple, causal_fix: bool = False
 ) -> Tensor:
@@ -234,6 +238,7 @@ def latent_to_pixel_coords_from_factors(
     return pixel_coords
 
 
+# Normalize latents using per-channel statistics or the model scaling factor.
 def normalize_latents(
     latents: Tensor, vae: AutoencoderKL, vae_per_channel_normalize: bool = False
 ) -> Tensor:
@@ -245,6 +250,7 @@ def normalize_latents(
     )
 
 
+# Undo latent normalization using per-channel statistics or the model scaling factor.
 def un_normalize_latents(
     latents: Tensor, vae: AutoencoderKL, vae_per_channel_normalize: bool = False
 ) -> Tensor:

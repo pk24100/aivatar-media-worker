@@ -13,6 +13,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), "configs", "infer_params.y
 with open(CONFIG_PATH, "r") as f:
     infer_params = yaml.safe_load(f)
 
+# Build and return the FlashHead pipeline for the given model configuration.
 def get_pipeline(world_size, ckpt_dir, model_type, wav2vec_dir):
     global infer_params
     ulysses_degree, ring_degree = get_parallel_degree(world_size, infer_params['num_heads'])
@@ -39,6 +40,7 @@ def get_pipeline(world_size, ckpt_dir, model_type, wav2vec_dir):
         infer_params['sample_steps'] = 4
     return pipeline
 
+# Prepare conditioning image data and pipeline parameters for generation.
 def get_base_data(pipeline, cond_image_path_or_dir, base_seed, use_face_crop):
     pipeline.prepare_params(
         cond_image_path_or_dir=cond_image_path_or_dir,
@@ -52,10 +54,12 @@ def get_base_data(pipeline, cond_image_path_or_dir, base_seed, use_face_crop):
         use_face_crop=use_face_crop,
     )
 
+# Return a deep copy of the global inference parameters.
 def get_infer_params():
     global infer_params
     return copy.deepcopy(infer_params)
 
+# Extract and window audio embeddings from the pipeline for the given audio array.
 def get_audio_embedding(pipeline, audio_array, audio_start_idx=-1, audio_end_idx=-1):
     # audio_array = loudness_norm(audio_array, infer_params['sample_rate'])
     audio_embedding = pipeline.preprocess_audio(audio_array, sr=infer_params['sample_rate'], fps=infer_params['tgt_fps'])
@@ -72,6 +76,7 @@ def get_audio_embedding(pipeline, audio_array, audio_start_idx=-1, audio_end_idx
     audio_embedding = audio_embedding[center_indices][None,...].contiguous()
     return audio_embedding
 
+# Run the generation pipeline with the provided audio embedding and return video frames.
 def run_pipeline(pipeline, audio_embedding):
     audio_embedding = audio_embedding.to(pipeline.device)
     sample = pipeline.generate(audio_embedding)

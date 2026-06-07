@@ -7,15 +7,19 @@ from einops import rearrange
 from torch import Tensor
 
 
+# Abstract base class for patchifying and unpatchifying latent tensors.
 class Patchifier(ConfigMixin, ABC):
+    # Initialize the patchifier with the desired patch size.
     def __init__(self, patch_size: int):
         super().__init__()
         self._patch_size = (1, patch_size, patch_size)
 
+    # Abstract method to patchify latents into tokens and coordinates.
     @abstractmethod
     def patchify(self, latents: Tensor) -> Tuple[Tensor, Tensor]:
         raise NotImplementedError("Patchify method not implemented")
 
+    # Abstract method to unpatchify tokens back into latent tensors.
     @abstractmethod
     def unpatchify(
         self,
@@ -26,6 +30,7 @@ class Patchifier(ConfigMixin, ABC):
     ) -> Tuple[Tensor, Tensor]:
         pass
 
+    # Return the configured patch size tuple.
     @property
     def patch_size(self):
         return self._patch_size
@@ -51,7 +56,9 @@ class Patchifier(ConfigMixin, ABC):
         return latent_coords
 
 
+# Patchifier that uses symmetric spatial and temporal patch sizes.
 class SymmetricPatchifier(Patchifier):
+    # Patchify latents into flattened tokens and their spatial coordinates.
     def patchify(self, latents: Tensor) -> Tuple[Tensor, Tensor]:
         b, _, f, h, w = latents.shape
         latent_coords = self.get_latent_coords(f, h, w, b, latents.device)
@@ -64,6 +71,7 @@ class SymmetricPatchifier(Patchifier):
         )
         return latents, latent_coords
 
+    # Unpatchify tokens back into a tensor of the specified output shape.
     def unpatchify(
         self,
         latents: Tensor,

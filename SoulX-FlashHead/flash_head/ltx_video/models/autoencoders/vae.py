@@ -76,6 +76,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
         # only relevant if vae tiling is enabled
         self.set_tiling_params(sample_size=sample_size, overlap_factor=0.25)
 
+    # Configure tile sizes and overlap for tiled encoding/decoding.
     def set_tiling_params(self, sample_size: int = 512, overlap_factor: float = 0.25):
         self.tile_sample_min_size = sample_size
         num_blocks = len(self.encoder.down_blocks)
@@ -114,6 +115,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
         """
         self.use_hw_tiling = False
 
+    # Encode the input by splitting it into overlapping spatial tiles.
     def _hw_tiled_encode(self, x: torch.FloatTensor, return_dict: bool = True):
         overlap_size = int(self.tile_sample_min_size * (1 - self.tile_overlap_factor))
         blend_extent = int(self.tile_latent_min_size * self.tile_overlap_factor)
@@ -151,6 +153,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
         moments = torch.cat(result_rows, dim=3)
         return moments
 
+    # Blend two tensors along the temporal dimension with linear interpolation.
     def blend_z(
         self, a: torch.Tensor, b: torch.Tensor, blend_extent: int
     ) -> torch.Tensor:
@@ -161,6 +164,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
             ) + b[:, :, z, :, :] * (z / blend_extent)
         return b
 
+    # Blend two tensors along the vertical dimension with linear interpolation.
     def blend_v(
         self, a: torch.Tensor, b: torch.Tensor, blend_extent: int
     ) -> torch.Tensor:
@@ -171,6 +175,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
             ) + b[:, :, :, y, :] * (y / blend_extent)
         return b
 
+    # Blend two tensors along the horizontal dimension with linear interpolation.
     def blend_h(
         self, a: torch.Tensor, b: torch.Tensor, blend_extent: int
     ) -> torch.Tensor:
@@ -181,6 +186,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
             ) + b[:, :, :, :, x] * (x / blend_extent)
         return b
 
+    # Decode latents by splitting them into overlapping spatial tiles.
     def _hw_tiled_decode(self, z: torch.FloatTensor, target_shape):
         overlap_size = int(self.tile_latent_min_size * (1 - self.tile_overlap_factor))
         blend_extent = int(self.tile_sample_min_size * self.tile_overlap_factor)
@@ -223,6 +229,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
         dec = torch.cat(result_rows, dim=3)
         return dec
 
+    # Encode input into a posterior distribution, optionally using tiled processing.
     def encode(
         self, z: torch.FloatTensor, return_dict: bool = True
     ) -> Union[DecoderOutput, torch.FloatTensor]:
@@ -258,6 +265,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
 
         return AutoencoderKLOutput(latent_dist=posterior)
 
+    # Normalize latent channels using batch statistics if enabled.
     def _normalize_latent_channels(self, z: torch.FloatTensor) -> torch.FloatTensor:
         if isinstance(self.latent_norm_out, nn.BatchNorm3d):
             _, c, _, _, _ = z.shape
@@ -272,6 +280,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
             raise NotImplementedError("BatchNorm2d not supported")
         return z
 
+    # Undo latent channel normalization using stored batch statistics.
     def _unnormalize_latent_channels(self, z: torch.FloatTensor) -> torch.FloatTensor:
         if isinstance(self.latent_norm_out, nn.BatchNorm3d):
             running_mean = self.latent_norm_out.running_mean.view(1, -1, 1, 1, 1)
@@ -283,12 +292,14 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
             raise NotImplementedError("BatchNorm2d not supported")
         return z
 
+    # Run the encoder and quantize the output moments.
     def _encode(self, x: torch.FloatTensor) -> AutoencoderKLOutput:
         h = self.encoder(x)
         moments = self.quant_conv(h)
         moments = self._normalize_latent_channels(moments)
         return moments
 
+    # Decode latent moments back into a reconstructed sample.
     def _decode(
         self,
         z: torch.FloatTensor,
@@ -303,6 +314,7 @@ class AutoencoderKLWrapper(ModelMixin, ConfigMixin):
             dec = self.decoder(z, target_shape=target_shape)
         return dec
 
+    # Decode latents to a sample, optionally using tiled decoding along the time axis.
     def decode(
         self,
         z: torch.FloatTensor,

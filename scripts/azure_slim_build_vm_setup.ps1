@@ -1,21 +1,22 @@
-# Azure Docker Builder Setup Script
-# This script automates the Azure VM setup and remote Linux preparation steps for building the AiVatar media worker image.
-# Usage: Fill in the configuration values below and run: .\azure_build_vm_setup.ps1
+# Azure Slim Docker Builder Setup Script
+# This script automates the Azure VM setup and remote Linux preparation steps for building
+# the slim AiVatar media worker image (wav2vec2 baked, FlashHead loaded from RunPod cached HF model).
+# Usage: Fill in the configuration values below and run: .\azure_slim_build_vm_setup.ps1
 
 # ===============================
 # CONFIGURATION - Fill these in
 # ===============================
 $Location             = "australiaeast"
-$ResourceGroup        = "aivatar-builder-rg"
-$VmName               = "aivatar-builder-vm"
-$NsgName              = "aivatar-builder-nsg"
-$PublicIpName         = "aivatar-builder-pip"
+$ResourceGroup        = "aivatar-slim-builder-rg"
+$VmName               = "aivatar-slim-builder-vm"
+$NsgName              = "aivatar-slim-builder-nsg"
+$PublicIpName         = "aivatar-slim-builder-pip"
 $AdminUser            = "azureuser"
-$VmSize               = "Standard_D4s_v3"
+$VmSize               = "Standard_D2s_v3"
 $VmImage              = "Ubuntu2204"
-$OsDiskGb             = 160
+$OsDiskGb             = 32
 $StorageSku           = "Premium_LRS"
-$SwapSizeGb           = 8
+$SwapSizeGb           = 4
 $SshPrivateKeyPath    = "$HOME\.ssh\id_rsa"
 
 $RepoUrl              = "https://github.com/pk24100/aivatar-media-worker.git"
@@ -139,7 +140,7 @@ if ($RepoUrl -eq "https://github.com/<owner>/<repo>.git" -or $RepoDirectoryName 
     throw "Set both `$RepoUrl and `$RepoDirectoryName before running this script."
 }
 
-Write-Host "=== Azure Docker Builder Setup ===" -ForegroundColor Cyan
+Write-Host "=== Azure Slim Docker Builder Setup ===" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "Step 1: Creating resource group '$ResourceGroup' in '$Location'..." -ForegroundColor Yellow
@@ -191,7 +192,7 @@ Write-Host "Step 5: Waiting for SSH to become available..." -ForegroundColor Yel
 Wait-ForSsh -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath
 Write-Host "  SSH is ready." -ForegroundColor Green
 
-Write-Host "Step 6-13: Running remote Linux setup, Docker Buildx setup, and model download..." -ForegroundColor Yellow
+Write-Host "Step 6-13: Running remote Linux setup, Docker Buildx setup, and wav2vec2-only model download..." -ForegroundColor Yellow
 $RemoteScript = @"
 set -euo pipefail
 
@@ -254,10 +255,7 @@ sg docker -c 'docker buildx inspect --bootstrap'
 
 sudo python3 -m pip install -U "huggingface_hub[cli]"
 chmod +x scripts/download_models.sh
-DOWNLOAD_FLASHHEAD=1 ./scripts/download_models.sh
-rm -rf models/SoulX-FlashHead-1_3B/Model_Pro || true
-
-du -sh models/SoulX-FlashHead-1_3B
+./scripts/download_models.sh
 if [ -d models/wav2vec2-base-960h ]; then
   du -sh models/wav2vec2-base-960h
 fi
@@ -267,10 +265,10 @@ echo "BUILDX_BUILDER=aivatar-builder"
 "@
 Invoke-RemoteScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $RemoteScript
 
-Write-Host "" 
+Write-Host ""
 Write-Host "=== Setup Complete ===" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Starting remote Docker login and image build/push..." -ForegroundColor Yellow
+Write-Host "Starting remote Docker login (device-code flow)..." -ForegroundColor Yellow
 Write-Host "Complete the Docker device-code login in your browser when prompted." -ForegroundColor White
 
 $BuildScript = @"
@@ -281,14 +279,16 @@ cd "$WorkRoot/$RepoDirectoryName"
 sg docker -c 'docker version'
 sg docker -c 'docker buildx use aivatar-builder'
 sg docker -c 'docker login'
-sg docker -c 'docker buildx build --platform linux/amd64 -t $DockerImageTag --cache-from type=registry,ref=pk24100/aivatar-worker:buildcache --cache-to type=registry,ref=pk24100/aivatar-worker:buildcache,mode=max --push .'
 "@
 Invoke-RemoteInteractiveScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $BuildScript
 
 Write-Host ""
-Write-Host "Remote build and push completed." -ForegroundColor Green
+Write-Host "Docker login complete. Build and push the slim image MANUALLY over SSH:" -ForegroundColor Green
+Write-Host ""
+Write-Host "  ssh -i `"$SshPrivateKeyPath`" $AdminUser@$VmPublicIp" -ForegroundColor White
+Write-Host "  cd $WorkRoot/$RepoDirectoryName" -ForegroundColor White
+Write-Host "  sg docker -c 'docker buildx use aivatar-builder'" -ForegroundColor White
+Write-Host "  sg docker -c 'docker buildx build --platform linux/amd64 -t $DockerImageTag --cache-from type=registry,ref=pk24100/aivatar-worker:buildcache --cache-to type=registry,ref=pk24100/aivatar-worker:buildcache,mode=max --push .'" -ForegroundColor White
 Write-Host ""
 Write-Host "Cleanup when finished:" -ForegroundColor White
 Write-Host "  az group delete --name $ResourceGroup --yes --no-wait" -ForegroundColor Green
-
-

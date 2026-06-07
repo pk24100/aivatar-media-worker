@@ -29,8 +29,10 @@ PER_CHANNEL_STATISTICS_PREFIX = "per_channel_statistics."
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
 
+# Causal video autoencoder that supports 2D, 3D, and (2,1)D convolutions.
 class CausalVideoAutoencoder(AutoencoderKLWrapper):
     @classmethod
+    # Load a pretrained CausalVideoAutoencoder from a checkpoint path.
     def from_pretrained(
         cls,
         pretrained_model_name_or_path: Optional[Union[str, os.PathLike]],
@@ -118,6 +120,7 @@ class CausalVideoAutoencoder(AutoencoderKLWrapper):
         return video_vae
 
     @staticmethod
+    # Instantiate a CausalVideoAutoencoder from a configuration dictionary.
     def from_config(config):
         assert (
             config["_class_name"] == "CausalVideoAutoencoder"
@@ -175,6 +178,7 @@ class CausalVideoAutoencoder(AutoencoderKLWrapper):
         )
 
     @property
+    # Return the current model configuration as a namespace.
     def config(self):
         return SimpleNamespace(
             _class_name="CausalVideoAutoencoder",
@@ -203,6 +207,7 @@ class CausalVideoAutoencoder(AutoencoderKLWrapper):
         return self.dims != 2
 
     @property
+    # Compute the spatial downscale factor from encoder blocks.
     def spatial_downscale_factor(self):
         return (
             2
@@ -223,6 +228,7 @@ class CausalVideoAutoencoder(AutoencoderKLWrapper):
         )
 
     @property
+    # Compute the temporal downscale factor from encoder blocks.
     def temporal_downscale_factor(self):
         return 2 ** len(
             [
@@ -310,6 +316,7 @@ class CausalVideoAutoencoder(AutoencoderKLWrapper):
                     attention_block.set_use_tpu_flash_attention()
 
 
+# Encoder that downsamples video frames into latent representations.
 class Encoder(nn.Module):
     r"""
     The `Encoder` layer of a variational autoencoder that encodes its input into a latent representation.
@@ -503,6 +510,7 @@ class Encoder(nn.Module):
 
         self.gradient_checkpointing = False
 
+    # Forward pass through residual and optional attention blocks.
     def forward(self, sample: torch.FloatTensor) -> torch.FloatTensor:
         r"""The forward method of the `Encoder` class."""
 
@@ -553,6 +561,7 @@ class Encoder(nn.Module):
         return sample
 
 
+# Decoder that upsamples latent representations back into video frames.
 class Decoder(nn.Module):
     r"""
     The `Decoder` layer of a variational autoencoder that decodes its latent representation into an output sample.
@@ -728,6 +737,7 @@ class Decoder(nn.Module):
                 torch.randn(2, output_channel) / output_channel**0.5
             )
 
+    # Forward pass through residual and optional attention blocks.
     def forward(
         self,
         sample: torch.FloatTensor,
@@ -798,6 +808,7 @@ class Decoder(nn.Module):
         return sample
 
 
+# Middle UNet block with residual and attention layers.
 class UNetMidBlock3D(nn.Module):
     """
     A 3D UNet mid-block [`UNetMidBlock3D`] with multiple residual blocks.
@@ -890,6 +901,7 @@ class UNetMidBlock3D(nn.Module):
                 ]
             )
 
+    # Forward pass through residual and optional attention blocks.
     def forward(
         self,
         hidden_states: torch.FloatTensor,
@@ -969,6 +981,7 @@ class UNetMidBlock3D(nn.Module):
         return hidden_states
 
 
+# Downsample by rearranging channel dimensions into spatial/temporal depth.
 class SpaceToDepthDownsample(nn.Module):
     def __init__(self, dims, in_channels, out_channels, stride, spatial_padding_mode):
         super().__init__()
@@ -984,6 +997,7 @@ class SpaceToDepthDownsample(nn.Module):
             spatial_padding_mode=spatial_padding_mode,
         )
 
+    # Forward pass through residual and optional attention blocks.
     def forward(self, x, causal: bool = True):
         if self.stride[0] == 2:
             x = torch.cat(
@@ -1016,6 +1030,7 @@ class SpaceToDepthDownsample(nn.Module):
         return x
 
 
+# Upsample by rearranging spatial/temporal depth into channel dimensions.
 class DepthToSpaceUpsample(nn.Module):
     def __init__(
         self,
@@ -1043,6 +1058,7 @@ class DepthToSpaceUpsample(nn.Module):
         self.residual = residual
         self.out_channels_reduction_factor = out_channels_reduction_factor
 
+    # Forward pass through residual and optional attention blocks.
     def forward(self, x, causal: bool = True):
         if self.residual:
             # Reshape and duplicate the input to match the output shape
@@ -1072,11 +1088,13 @@ class DepthToSpaceUpsample(nn.Module):
         return x
 
 
+# Apply layer normalization to 5D video tensors.
 class LayerNorm(nn.Module):
     def __init__(self, dim, eps, elementwise_affine=True) -> None:
         super().__init__()
         self.norm = nn.LayerNorm(dim, eps=eps, elementwise_affine=elementwise_affine)
 
+    # Forward pass through residual and optional attention blocks.
     def forward(self, x):
         x = rearrange(x, "b c d h w -> b d h w c")
         x = self.norm(x)
@@ -1084,6 +1102,7 @@ class LayerNorm(nn.Module):
         return x
 
 
+# Residual block with causal 3D convolutions and optional timestep conditioning.
 class ResnetBlock3D(nn.Module):
     r"""
     A Resnet block.
@@ -1187,6 +1206,7 @@ class ResnetBlock3D(nn.Module):
                 torch.randn(4, in_channels) / in_channels**0.5
             )
 
+    # Inject per-channel learnable spatial noise into hidden states.
     def _feed_spatial_noise(
         self, hidden_states: torch.FloatTensor, per_channel_scale: torch.FloatTensor
     ) -> torch.FloatTensor:
@@ -1201,6 +1221,7 @@ class ResnetBlock3D(nn.Module):
 
         return hidden_states
 
+    # Forward pass through residual and optional attention blocks.
     def forward(
         self,
         input_tensor: torch.FloatTensor,
@@ -1265,6 +1286,7 @@ class ResnetBlock3D(nn.Module):
         return output_tensor
 
 
+# Rearrange spatial/temporal dimensions into channel patches.
 def patchify(x, patch_size_hw, patch_size_t=1):
     if patch_size_hw == 1 and patch_size_t == 1:
         return x
@@ -1286,6 +1308,7 @@ def patchify(x, patch_size_hw, patch_size_t=1):
     return x
 
 
+# Reverse the patchify operation to restore spatial/temporal dimensions.
 def unpatchify(x, patch_size_hw, patch_size_t=1):
     if patch_size_hw == 1 and patch_size_t == 1:
         return x
@@ -1306,6 +1329,7 @@ def unpatchify(x, patch_size_hw, patch_size_t=1):
     return x
 
 
+# Generate a demo configuration for the causal video autoencoder.
 def create_video_autoencoder_demo_config(
     latent_channels: int = 64,
 ):
@@ -1345,6 +1369,7 @@ def create_video_autoencoder_demo_config(
     }
 
 
+# Verify that patchify and unpatchify are inverse operations.
 def test_vae_patchify_unpatchify():
     import torch
 
@@ -1354,6 +1379,7 @@ def test_vae_patchify_unpatchify():
     assert torch.allclose(x, x_unpatched)
 
 
+# Run a forward/backward demo on the causal video autoencoder.
 def demo_video_autoencoder_forward_backward():
     # Configuration for the VideoAutoencoder
     config = create_video_autoencoder_demo_config()

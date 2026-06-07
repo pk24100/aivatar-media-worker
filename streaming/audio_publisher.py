@@ -27,7 +27,9 @@ from livekit import rtc
 logger = logging.getLogger("AudioPublisher")
 
 
+# Publish audio to a LiveKit room so subscribers hear speech.
 class AudioPublisher:
+    # Initialize publisher with room and audio format settings.
     def __init__(
         self,
         room: rtc.Room,
@@ -43,6 +45,7 @@ class AudioPublisher:
         self.track: Optional[rtc.LocalAudioTrack] = None
         self._publish_lock = asyncio.Lock()
 
+    # Lazily create and publish the local audio track.
     async def _ensure_track(self) -> None:
         if self.track is not None:
             return
@@ -100,6 +103,7 @@ class AudioPublisher:
         # effectively rate-limits us to realtime which is what we want.
         await self.audio_source.capture_frame(frame)
 
+    # Close the audio source and release resources.
     async def aclose(self) -> None:
         try:
             if self.audio_source is not None:

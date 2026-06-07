@@ -74,6 +74,7 @@ class BasicTransformerBlock(nn.Module):
             The maximum number of positional embeddings to apply.
     """
 
+    # Initialize a transformer block with self/cross-attention and feed-forward layers.
     def __init__(
         self,
         dim: int,
@@ -195,6 +196,7 @@ class BasicTransformerBlock(nn.Module):
         self._chunk_size = chunk_size
         self._chunk_dim = dim
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(
         self,
         hidden_states: torch.FloatTensor,
@@ -376,6 +378,7 @@ class Attention(nn.Module):
             `AttnProcessor` otherwise.
     """
 
+    # Initialize the attention layer with query projection and optional context/kv projections.
     def __init__(
         self,
         query_dim: int,
@@ -658,6 +661,7 @@ class Attention(nn.Module):
 
         return lora_processor
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(
         self,
         hidden_states: torch.FloatTensor,
@@ -933,6 +937,7 @@ class Attention(nn.Module):
         return out
 
 
+# Attention processor using PyTorch 2.0 scaled dot-product attention.
 class AttnProcessor2_0:
     r"""
     Processor for implementing scaled dot-product attention (enabled by default if you're using PyTorch 2.0).
@@ -1115,6 +1120,7 @@ class AttnProcessor2_0:
         return hidden_states
 
 
+# Default attention processor for query-key-value computations.
 class AttnProcessor:
     r"""
     Default processor for performing attention-related computations.
@@ -1202,6 +1208,7 @@ class AttnProcessor:
         return hidden_states
 
 
+# Feed-forward network with gated activation and optional chunked execution.
 class FeedForward(nn.Module):
     r"""
     A feed-forward layer.
@@ -1216,6 +1223,7 @@ class FeedForward(nn.Module):
         bias (`bool`, defaults to True): Whether to use a bias in the linear layer.
     """
 
+    # Initialize the feed-forward network with activation and optional dropout.
     def __init__(
         self,
         dim: int,
@@ -1255,6 +1263,7 @@ class FeedForward(nn.Module):
         if final_dropout:
             self.net.append(nn.Dropout(dropout))
 
+    # Forward pass through the gated feed-forward network.
     def forward(self, hidden_states: torch.Tensor, scale: float = 1.0) -> torch.Tensor:
         compatible_cls = (GEGLU, LoRACompatibleLinear)
         for module in self.net:

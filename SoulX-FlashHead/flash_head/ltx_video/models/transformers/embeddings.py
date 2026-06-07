@@ -63,6 +63,7 @@ def get_3d_sincos_pos_embed(embed_dim, grid, w, h, f):
     return rearrange(pos_embed, "h w f c -> (f h w) c")
 
 
+# Combine 1D sinusoidal embeddings for three grid axes into a single 3D embedding.
 def get_3d_sincos_pos_embed_from_grid(embed_dim, grid):
     if embed_dim % 3 != 0:
         raise ValueError("embed_dim must be divisible by 3")
@@ -112,6 +113,7 @@ class SinusoidalPositionalEmbedding(nn.Module):
 
     """
 
+    # Initialize fixed sinusoidal positional embeddings up to max_seq_length.
     def __init__(self, embed_dim: int, max_seq_length: int = 32):
         super().__init__()
         position = torch.arange(max_seq_length).unsqueeze(1)
@@ -123,6 +125,7 @@ class SinusoidalPositionalEmbedding(nn.Module):
         pe[0, :, 1::2] = torch.cos(position * div_term)
         self.register_buffer("pe", pe)
 
+    # Add precomputed sinusoidal positional embeddings to the input sequence.
     def forward(self, x):
         _, seq_length, _ = x.shape
         x = x + self.pe[:, :seq_length]

@@ -9,6 +9,7 @@ import numpy as np
 
 from flash_head.utils.cpu_face_handler import CPUFaceHandler
 
+# Compute a scaled bounding box around a face for cropping.
 def get_scaled_bbox(
     bbox, img_w, img_h, ratio: float = 1.0, face_image: Image.Image = None
 ):
@@ -54,6 +55,7 @@ def get_scaled_bbox(
     return crop_face
 
 
+# Detect a face in an image, crop it, and resize to the target size.
 def process_image(
     input_path,
     face_ratio=2.0,

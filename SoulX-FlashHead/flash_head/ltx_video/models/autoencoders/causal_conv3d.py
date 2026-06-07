@@ -4,7 +4,9 @@ import torch
 import torch.nn as nn
 
 
+# 3D causal convolution with temporal padding handled manually.
 class CausalConv3d(nn.Module):
+    # Initialize the causal 3D convolution layer.
     def __init__(
         self,
         in_channels,
@@ -41,6 +43,7 @@ class CausalConv3d(nn.Module):
             groups=groups,
         )
 
+    # Apply causal or symmetric temporal padding and run the 3D convolution.
     def forward(self, x, causal: bool = True):
         if causal:
             first_frame_pad = x[:, :, :1, :, :].repeat(
@@ -58,6 +61,9 @@ class CausalConv3d(nn.Module):
         x = self.conv(x)
         return x
 
+    @property
+    def weight(self):
+    # Expose the underlying convolution weight tensor.
     @property
     def weight(self):
         return self.conv.weight

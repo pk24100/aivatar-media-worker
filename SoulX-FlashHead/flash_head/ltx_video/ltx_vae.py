@@ -2,6 +2,7 @@ import torch
 from flash_head.ltx_video.models.autoencoders.causal_video_autoencoder import CausalVideoAutoencoder
 
 
+# Wrapper for LTX VAE encoding and decoding with latent normalization.
 class LtxVAE:
     def __init__(
         self,
@@ -28,6 +29,7 @@ class LtxVAE:
         )[0]
         return image
     
+    # Normalize latent tensors using the VAE's channel statistics.
     def normalize_latents(self, latents):
         return (
             (latents - self.model.mean_of_means.to(latents.dtype).view(1, -1, 1, 1, 1))
@@ -35,6 +37,7 @@ class LtxVAE:
         )
 
 
+    # Un-normalize latent tensors using the VAE's channel statistics.
     def un_normalize_latents(self,latents):
         return (
             latents * self.model.std_of_means.to(latents.dtype).view(1, -1, 1, 1, 1)

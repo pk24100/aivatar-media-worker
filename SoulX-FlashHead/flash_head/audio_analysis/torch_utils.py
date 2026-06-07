@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 
 
+# Create a boolean mask from sequence lengths for padding.
 def get_mask_from_lengths(lengths, max_len=None):
     lengths = lengths.to(torch.long)
     if max_len is None:
@@ -13,6 +14,7 @@ def get_mask_from_lengths(lengths, max_len=None):
     return mask
 
 
+# Interpolate feature sequences to a target length using linear interpolation.
 def linear_interpolation(features, seq_len):
     features = features.transpose(1, 2)
     output_features = F.interpolate(features, size=seq_len, align_corners=True, mode='linear')

@@ -5,7 +5,9 @@ import numpy as np
 from livekit import rtc
 
 
+# Subscribe to a remote audio track in a LiveKit room.
 class AudioSubscriber:
+    # Initialize subscriber with room and audio format settings.
     def __init__(
         self,
         room: rtc.Room,
@@ -21,7 +23,9 @@ class AudioSubscriber:
         self._audio_task = None
         self._track_sid = None
 
+    # Attach event handlers to consume incoming audio tracks.
     def bind(self):
+        # Callback fired when a remote audio track is subscribed.
         @self.room.on("track_subscribed")
         def on_track_subscribed(
             track: rtc.Track,
@@ -48,6 +52,7 @@ class AudioSubscriber:
                     on_track_subscribed(track, publication, participant)
                     return
 
+    # Wait until an audio track has been subscribed.
     async def wait_until_ready(self, timeout: Optional[float] = None):
         if timeout is None:
             await self._ready.wait()
@@ -58,11 +63,13 @@ class AudioSubscriber:
         except asyncio.TimeoutError:
             return False
 
+    # Read the next audio chunk from the internal queue.
     async def read(self, timeout: Optional[float] = None):
         if timeout is None:
             return await self.queue.get()
         return await asyncio.wait_for(self.queue.get(), timeout=timeout)
 
+    # Consume audio frames from the stream and enqueue them.
     async def _consume(self, audio_stream: rtc.AudioStream):
         try:
             async for frame_event in audio_stream:

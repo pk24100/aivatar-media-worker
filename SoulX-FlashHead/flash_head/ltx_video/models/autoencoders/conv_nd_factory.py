@@ -6,6 +6,7 @@ from flash_head.ltx_video.models.autoencoders.dual_conv3d import DualConv3d
 from flash_head.ltx_video.models.autoencoders.causal_conv3d import CausalConv3d
 
 
+# Create an N-dimensional convolution layer based on the specified dimensions.
 def make_conv_nd(
     dims: Union[int, Tuple[int, int]],
     in_channels: int,
@@ -72,6 +73,7 @@ def make_conv_nd(
         raise ValueError(f"unsupported dimensions: {dims}")
 
 
+# Create an N-dimensional 1x1 linear convolution layer.
 def make_linear_nd(
     dims: int,
     in_channels: int,

@@ -3,7 +3,9 @@ import numpy as np
 from livekit import rtc
 
 
+# Publish video frames to a LiveKit room.
 class VideoPublisher:
+    # Initialize publisher with room, fps, and bitrate settings.
     def __init__(
         self,
         room: rtc.Room,
@@ -18,6 +20,7 @@ class VideoPublisher:
         self.video_source = None
         self.track = None
 
+    # Publish frames from a raw queue at the target FPS.
     async def publish_from_queue(self, frame_queue):
         frame_interval = 1.0 / float(self.fps)
         while True:
@@ -70,6 +73,7 @@ class VideoPublisher:
         # Unreachable unless the task is cancelled, but here for safety.
         await self._cleanup()
 
+    # Lazily create and publish the local video track.
     async def _ensure_track(self, frame: np.ndarray):
         if self.track is not None:
             return
@@ -87,6 +91,7 @@ class VideoPublisher:
         )
         await self.room.local_participant.publish_track(self.track, options)
 
+    # Convert and send a frame to the LiveKit video source.
     async def _send_frame(self, frame: np.ndarray):
         if frame.shape[2] == 3:
             alpha = np.full((frame.shape[0], frame.shape[1], 1), 255, dtype=np.uint8)
@@ -99,6 +104,7 @@ class VideoPublisher:
         )
         self.video_source.capture_frame(video_frame)
 
+    # Disconnect from the room if still connected.
     async def _cleanup(self):
         # livekit-rtc 1.x removed the `room.connected` boolean; check the
         # `connection_state` enum instead. See:

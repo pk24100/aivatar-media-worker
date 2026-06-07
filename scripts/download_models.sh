@@ -21,13 +21,20 @@ fi
 # Create models directory
 mkdir -p models
 
-# 1. Download FlashHead Lite model (~6.11GB)
-echo "1. Downloading SoulX-FlashHead-1_3B (FlashHead Lite)..."
-echo "   This is ~6.11GB, may take several minutes..."
-mkdir -p models/SoulX-FlashHead-1_3B
-hf download Soul-AILab/SoulX-FlashHead-1_3B \
-    --local-dir ./models/SoulX-FlashHead-1_3B
-echo "   Done!"
+DOWNLOAD_FLASHHEAD="${DOWNLOAD_FLASHHEAD:-0}"
+FLASHHEAD_SOURCE_REPO_ID="${FLASHHEAD_SOURCE_REPO_ID:-Soul-AILab/SoulX-FlashHead-1_3B}"
+
+if [ "${DOWNLOAD_FLASHHEAD}" = "1" ] || [ "${DOWNLOAD_FLASHHEAD}" = "true" ] || [ "${DOWNLOAD_FLASHHEAD}" = "yes" ]; then
+    echo "1. Downloading SoulX-FlashHead-1_3B (FlashHead Lite)..."
+    echo "   This is ~6.11GB, may take several minutes..."
+    mkdir -p models/SoulX-FlashHead-1_3B
+    hf download "${FLASHHEAD_SOURCE_REPO_ID}" \
+        --local-dir ./models/SoulX-FlashHead-1_3B
+    echo "   Done!"
+else
+    echo "1. Skipping SoulX-FlashHead-1_3B download (RunPod cached-model flow)."
+    echo "   Set DOWNLOAD_FLASHHEAD=1 to download a local fallback checkpoint copy."
+fi
 
 # 2. Download Wav2Vec2 model (~360MB)
 echo ""
@@ -41,7 +48,9 @@ echo ""
 echo "=== Download Complete ==="
 echo ""
 echo "Models downloaded to:"
-du -sh ./models/SoulX-FlashHead-1_3B
+if [ -d ./models/SoulX-FlashHead-1_3B ]; then
+    du -sh ./models/SoulX-FlashHead-1_3B
+fi
 du -sh ./models/wav2vec2-base-960h
 echo ""
 echo "You can now run: ./scripts/build_on_runpod.sh"

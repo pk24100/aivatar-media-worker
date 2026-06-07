@@ -45,6 +45,7 @@ class Transformer3DModelOutput(BaseOutput):
     sample: torch.FloatTensor
 
 
+# 3D transformer model with patchified latents and RoPE positional embeddings.
 class Transformer3DModel(ModelMixin, ConfigMixin):
     _supports_gradient_checkpointing = True
 
@@ -159,6 +160,7 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
 
         self.gradient_checkpointing = False
 
+    # Enable TPU flash attention across all transformer blocks.
     def set_use_tpu_flash_attention(self):
         r"""
         Function sets the flag in this object and propagates down the children. The flag will enforce the usage of TPU
@@ -170,6 +172,7 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
         for block in self.transformer_blocks:
             block.set_use_tpu_flash_attention()
 
+    # Build a mask to selectively skip transformer blocks for certain conditions.
     def create_skip_layer_mask(
         self,
         batch_size: int,
@@ -187,10 +190,12 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
             mask[block_idx, ptb_index::num_conds] = 0
         return mask
 
+    # Toggle gradient checkpointing on the given module.
     def _set_gradient_checkpointing(self, module, value=False):
         if hasattr(module, "gradient_checkpointing"):
             module.gradient_checkpointing = value
 
+    # Convert index grids to fractional positions for RoPE embeddings.
     def get_fractional_positions(self, indices_grid):
         fractional_positions = torch.stack(
             [
@@ -201,6 +206,7 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
         )
         return fractional_positions
 
+    # Precompute cosine/sine frequencies for 3D RoPE positional embeddings.
     def precompute_freqs_cis(self, indices_grid, spacing="exp"):
         dtype = torch.float32  # We need full precision in the freqs_cis computation.
         dim = self.inner_dim
@@ -256,6 +262,7 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
             sin_freq = torch.cat([sin_padding, sin_freq], dim=-1)
         return cos_freq.to(self.dtype), sin_freq.to(self.dtype)
 
+    # Load a state dict and remap legacy diffusion model keys if present.
     def load_state_dict(
         self,
         state_dict: Dict,
@@ -271,6 +278,7 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
         super().load_state_dict(state_dict, **kwargs)
 
     @classmethod
+    # Load a pretrained Transformer3DModel from a local checkpoint directory.
     def from_pretrained(
         cls,
         pretrained_model_path: Optional[Union[str, os.PathLike]],
@@ -327,6 +335,7 @@ class Transformer3DModel(ModelMixin, ConfigMixin):
             transformer.load_state_dict(comfy_single_file_state_dict, assign=True)
         return transformer
 
+    # Forward pass through patch projection, AdaLN, transformer blocks, and output projection.
     def forward(
         self,
         hidden_states: torch.Tensor,

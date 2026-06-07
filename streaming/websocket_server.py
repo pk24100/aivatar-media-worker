@@ -5,13 +5,16 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
+# WebSocket server that ingests audio bytes for active sessions.
 class WebsocketIngestionServer:
+    # Initialize server with host, port, and session registry.
     def __init__(self, host: str = "0.0.0.0", port: int = 8765):
         self.host = host
         self.port = port
         self.active_sessions: Dict[str, asyncio.Queue] = {}
         self._server: Optional[websockets.serve] = None
 
+    # Return whether the WebSocket server is currently running.
     @property
     def is_running(self) -> bool:
         return self._server is not None

@@ -22,6 +22,7 @@ COMPILE_VAE = True
 USE_PARALLEL_VAE = True
 _LITE_COMPONENT_CACHE = {}
 
+# Load and optionally face-crop conditioning images from a path or directory.
 def get_cond_image_dict(cond_image_path_or_dir, use_face_crop):
     def get_image(cond_image_path, use_face_crop):
         if use_face_crop:
@@ -41,6 +42,7 @@ def get_cond_image_dict(cond_image_path_or_dir, use_face_crop):
         cond_image_dict = {os.path.splitext(os.path.basename(cond_image_path_or_dir))[0]: get_image(cond_image_path_or_dir, use_face_crop)}
     return cond_image_dict
 
+# Apply a shift-based transform to normalize diffusion timesteps.
 def timestep_transform(
     t,
     shift=5.0,
@@ -53,6 +55,7 @@ def timestep_transform(
     return new_t
 
 
+# Cache and reuse lightweight model components to avoid repeated loading.
 def get_cached_lite_components(checkpoint_dir, wav2vec_dir, device, param_dtype):
     cache_key = (checkpoint_dir, wav2vec_dir, str(device), str(param_dtype))
     cached_components = _LITE_COMPONENT_CACHE.get(cache_key)
@@ -95,6 +98,7 @@ def get_cached_lite_components(checkpoint_dir, wav2vec_dir, device, param_dtype)
     return cached_components
 
 
+# End-to-end pipeline for audio-driven face video generation.
 class FlashHeadPipeline:
     def __init__(
         self,

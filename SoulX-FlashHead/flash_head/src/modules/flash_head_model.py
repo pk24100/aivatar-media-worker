@@ -32,6 +32,7 @@ except ModuleNotFoundError:
     SAGE_ATTN_AVAILABLE = False
     
     
+# Compute flash attention using the best available optimized kernel.
 def flash_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, num_heads: int, compatibility_mode=False):
     if compatibility_mode:
         q = rearrange(q, "b s (n d) -> b n s d", n=num_heads)
@@ -65,6 +66,7 @@ def flash_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, num_heads
         x = rearrange(x, "b n s d -> b s (n d)", n=num_heads)
     return x
 
+# Generate sinusoidal positional embeddings for 1D sequences.
 def sinusoidal_embedding_1d(dim, position):
     sinusoid = torch.outer(position.type(torch.float64), torch.pow(
         10000, -torch.arange(dim//2, dtype=torch.float64, device=position.device).div(dim//2)))
@@ -72,6 +74,7 @@ def sinusoidal_embedding_1d(dim, position):
     return x.to(position.dtype)
 
 
+# Precompute 3D rotary positional frequencies for temporal, height, and width axes.
 def precompute_freqs_cis_3d(dim: int, end: int = 1024, theta: float = 10000.0):
     # 3d rope precompute
     f_freqs_cis = precompute_freqs_cis(dim - 2 * (dim // 3), end, theta)
@@ -80,6 +83,7 @@ def precompute_freqs_cis_3d(dim: int, end: int = 1024, theta: float = 10000.0):
     return torch.cat([f_freqs_cis, h_freqs_cis, w_freqs_cis], dim=1)
 
 
+# Precompute 1D rotary positional frequencies using complex polar form.
 def precompute_freqs_cis(dim: int, end: int = 1024, theta: float = 10000.0):
     # 1d rope precompute
     freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)
@@ -88,6 +92,7 @@ def precompute_freqs_cis(dim: int, end: int = 1024, theta: float = 10000.0):
     freqs_cis = torch.polar(torch.ones_like(freqs), freqs)  # complex64
     return freqs_cis
 
+# Pad a frequency tensor along the sequence dimension to a target length.
 def pad_freqs(original_tensor, target_len):
     seq_len, s1, s2 = original_tensor.shape
     pad_size = target_len - seq_len
@@ -139,20 +144,26 @@ def rope_apply(x, freqs, grid_sizes, use_usp=False, sp_size=1, sp_rank=0):
     return x_i.unsqueeze(0).to(x.dtype)
 
 
+# Root-mean-square normalization with learnable scaling.
 class RMSNorm(nn.Module):
+    # Initialize RMSNorm with the feature dimension and epsilon.
     def __init__(self, dim, eps=1e-5):
         super().__init__()
         self.eps = eps
         self.weight = nn.Parameter(torch.ones(dim))
 
+    # Compute the root-mean-square normalized tensor.
     def norm(self, x):
         return x * torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + self.eps)
 
+    # Apply RMS normalization with learnable scaling to the input.
     def forward(self, x):
         dtype = x.dtype
         return self.norm(x.float()).to(dtype) * self.weight
 
+# Self-attention layer with RMSNorm, RoPE, and optional sequence parallelism.
 class SelfAttention(nn.Module):
+    # Initialize self-attention with Q/K/V projections and RMSNorm layers.
     def __init__(self, dim: int, num_heads: int, eps: float = 1e-6):
         super().__init__()
         self.dim = dim
@@ -170,6 +181,7 @@ class SelfAttention(nn.Module):
         self.sp_size = get_sequence_parallel_world_size() if self.use_usp else 1
         self.sp_rank = get_sequence_parallel_rank() if self.use_usp else 0
 
+    # Compute self-attention with RoPE applied to queries and keys.
     def forward(self, x, freqs, grid_sizes):
         b, s, n, d = *x.shape[:2], self.num_heads, self.head_dim
         q = self.norm_q(self.q(x)).view(b, s, n, d)
@@ -199,7 +211,9 @@ class SelfAttention(nn.Module):
         return self.o(x)
 
 
+# Cross-attention layer with RMSNorm and optional image conditioning.
 class CrossAttention(nn.Module):
+    # Initialize cross-attention with optional image conditioning projections.
     def __init__(self, dim: int, num_heads: int, eps: float = 1e-6, has_image_input: bool = False):
         super().__init__()
         self.dim = dim
@@ -218,6 +232,7 @@ class CrossAttention(nn.Module):
             self.v_img = nn.Linear(dim, dim)
             self.norm_k_img = RMSNorm(dim, eps=eps)
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(self, x: torch.Tensor, y: torch.Tensor):
         if self.has_image_input:
             img = y[:, :257]
@@ -235,7 +250,9 @@ class CrossAttention(nn.Module):
             x = x + y
         return self.o(x)
 
+# Diffusion transformer block with self-attention, cross-attention, and FFN.
 class DiTAudioBlock(nn.Module):
+    # Initialize a transformer block with self-attention, cross-attention, and FFN.
     def __init__(self, has_image_input: bool, dim: int, num_heads: int, ffn_dim: int, eps: float = 1e-6, i=0, num_layers=0):
         super().__init__()
         self.dim = dim
@@ -258,6 +275,7 @@ class DiTAudioBlock(nn.Module):
         self.sp_size = get_sequence_parallel_world_size() if self.use_usp else 1
         self.sp_rank = get_sequence_parallel_rank() if self.use_usp else 0
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(self, x, context, t_mod, freqs, grid_sizes):
         e = (self.modulation.to(dtype=t_mod.dtype, device=t_mod.device) + t_mod).chunk(6, dim=1)
 
@@ -280,7 +298,9 @@ class DiTAudioBlock(nn.Module):
 
         return x
 
+# Simple two-layer MLP with SiLU activation.
 class MLP(torch.nn.Module):
+    # Initialize a two-layer MLP with hidden SiLU activation.
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.proj = torch.nn.Sequential(
@@ -291,11 +311,14 @@ class MLP(torch.nn.Module):
             nn.LayerNorm(out_dim)
         )
 
+    # Apply RMS normalization with learnable scaling to the input.
     def forward(self, x):
         return self.proj(x)
 
 
+# Output head that un-patchifies latent tokens into video frames.
 class Head(nn.Module):
+    # Initialize the output head with patchify and timestep modulation layers.
     def __init__(self, dim: int, out_dim: int, patch_size: Tuple[int, int, int], eps: float):
         super().__init__()
         self.dim = dim
@@ -304,6 +327,7 @@ class Head(nn.Module):
         self.head = nn.Linear(dim, out_dim * math.prod(patch_size))
         self.modulation = nn.Parameter(torch.randn(1, 2, dim) / dim**0.5)
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(self, x, t_mod):
         r"""
         Args:
@@ -319,6 +343,7 @@ class Head(nn.Module):
         x = rearrange(x, 'b f l d -> b (f l) d')
         return x
 
+# Wan diffusion model with audio cross-attention and timestep modulation.
 class WanModelAudioProject(ModelMixin, ConfigMixin):
     _no_split_modules = ['DiTAudioBlock']
     @register_to_config
@@ -406,6 +431,7 @@ class WanModelAudioProject(ModelMixin, ConfigMixin):
             x=self.patch_size[0], y=self.patch_size[1], z=self.patch_size[2]
         )
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(self,
                 x: torch.Tensor,  #(1, 16, 9, 64, 64))
                 timestep: torch.Tensor, #(9,)
@@ -481,6 +507,7 @@ class WanModelAudioProject(ModelMixin, ConfigMixin):
         return x
 
 
+# Project stacked audio features into context tokens for cross-attention.
 class AudioProjModel(ModelMixin, ConfigMixin):
     def __init__(
         self,
@@ -511,6 +538,7 @@ class AudioProjModel(ModelMixin, ConfigMixin):
         self.proj3 = nn.Linear(intermediate_dim, context_tokens * output_dim)
         self.norm = nn.LayerNorm(output_dim) if norm_output_audio else nn.Identity()
 
+    # Forward pass through self-attention, cross-attention, and feed-forward layers.
     def forward(self, audio_embeds, audio_embeds_vf):
         video_length = audio_embeds.shape[1] + audio_embeds_vf.shape[1]
         B, _, _, S, C = audio_embeds.shape

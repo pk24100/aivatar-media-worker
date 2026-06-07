@@ -49,11 +49,17 @@ aivatar-media-worker/
    pip install -r requirements.txt
    ```
 2. Create a `.env` (copy from `.env.example` or keep `.env` private) and set:
-   - `FLASHHEAD_CKPT_DIR` (defaults to `/app/models/SoulX-FlashHead-1_3B`)
-   - `WAV2VEC_DIR` (defaults to `/app/models/wav2vec2-base-960h`)
-   - `FLASHHEAD_REPO_PATH` (defaults to `/app/SoulX-FlashHead`)
-   - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`
+   - `LIVEKIT_URL`
+   - optionally `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` if your surrounding workflow needs them
+   - optionally `HUGGING_FACE_HUB_TOKEN` / `HF_TOKEN` for private cached-model access outside the RunPod-managed model cache
 3. Download models using `scripts/download_models.sh` before building Docker image.
+
+The worker defaults internally to:
+
+- cached FlashHead repo `pkam24100/aivatar-flashhead-model`
+- Hugging Face cache root `/runpod-volume/huggingface-cache/hub` on RunPod
+- baked wav2vec2 path `/app/models/wav2vec2-base-960h`
+- legacy baked FlashHead fallback `/app/models/SoulX-FlashHead-1_3B`
 
 ## Running
 
@@ -62,7 +68,7 @@ aivatar-media-worker/
   - **Streaming-only mode** requires `roomName`, `livekitToken`, `sourceImage`, and `LIVEKIT_URL`; it runs `streaming.stream_processor.run_streaming_session`.
   - The worker maintains a `MODEL_POOL` of 3 concurrent FlashHead instances for parallel stream processing.
 - `scripts/build_on_runpod.sh` builds and pushes the Docker image to Docker Hub.
-- `scripts/download_models.sh` downloads FlashHead Lite and Wav2Vec2 models locally before building.
+- `scripts/download_models.sh` downloads `wav2vec2-base-960h` by default and supports `DOWNLOAD_FLASHHEAD=1` for an explicit local FlashHead download.
 
 ## Streaming & Utilities
 

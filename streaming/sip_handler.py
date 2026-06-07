@@ -12,6 +12,7 @@ class SipAudioSubscriber:
     When a SIP participant dials into the room, LiveKit publishes an audio track.
     This class subscribes to that track and routes it to the streaming engine queue.
     """
+    # Initialize SIP subscriber with room and target audio queue.
     def __init__(
         self,
         room: rtc.Room,
@@ -27,7 +28,9 @@ class SipAudioSubscriber:
         self._audio_task = None
         self._track_sid = None
 
+    # Bind to incoming audio tracks from SIP participants.
     def bind(self):
+        # Callback fired when a remote audio track is subscribed in the SIP room.
         @self.room.on("track_subscribed")
         def on_track_subscribed(
             track: rtc.Track,
@@ -61,6 +64,7 @@ class SipAudioSubscriber:
                     on_track_subscribed(track, publication, participant)
                     return
 
+    # Wait until a SIP audio track has been subscribed.
     async def wait_until_ready(self, timeout: Optional[float] = None) -> bool:
         if timeout is None:
             await self._ready.wait()
@@ -71,6 +75,7 @@ class SipAudioSubscriber:
         except asyncio.TimeoutError:
             return False
 
+    # Consume SIP audio frames and enqueue them for processing.
     async def _consume(self, audio_stream: rtc.AudioStream):
         import numpy as np
         logger.info("Starting SIP audio consumption stream")

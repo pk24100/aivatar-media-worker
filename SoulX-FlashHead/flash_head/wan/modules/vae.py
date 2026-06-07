@@ -14,6 +14,7 @@ __all__ = [
 CACHE_T = 2
 
 
+# Causal 3D convolution with custom padding for temporal causality.
 class CausalConv3d(nn.Conv3d):
     """
     Causal 3d convolusion.
@@ -31,6 +32,7 @@ class CausalConv3d(nn.Conv3d):
         )
         self.padding = (0, 0, 0)
 
+    # Apply causal padding with optional cache and run the 3D convolution.
     def forward(self, x, cache_x=None):
         padding = list(self._padding)
         if cache_x is not None and self._padding[4] > 0:
@@ -42,6 +44,7 @@ class CausalConv3d(nn.Conv3d):
         return super().forward(x)
 
 
+# RMS normalization with channel-first broadcasting.
 class RMS_norm(nn.Module):
     def __init__(self, dim, channel_first=True, images=True, bias=False):
         super().__init__()
@@ -62,6 +65,7 @@ class RMS_norm(nn.Module):
         )
 
 
+# Upsample layer with bfloat16-safe nearest-neighbor interpolation.
 class Upsample(nn.Upsample):
     def forward(self, x):
         """
@@ -70,6 +74,7 @@ class Upsample(nn.Upsample):
         return super().forward(x)
 
 
+# Resampling block for 2D/3D upsampling or downsampling with optional time conv.
 class Resample(nn.Module):
     def __init__(self, dim, mode):
         assert mode in (
@@ -111,6 +116,7 @@ class Resample(nn.Module):
         else:
             self.resample = nn.Identity()
 
+    # Apply the residual path with feature caching for streaming inference.
     def forward(self, x, feat_cache=None, feat_idx=[0]):
         b, c, t, h, w = x.size()
         if self.mode == "upsample3d":
@@ -179,6 +185,7 @@ class Resample(nn.Module):
                     feat_idx[0] += 1
         return x
 
+    # Initialize a convolution weight as an identity-like mapping.
     def init_weight(self, conv):
         conv_weight = conv.weight
         nn.init.zeros_(conv_weight)
@@ -191,6 +198,7 @@ class Resample(nn.Module):
         conv.weight.data.copy_(conv_weight)
         nn.init.zeros_(conv.bias.data)
 
+    # Initialize a time-convolution weight for channel splitting.
     def init_weight2(self, conv):
         conv_weight = conv.weight.data
         nn.init.zeros_(conv_weight)
@@ -203,6 +211,7 @@ class Resample(nn.Module):
         nn.init.zeros_(conv.bias.data)
 
 
+# Residual block with causal 3D convolutions and optional feature caching.
 class ResidualBlock(nn.Module):
     def __init__(self, in_dim, out_dim, dropout=0.0):
         super().__init__()
@@ -223,6 +232,7 @@ class ResidualBlock(nn.Module):
             CausalConv3d(in_dim, out_dim, 1) if in_dim != out_dim else nn.Identity()
         )
 
+    # Apply the residual path with feature caching for streaming inference.
     def forward(self, x, feat_cache=None, feat_idx=[0]):
         h = self.shortcut(x)
         for layer in self.residual:
@@ -248,6 +258,7 @@ class ResidualBlock(nn.Module):
         return x + h
 
 
+# Causal self-attention block with a single head.
 class AttentionBlock(nn.Module):
     """
     Causal self-attention with a single head.
@@ -293,6 +304,7 @@ class AttentionBlock(nn.Module):
         return x + identity
 
 
+# 3D encoder stack with residual blocks, resampling, and attention blocks.
 class Encoder3d(nn.Module):
     def __init__(
         self,
@@ -350,6 +362,7 @@ class Encoder3d(nn.Module):
             CausalConv3d(out_dim, z_dim, 3, padding=1),
         )
 
+    # Apply the residual path with feature caching for streaming inference.
     def forward(self, x, feat_cache=None, feat_idx=[0]):
         if feat_cache is not None:
             idx = feat_idx[0]
@@ -407,6 +420,7 @@ class Encoder3d(nn.Module):
         return x
 
 
+# 3D decoder stack with residual blocks, resampling, and attention blocks.
 class Decoder3d(nn.Module):
     def __init__(
         self,
@@ -467,6 +481,7 @@ class Decoder3d(nn.Module):
             CausalConv3d(out_dim, 3, 3, padding=1),
         )
 
+    # Apply the residual path with feature caching for streaming inference.
     def forward(self, x, feat_cache=None, feat_idx=[0]):
         ## conv1
         if feat_cache is not None:
@@ -525,6 +540,7 @@ class Decoder3d(nn.Module):
         return x
 
 
+# Count the number of CausalConv3d modules in a model.
 def count_conv3d(model):
     count = 0
     for m in model.modules():
@@ -533,6 +549,7 @@ def count_conv3d(model):
     return count
 
 
+# Internal WanVAE implementation with encoder, decoder, and quantization.
 class WanVAE_(nn.Module):
     def __init__(
         self,
@@ -767,6 +784,7 @@ class WanVAE_(nn.Module):
 
         return dec
 
+    # Encode video frames into quantized latent codes with optional slicing.
     def encode(self, x, scale, return_mu=False):
         self.clear_cache()
         ## cache
@@ -801,6 +819,7 @@ class WanVAE_(nn.Module):
         else:
             return mu
 
+    # Decode latent codes back into video frames with optional slicing.
     def decode(self, z, scale):
         self.clear_cache()
 
@@ -920,6 +939,7 @@ class WanVAE_(nn.Module):
         return y.transpose(1, 2).to(x)
 
 
+# Build and optionally load a WanVAE_ model from a pretrained path.
 def _video_vae(
     pretrained_path=None,
     z_dim=None,
@@ -951,6 +971,7 @@ def _video_vae(
 
     return model
 
+# Public wrapper for WanVAE with automatic tiling for large inputs.
 class WanVAE:
     def __init__(
         self,
@@ -1260,6 +1281,7 @@ class WanVAE:
 
         return encoded.squeeze(0)
 
+    # Encode video frames into quantized latent codes with optional slicing.
     def encode(self, video, world_size_h=None, world_size_w=None):
         """
         video: one video  with shape [1, C, T, H, W].
@@ -1538,6 +1560,7 @@ class WanVAE:
 
             yield images
 
+    # Decode latent codes back into video frames with optional slicing.
     def decode(self, zs):
         if self.parallel:
             world_size = dist.get_world_size()

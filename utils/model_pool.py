@@ -9,7 +9,9 @@ from flash_head.inference import get_pipeline
 
 logger = logging.getLogger(__name__)
 
+# Manage a pool of pre-loaded FlashHead inference pipelines.
 class FlashHeadModelPool:
+    # Load and initialize the configured number of pipelines.
     def __init__(self, size=3, ckpt_dir=None, wav2vec_dir=None):
         self.size = size
         self.pool = asyncio.Queue(maxsize=size)
@@ -56,5 +58,6 @@ class FlashHeadModelPool:
         except asyncio.QueueFull:
             logger.error("Attempted to release pipeline to full pool. This shouldn't happen.")
             
+    # Return the number of currently available pipelines in the pool.
     def get_available_count(self):
         return self.pool.qsize()

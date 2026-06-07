@@ -18,7 +18,9 @@ from flash_head.inference import get_audio_embedding, run_pipeline, get_infer_pa
 logger = logging.getLogger("FlashHeadStreamingEngine")
 
 
+# Streaming engine that generates lip-synced video frames from audio.
 class FlashHeadStreamingEngine:
+    # Initialize engine with pipeline, avatar path, and inference params.
     def __init__(self, pipeline, avatar_image_path: str = None, seed: int = 42):
         self.pipeline = pipeline
         self.seed = seed
@@ -46,6 +48,7 @@ class FlashHeadStreamingEngine:
         if avatar_image_path:
             self.prepare_avatar(avatar_image_path)
 
+    # Prepare the pipeline with the avatar image for inference.
     def prepare_avatar(self, avatar_image_path: str, use_face_crop: bool = False):
         avatar_path = self._resolve_avatar_path(avatar_image_path)
         self.pipeline.prepare_params(
@@ -61,6 +64,7 @@ class FlashHeadStreamingEngine:
         )
         self._prepared = True
 
+    # Resolve avatar URL/path to a local file, downloading if needed.
     def _resolve_avatar_path(self, avatar_image_path: str) -> str:
         parsed = urlparse(avatar_image_path)
         if parsed.scheme in ("http", "https"):
@@ -90,6 +94,7 @@ class FlashHeadStreamingEngine:
             raise FileNotFoundError(f"Avatar image not found: {avatar_image_path}")
         return avatar_image_path
 
+    # Process buffered audio slices into video frames via FlashHead.
     def _process_available_audio(self):
         while len(self.pending_audio) >= self.slice_samples:
             human_speech_array = np.array(
@@ -111,6 +116,7 @@ class FlashHeadStreamingEngine:
             # can emit them together for lip-sync.
             self.audio_queue.put_nowait(human_speech_array)
 
+    # Feed an audio chunk into the engine and trigger frame generation.
     def run_chunk(self, audio_data: np.ndarray):
         if not self._prepared:
             raise RuntimeError("Avatar not prepared. Call prepare_avatar() first.")
@@ -118,6 +124,7 @@ class FlashHeadStreamingEngine:
         self.pending_audio.extend(audio_array.tolist())
         self._process_available_audio()
 
+    # Pad and process any remaining buffered audio.
     def flush(self):
         if self.pending_audio:
             pad = (-len(self.pending_audio)) % self.slice_samples
@@ -125,6 +132,7 @@ class FlashHeadStreamingEngine:
                 self.pending_audio.extend([0.0] * pad)
             self._process_available_audio()
 
+    # Clear queues and clean up temporary avatar files.
     def close(self):
         self.pending_audio.clear()
         self.audio_context.clear()

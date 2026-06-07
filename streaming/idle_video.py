@@ -14,6 +14,7 @@ class IdleVideoLoop:
     Implements seamless looping and crossfade transitions.
     """
     
+    # Load idle video frames into memory for looping playback.
     def __init__(self, idle_video_url: str, crossfade_frames: int = 8):
         self.crossfade_frames = crossfade_frames
         self.frames: List[np.ndarray] = []
@@ -69,6 +70,7 @@ class IdleVideoLoop:
         self.total_frames = len(self.frames)
         logger.info(f"Loaded {self.total_frames} frames for idle loop")
     
+    # Return whether idle video frames were loaded successfully.
     def is_valid(self) -> bool:
         return self.total_frames > 0
         

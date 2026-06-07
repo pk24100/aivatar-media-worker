@@ -32,7 +32,7 @@ $RepoBranch           = "test1"
 $RepoDirectoryName    = "aivatar-media-worker"
 $WorkRoot             = "/home/$AdminUser/work"
 $ProjectSubdirectory  = "aivatar-media-worker"
-$DockerImageTag       = "pk24100/aivatar-worker:flashhead-lite-v2"
+$DockerImageTag       = "pk24100/aivatar-worker:flashhead-lite-v3"
 $WorkerDockerfile     = "Dockerfile.worker"
 
 # ===============================
@@ -118,9 +118,16 @@ function Invoke-RemoteInteractiveScript {
     )
 
     $tempFile = [System.IO.Path]::GetTempFileName()
+    $remoteTempFile = "/tmp/$([System.IO.Path]::GetFileName($tempFile)).sh"
     try {
         Set-Content -Path $tempFile -Value $ScriptContent -NoNewline
-        Get-Content -Path $tempFile -Raw | ssh -tt -i $KeyPath -o StrictHostKeyChecking=accept-new "$UserName@$HostName" "bash -s"
+        & scp -i $KeyPath -o StrictHostKeyChecking=accept-new $tempFile "$UserName@${HostName}:$remoteTempFile"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to upload remote interactive script to $HostName"
+        }
+
+        $remoteCommand = "chmod +x '$remoteTempFile'; bash '$remoteTempFile'; exitCode=`$?; rm -f '$remoteTempFile'; exit `$exitCode"
+        & ssh -tt -i $KeyPath -o StrictHostKeyChecking=accept-new "$UserName@$HostName" $remoteCommand
         if ($LASTEXITCODE -ne 0) {
             throw "Remote interactive script failed on $HostName"
         }
@@ -132,6 +139,7 @@ function Invoke-RemoteInteractiveScript {
 
 Require-Command -CommandName "az"
 Require-Command -CommandName "ssh"
+Require-Command -CommandName "scp"
 
 if (-not (Test-Path $SshPrivateKeyPath)) {
     throw "SSH private key not found at '$SshPrivateKeyPath'. Update `$SshPrivateKeyPath or generate SSH keys before running this script."
@@ -262,7 +270,7 @@ Invoke-RemoteScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPriv
 Write-Host ""
 Write-Host "=== Setup Complete ===" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Starting remote Docker login and overlay build/push..." -ForegroundColor Yellow
+Write-Host "Starting remote Docker login (device-code flow)..." -ForegroundColor Yellow
 Write-Host "Complete the Docker device-code login in your browser when prompted." -ForegroundColor White
 
 $BuildScript = @"
@@ -273,14 +281,18 @@ cd "$WorkRoot/$RepoDirectoryName"
 sg docker -c 'docker version'
 sg docker -c 'docker buildx use aivatar-builder'
 sg docker -c 'docker login'
-sg docker -c 'docker buildx build --platform linux/amd64 -f $WorkerDockerfile -t $DockerImageTag --push .'
 "@
 Invoke-RemoteInteractiveScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $BuildScript
 
 Write-Host ""
-Write-Host "Remote overlay build and push completed." -ForegroundColor Green
+Write-Host "Docker login complete. Build and push the overlay image MANUALLY over SSH:" -ForegroundColor Green
 Write-Host ""
-Write-Host "The overlay build pulls the ~17.5 GB base on Azure  and only" -ForegroundColor White
+Write-Host "  ssh -i `"$SshPrivateKeyPath`" $AdminUser@$VmPublicIp" -ForegroundColor White
+Write-Host "  cd $WorkRoot/$RepoDirectoryName" -ForegroundColor White
+Write-Host "  sg docker -c 'docker buildx use aivatar-builder'" -ForegroundColor White
+Write-Host "  sg docker -c 'docker buildx build --platform linux/amd64 -f $WorkerDockerfile -t $DockerImageTag --push .'" -ForegroundColor White
+Write-Host ""
+Write-Host "The overlay build pulls the ~17.5 GB base on Azure and only" -ForegroundColor White
 Write-Host "uploads the small changed app layers, since the base layers already exist on Docker Hub." -ForegroundColor White
 Write-Host ""
 Write-Host "Cleanup when finished:" -ForegroundColor White

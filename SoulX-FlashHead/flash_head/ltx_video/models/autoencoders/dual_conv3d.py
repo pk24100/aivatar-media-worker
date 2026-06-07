@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from einops import rearrange
 
 
+# Dual 3D convolution decomposed into spatial and temporal convolutions.
 class DualConv3d(nn.Module):
     def __init__(
         self,
@@ -83,6 +84,7 @@ class DualConv3d(nn.Module):
         # Initialize weights and biases
         self.reset_parameters()
 
+    # Initialize weights and biases using Kaiming uniform initialization.
     def reset_parameters(self):
         nn.init.kaiming_uniform_(self.weight1, a=math.sqrt(5))
         nn.init.kaiming_uniform_(self.weight2, a=math.sqrt(5))
@@ -94,12 +96,14 @@ class DualConv3d(nn.Module):
             bound2 = 1 / math.sqrt(fan_in2)
             nn.init.uniform_(self.bias2, -bound2, bound2)
 
+    # Route to either full 3D or decomposed 2D+1D convolution paths.
     def forward(self, x, use_conv3d=False, skip_time_conv=False):
         if use_conv3d:
             return self.forward_with_3d(x=x, skip_time_conv=skip_time_conv)
         else:
             return self.forward_with_2d(x=x, skip_time_conv=skip_time_conv)
 
+    # Perform the dual convolution using native 3D conv operations.
     def forward_with_3d(self, x, skip_time_conv):
         # First convolution
         x = F.conv3d(
@@ -130,6 +134,7 @@ class DualConv3d(nn.Module):
 
         return x
 
+    # Perform the dual convolution using decomposed 2D and 1D conv operations.
     def forward_with_2d(self, x, skip_time_conv):
         b, c, d, h, w = x.shape
 
@@ -181,11 +186,13 @@ class DualConv3d(nn.Module):
 
         return x
 
+    # Expose the second convolution weight tensor.
     @property
     def weight(self):
         return self.weight2
 
 
+# Test that 3D and decomposed 2D+1D convolution outputs match.
 def test_dual_conv3d_consistency():
     # Initialize parameters
     in_channels = 3

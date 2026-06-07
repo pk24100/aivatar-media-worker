@@ -12,8 +12,8 @@
 #
 # Build (linux/amd64 for RunPod):
 #   cd aivatar-media-worker
-#   docker build -f Dockerfile.worker -t pk24100/aivatar-worker:flashhead-lite-v2 .
-#   docker push pk24100/aivatar-worker:flashhead-lite-v2
+#   docker build -f Dockerfile.worker -t pk24100/aivatar-worker:flashhead-lite-v3 .
+#   docker push pk24100/aivatar-worker:flashhead-lite-v3
 #
 # Override the base with --build-arg BASE_IMAGE=... when you cut a dedicated
 # base tag (e.g. pk24100/aivatar-worker-base:flashhead-lite-v1).

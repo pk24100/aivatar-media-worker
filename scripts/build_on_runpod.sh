@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # scripts/build_on_runpod.sh
 # Builds the Docker image for AiVatar Media Worker with FlashHead Lite models
-# Prerequisites: Run scripts/download_models.sh first to download models locally
+# Prerequisites: Run scripts/download_models.sh first to download wav2vec2 locally
 
 set -e
 
 IMAGE_NAME="pk24100/aivatar-worker"
-IMAGE_TAG="flashhead-lite"
+IMAGE_TAG="flashhead-lite-v3"
 FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,12 +18,6 @@ echo "=== Building ${FULL_IMAGE} ==="
 echo ""
 
 # Verify models exist
-if [ ! -d "models/SoulX-FlashHead-1_3B" ]; then
-    echo "ERROR: models/SoulX-FlashHead-1_3B not found!"
-    echo "Please run: ./scripts/download_models.sh"
-    exit 1
-fi
-
 if [ ! -d "models/wav2vec2-base-960h" ]; then
     echo "ERROR: models/wav2vec2-base-960h not found!"
     echo "Please run: ./scripts/download_models.sh"
@@ -31,7 +25,6 @@ if [ ! -d "models/wav2vec2-base-960h" ]; then
 fi
 
 echo "Models found:"
-du -sh models/SoulX-FlashHead-1_3B
 du -sh models/wav2vec2-base-960h
 echo ""
 
@@ -60,8 +53,7 @@ echo ""
 echo "Next steps:"
 echo "  1. Go to RunPod Console -> Serverless -> Edit Endpoint"
 echo "  2. Set Image: ${FULL_IMAGE}"
-echo "  3. Enable FlashBoot, set workersMin=0"
-echo "  4. Set env vars:"
-echo "       FLASHHEAD_CKPT_DIR=/app/models/SoulX-FlashHead-1_3B"
-echo "       WAV2VEC_DIR=/app/models/wav2vec2-base-960h"
+echo "  3. Set cached model: pkam24100/aivatar-flashhead-model"
+echo "  4. Enable FlashBoot, set workersMin=0"
+echo "  5. Set env vars:"
 echo "       LIVEKIT_URL=wss://your-livekit.cloud"

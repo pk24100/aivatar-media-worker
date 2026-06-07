@@ -9,6 +9,7 @@ from streaming.idle_video import IdleVideoLoop
 
 logger = logging.getLogger(__name__)
 
+# Possible states of the avatar stream.
 class StreamState(Enum):
     LIVE = "live"
     IDLE = "idle"
@@ -21,6 +22,7 @@ class StreamStateManager:
     Acts as a proxy queue for the VideoPublisher.
     """
     
+    # Initialize state manager with live queue, idle video, and timeouts.
     def __init__(
         self,
         live_frame_queue: Queue,
@@ -43,6 +45,7 @@ class StreamStateManager:
         self._first_live_frame = None
         self._transition_start_idle_idx = 0
         
+    # Begin crossfade transition from live to idle playback.
     def _start_transition_to_idle(self):
         if not self.idle_video or not self.idle_video.is_valid() or self.last_live_frame is None:
             self.state = StreamState.IDLE
@@ -56,6 +59,7 @@ class StreamStateManager:
         self.state = StreamState.TRANSITION_TO_IDLE
         logger.debug("Starting transition to IDLE")
         
+    # Begin crossfade transition from idle to live playback.
     def _start_transition_to_live(self):
         if not self.idle_video or not self.idle_video.is_valid():
             self.state = StreamState.LIVE
@@ -68,6 +72,7 @@ class StreamStateManager:
         self._first_live_frame = None
         logger.debug("Starting transition to LIVE")
 
+    # Return the next frame based on current stream state.
     def get_next_frame(self) -> Optional[np.ndarray]:
         current_time = time.time()
         
