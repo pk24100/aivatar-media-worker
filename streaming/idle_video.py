@@ -1,3 +1,4 @@
+# Loads and manages idle video frames in memory for seamless looping and crossfade transitions.
 import cv2
 import numpy as np
 import tempfile

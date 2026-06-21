@@ -1,3 +1,4 @@
+# Subscribes to audio tracks from SIP participants in LiveKit rooms and routes audio to the streaming engine.
 import asyncio
 import logging
 from typing import Optional

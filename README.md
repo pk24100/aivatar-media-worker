@@ -75,7 +75,7 @@ The worker defaults internally to:
 - `streaming/stream_processor.py` orchestrates LiveKit connections and FlashHead streaming sessions.
 - `streaming/flashhead_streaming.py` contains `FlashHeadStreamingEngine` for real-time video generation from audio chunks.
 - `streaming/websocket_server.py` handles server-to-server WebSocket audio ingestion with token authentication.
-- `streaming/audio_subscriber.py` and `sip_handler.py` handle LiveKit audio subscription and SIP ingestion.
+- `streaming/sip_handler.py` handles SIP audio ingestion and `streaming/websocket_server.py` handles WebSocket audio ingestion.
 - `utils/model_pool.py` manages a pool of 3 FlashHead pipeline instances for concurrent stream processing.
 - `streaming/video_publisher.py` publishes generated video frames to LiveKit rooms.
 - `streaming/state_manager.py` handles transitions between live generation and idle video loops.

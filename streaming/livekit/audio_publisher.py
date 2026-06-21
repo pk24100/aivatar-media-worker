@@ -1,4 +1,6 @@
-"""LiveKit audio republisher.
+"""Re-publishes ingested audio to a LiveKit room.
+
+LiveKit audio republisher.
 
 The worker receives PCM/float audio chunks over its WebSocket ingestion and
 feeds them to the FlashHead engine to drive lip-sync. Without this module those
@@ -57,11 +59,14 @@ class AudioPublisher:
                 self.track_name, self.audio_source
             )
             options = rtc.TrackPublishOptions(source=rtc.TrackSource.SOURCE_MICROPHONE)
+            import time as _time
+            logger.info("[AP-DIAG] Calling publish_track()...")
+            _pub_t0 = _time.monotonic()
             await self.room.local_participant.publish_track(self.track, options)
+            _pub_ms = round((_time.monotonic() - _pub_t0) * 1000, 1)
             logger.info(
-                "AudioPublisher track published (%d Hz, %d ch)",
-                self.sample_rate,
-                self.num_channels,
+                "[AP-DIAG] publish_track() completed in %.1f ms (%d Hz, %d ch)",
+                _pub_ms, self.sample_rate, self.num_channels,
             )
 
     async def push_audio(self, audio_array: np.ndarray) -> None:
@@ -97,7 +102,8 @@ class AudioPublisher:
         )
         # Copy PCM into the preallocated buffer
         buf = np.frombuffer(frame.data, dtype=np.int16)
-        np.copyto(buf, pcm[: len(buf)])
+        to_copy = min(len(buf), len(pcm))
+        buf[:to_copy] = pcm[:to_copy]
 
         # capture_frame is async; it returns once there's room in the queue --
         # effectively rate-limits us to realtime which is what we want.

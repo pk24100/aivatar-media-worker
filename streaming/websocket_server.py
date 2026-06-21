@@ -1,3 +1,4 @@
+# WebSocket server that ingests raw audio bytes for active streaming sessions.
 import asyncio
 import websockets
 import logging

@@ -1,3 +1,4 @@
+# Core streaming engine that drives the FlashHead model to generate lip-synced avatar video frames from audio.
 import os
 import sys
 import numpy as np
@@ -96,7 +97,28 @@ class FlashHeadStreamingEngine:
 
     # Process buffered audio slices into video frames via FlashHead.
     def _process_available_audio(self):
+        # Real-time pacing: each slice represents slice_len frames at tgt_fps,
+        # i.e. slice_len / tgt_fps seconds of real-time content.  We measure
+        # from the START of the previous slice, not the end, so that inference
+        # time (~0.75s) overlaps with the wait period.  This gives a total
+        # cycle of max(slice_realtime, inference_time) instead of
+        # slice_realtime + inference_time, keeping production matched to
+        # consumption at 25 fps.
+        import time as _time
+        slice_realtime = self.slice_len / float(self.tgt_fps)  # e.g. 24/25 = 0.96s
         while len(self.pending_audio) >= self.slice_samples:
+            now = _time.monotonic()
+            if hasattr(self, '_last_slice_time') and (now - self._last_slice_time) < slice_realtime:
+                # Not enough real-time has elapsed since the last slice STARTED.
+                # Wait for the next run_chunk call to try again.
+                return
+            # Stamp the start time BEFORE inference so the wait period
+            # overlaps with inference time.
+            self._last_slice_time = now
+            logger.info(
+                "[ENGINE] Processing audio slice: pending=%d samples, slice_samples=%d, frame_queue=%d",
+                len(self.pending_audio), self.slice_samples, self.frame_queue.qsize(),
+            )
             human_speech_array = np.array(
                 [self.pending_audio.popleft() for _ in range(self.slice_samples)],
                 dtype=np.float32,
@@ -108,13 +130,18 @@ class FlashHeadStreamingEngine:
                 self.audio_start_idx,
                 self.audio_end_idx,
             )
+            _t0 = _time.monotonic()
             video = run_pipeline(self.pipeline, audio_embedding)
+            _infer_ms = round((_time.monotonic() - _t0) * 1000, 1)
             video = video[self.motion_frames_num:]
+            _n_frames = video.shape[0]
             for i in range(video.shape[0]):
                 self.frame_queue.put_nowait(video[i].cpu().numpy().astype(np.uint8))
-            # Pair the audio slice with its video frames so the publisher
-            # can emit them together for lip-sync.
             self.audio_queue.put_nowait(human_speech_array)
+            logger.info(
+                "[ENGINE] Slice done: inference=%.1fms, frames=%d, frame_queue=%d, audio_queue=%d",
+                _infer_ms, _n_frames, self.frame_queue.qsize(), self.audio_queue.qsize(),
+            )
 
     # Feed an audio chunk into the engine and trigger frame generation.
     def run_chunk(self, audio_data: np.ndarray):
@@ -122,6 +149,10 @@ class FlashHeadStreamingEngine:
             raise RuntimeError("Avatar not prepared. Call prepare_avatar() first.")
         audio_array = np.asarray(audio_data, dtype=np.float32).reshape(-1)
         self.pending_audio.extend(audio_array.tolist())
+        logger.info(
+            "[ENGINE] run_chunk: received=%d samples, pending=%d/%d (need %d for slice)",
+            len(audio_array), len(self.pending_audio), self.slice_samples, self.slice_samples,
+        )
         self._process_available_audio()
 
     # Pad and process any remaining buffered audio.

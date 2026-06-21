@@ -1,3 +1,4 @@
+# Manages live/idle state transitions and crossfading for the avatar stream.
 import time
 import logging
 from enum import Enum
@@ -80,6 +81,19 @@ class StreamStateManager:
         if self.state == StreamState.LIVE:
             try:
                 frame = self.live_frame_queue.get_nowait()
+                # If the queue has built up beyond ~2 slices, skip to the
+                # freshest frame.  This prevents video from lagging behind
+                # audio when the engine produces a burst of frames (e.g.
+                # during initial buffering or after a WebSocket reconnect).
+                _drained = 0
+                while self.live_frame_queue.qsize() > 48:
+                    frame = self.live_frame_queue.get_nowait()
+                    _drained += 1
+                if _drained > 0:
+                    logger.info(
+                        "[SM] Drained %d stale frames from live queue (qsize now %d)",
+                        _drained, self.live_frame_queue.qsize(),
+                    )
                 self.last_live_frame = frame
                 self.last_frame_time = current_time
                 return frame

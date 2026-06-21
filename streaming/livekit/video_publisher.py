@@ -1,6 +1,11 @@
+# Publish avatar video frames to a LiveKit room.
 import asyncio
+import logging
+import time
 import numpy as np
 from livekit import rtc
+
+_logger = logging.getLogger("VideoPublisher")
 
 
 # Publish video frames to a LiveKit room.
@@ -19,6 +24,8 @@ class VideoPublisher:
         self.track_name = track_name
         self.video_source = None
         self.track = None
+        self._width = 0
+        self._height = 0
 
     # Publish frames from a raw queue at the target FPS.
     async def publish_from_queue(self, frame_queue):
@@ -48,27 +55,49 @@ class VideoPublisher:
         Publishes frames continuously at the target FPS.
         Pulls frames from the state manager which handles Live/Idle transitions.
 
-        Pacing rule: emit AT MOST one frame per 1/fps interval. If the inference
-        pipeline produces frames in bursts and the live queue grows behind us, we
-        drop the older frames and keep only the freshest one for the next tick --
-        we never burst-send queued frames back-to-back (that was the legacy
-        behaviour and caused the avatar to talk far faster than the audio).
+        The engine is paced to real-time in _process_available_audio (one slice
+        per slice_len/tgt_fps seconds), so the frame_queue stays small and we
+        simply consume at tgt_fps.  If the queue does grow temporarily (e.g.
+        during initial buffering), we skip to the freshest frame to avoid
+        playing video faster than the audio.
         """
         frame_interval = 1.0 / float(self.fps)
+        _none_count = 0
+        _first_frame_logged = False
         while True:
-            # get_next_frame handles Live/Idle selection. We always pull exactly
-            # one frame per tick so the output cadence stays locked at self.fps.
+            _cycle_start = time.monotonic()
+
             frame = await asyncio.to_thread(state_manager.get_next_frame)
 
             if frame is None:
-                # Neither live nor idle frames available right now; keep the
-                # publish loop ticking at the target rate.
-                await asyncio.sleep(frame_interval)
+                _none_count += 1
+                if _none_count % 50 == 1:
+                    _logger.info(
+                        "[VP-DIAG] No frame yet (None count=%d, ~%.1fs waiting). Track not created.",
+                        _none_count, _none_count * frame_interval,
+                    )
+                _elapsed = time.monotonic() - _cycle_start
+                await asyncio.sleep(max(0, frame_interval - _elapsed))
                 continue
+
+            _none_count = 0
+            if not _first_frame_logged:
+                _logger.info(
+                    "[VP-DIAG] First non-None frame received after %d None ticks (~%.1fs). Creating track...",
+                    _none_count, _none_count * frame_interval,
+                )
+                _first_frame_logged = True
 
             await self._ensure_track(frame)
             await self._send_frame(frame)
-            await asyncio.sleep(frame_interval)
+
+            # Real-time pacing: sleep only the remaining time to maintain
+            # target FPS.  asyncio.sleep(frame_interval) alone sleeps for
+            # AT LEAST frame_interval, but to_thread + _send_frame add
+            # ~8-10ms overhead, dropping effective FPS to ~21 and causing
+            # slow-motion video.
+            _elapsed = time.monotonic() - _cycle_start
+            await asyncio.sleep(max(0, frame_interval - _elapsed))
 
         # Unreachable unless the task is cancelled, but here for safety.
         await self._cleanup()
@@ -77,8 +106,9 @@ class VideoPublisher:
     async def _ensure_track(self, frame: np.ndarray):
         if self.track is not None:
             return
-        height, width = frame.shape[0], frame.shape[1]
-        self.video_source = rtc.VideoSource(width, height)
+        self._height, self._width = int(frame.shape[0]), int(frame.shape[1])
+        _logger.info("[VP-DIAG] Creating video track %dx%d", self._width, self._height)
+        self.video_source = rtc.VideoSource(self._width, self._height)
         self.track = rtc.LocalVideoTrack.create_video_track(self.track_name, self.video_source)
         options = rtc.TrackPublishOptions(
             source=rtc.TrackSource.SOURCE_CAMERA,
@@ -89,18 +119,39 @@ class VideoPublisher:
             ),
             video_codec=rtc.VideoCodec.H264,
         )
+        _logger.info("[VP-DIAG] Calling publish_track()...")
+        _pub_t0 = time.monotonic()
         await self.room.local_participant.publish_track(self.track, options)
+        _pub_ms = round((time.monotonic() - _pub_t0) * 1000, 1)
+        _logger.info("[VP-DIAG] publish_track() completed in %.1f ms", _pub_ms)
 
     # Convert and send a frame to the LiveKit video source.
     async def _send_frame(self, frame: np.ndarray):
-        if frame.shape[2] == 3:
-            alpha = np.full((frame.shape[0], frame.shape[1], 1), 255, dtype=np.uint8)
-            frame = np.concatenate([frame, alpha], axis=2)
+        if frame is None or frame.ndim < 2:
+            return
+        if self.video_source is None:
+            return
+        if frame.shape[1] != self._width or frame.shape[0] != self._height:
+            _logger.warning(
+                "Frame size mismatch: got %dx%d, expected %dx%d. Skipping.",
+                frame.shape[1], frame.shape[0], self._width, self._height,
+            )
+            return
+
+        # Convert RGB (H,W,3) to RGBA (H,W,4) and send to LiveKit.
+        # The SDK's native C++ layer handles RGBA→I420 conversion for H264.
+        # This matches the official LiveKit python-sdks publisher example.
+        rgba = np.ascontiguousarray(
+            np.concatenate(
+                [frame, np.full((*frame.shape[:2], 1), 255, dtype=np.uint8)],
+                axis=2,
+            )
+        )
         video_frame = rtc.VideoFrame(
-            frame.shape[1],
-            frame.shape[0],
+            self._width,
+            self._height,
             rtc.VideoBufferType.RGBA,
-            frame.tobytes(),
+            rgba.tobytes(),
         )
         self.video_source.capture_frame(video_frame)
 
