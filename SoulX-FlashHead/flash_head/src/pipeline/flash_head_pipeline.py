@@ -184,6 +184,15 @@ class FlashHeadPipeline:
             self.audio_encoder.feature_extractor._freeze_parameters()
             self.wav2vec_feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(wav2vec_dir, local_files_only=True)
 
+    def move_to_device(self, device):
+        """Move all model components to a new device (CPU snapshot restore)."""
+        old_device = self.device
+        self.device = device
+        self.model = self.model.to(device)
+        self.vae.model = self.vae.model.to(device)
+        self.audio_encoder = self.audio_encoder.to(device)
+        logger.info(f"Moved FlashHeadPipeline components from {old_device} to {device}")
+
     @torch.no_grad()
     def prepare_params(self,
                         cond_image_path_or_dir,

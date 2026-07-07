@@ -1,7 +1,12 @@
 """
-One-off Modal script to download FlashHead model weights into the aivatar-models volume.
+DEPRECATED: FlashHead model weights are now baked into the Modal image at
+build time via modal_app.py's .run_commands() step. This script is no
+longer needed. Kept for reference only.
 
-Usage:
+Original purpose: one-off Modal script to download FlashHead model weights
+into the aivatar-models volume.
+
+Usage (no longer needed):
     modal run download_models.py
 
 After running, verify:

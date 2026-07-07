@@ -58,6 +58,16 @@ class FlashHeadModelPool:
         except asyncio.QueueFull:
             logger.error("Attempted to release pipeline to full pool. This shouldn't happen.")
             
+    def move_to_device(self, device):
+        """Move all pipelines to a new device (CPU snapshot restore)."""
+        pipelines = []
+        while not self.pool.empty():
+            pipelines.append(self.pool.get_nowait())
+        for p in pipelines:
+            p.move_to_device(device)
+            self.pool.put_nowait(p)
+        logger.info(f"Moved {len(pipelines)} pipelines to {device}")
+
     # Return the number of currently available pipelines in the pool.
     def get_available_count(self):
         return self.pool.qsize()

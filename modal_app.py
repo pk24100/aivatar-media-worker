@@ -2,12 +2,17 @@
 Modal serving wrapper for the AiVatar media worker.
 Uses the same aiohttp app (app_factory.build_app) as RunPod.
 
-Manual prerequisites (see migration plan Section 5):
+Manual prerequisites:
 1. modal secret create huggingface-secret HUGGING_FACE_HUB_TOKEN=hf_xxx
 2. modal secret create livekit-secret LIVEKIT_API_KEY=... LIVEKIT_API_SECRET=... LIVEKIT_URL=wss://...
 3. modal secret create aivatar-worker-secret LIVEKIT_URL=...
-4. modal volume create aivatar-models
-5. modal deploy modal_app.py
+# 4. modal volume create aivatar-models
+# 5. modal deploy modal_app.py
+4. modal deploy modal_app.py
+
+FlashHead model weights are baked into the image at build time via
+snapshot_download from pkam24100/aivatar-flashhead-model.
+No Modal Volume or pre-download script needed.
 """
 
 import os
@@ -19,6 +24,15 @@ image = (
     .pip_install("ninja")
     .run_commands("pip install flash-attn --no-build-isolation || true")
     .pip_install_from_requirements("requirements.txt")
+    # Download FlashHead model weights from HuggingFace into the image layer.
+    # This bakes ~6GB of weights directly into the image, eliminating the
+    # ~38s snapshot_download from Modal Volume at every container boot.
+    # Modal caches this layer, so it's only downloaded once (on first deploy
+    # or when the model changes). The huggingface-secret provides the HF token.
+    .run_commands(
+        "huggingface-cli download pkam24100/aivatar-flashhead-model --local-dir /app/models/SoulX-FlashHead-1_3B",
+        secrets=[modal.Secret.from_name("huggingface-secret")],
+    )
     .add_local_dir("streaming", "/app/streaming", copy=True)
     .add_local_dir("utils", "/app/utils", copy=True)
     .add_local_dir("SoulX-FlashHead", "/app/SoulX-FlashHead", copy=True)
@@ -28,7 +42,7 @@ image = (
 )
 
 app = modal.App("aivatar-worker", image=image)
-models_volume = modal.Volume.from_name("aivatar-models", create_if_missing=True)
+#models_volume = modal.Volume.from_name("aivatar-models", create_if_missing=True)
 
 
 @app.cls(
@@ -36,20 +50,21 @@ models_volume = modal.Volume.from_name("aivatar-models", create_if_missing=True)
     min_containers=1,
     scaledown_window=15,
     timeout=600,
-    volumes={"/models": models_volume},
+    #volumes={"/models": models_volume},
     secrets=[
         modal.Secret.from_name("huggingface-secret"),
         modal.Secret.from_name("livekit-secret"),
         modal.Secret.from_name("aivatar-worker-secret"),
     ],
-    # NOTE: Snapshots disabled — UCX/libucs segfaults on restore (signal 11).
-    # Re-enable once the NGC base image / CUDA driver compat issue is resolved.
-    # enable_memory_snapshot=True,
-    # experimental_options={"enable_gpu_snapshot": True},
+    enable_memory_snapshot=True,
+    # NOTE: GPU snapshots are alpha. Using CPU-only snapshots (stable) which
+    # skip disk I/O + deserialization but still pay CPU->GPU transfer.
+    # Modal auto-invalidates snapshots when code or image changes (e.g. model
+    # weight updates create a new image layer). No manual key needed.
 )
 @modal.concurrent(max_inputs=3)
 class Worker:
-    @modal.enter()
+    @modal.enter(snap=True)
     def load(self):
         import sys
         sys.path.insert(0, "/app")
@@ -57,16 +72,30 @@ class Worker:
         worker_concurrency = os.getenv("AIVATAR_WORKER_CONCURRENCY", "1")
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = worker_concurrency
         os.environ["TORCHINDUCTOR_COMPILE_THREADS"] = "1"
-        os.environ.setdefault("FLASHHEAD_HF_CACHE_DIR", "/models/huggingface-cache/hub")
+        # Load models to CPU for snapshotting (no CUDA calls before snapshot)
+        os.environ["FLASHHEAD_LOAD_DEVICE"] = "cpu"
         # Enable Rust FFI debug logs (ICE, DTLS) before handler import so the
         # native livekit.rtc library picks it up at initialization time.
         os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
-        # Trigger FlashHeadModelPool preload at import
+        # Trigger FlashHeadModelPool preload at import - loads to CPU
         import handler
         self._handler = handler
+        print("[modal] Models loaded to CPU for snapshot", flush=True)
 
-        # Warm-up: model weights are already loaded by import handler above.
-        # We call get_base_data to trigger any lazy pipeline initialization.
+    @modal.enter(snap=False)
+    def restore(self):
+        import sys
+        sys.path.insert(0, "/app")
+        import torch
+
+        # Move models from CPU to GPU after snapshot restore
+        os.environ.pop("FLASHHEAD_LOAD_DEVICE", None)
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(f"[modal] Restoring from snapshot, moving models to {device}", flush=True)
+        self._handler.model_pool.move_to_device(device)
+        print("[modal] Models moved to GPU", flush=True)
+
+        # Warm-up: run dummy inference to pre-compile CUDA kernels
         from flash_head.inference import get_base_data, get_audio_embedding, run_pipeline, get_infer_params
         from PIL import Image
         import numpy as np

@@ -1,4 +1,5 @@
 import math
+import os
 from loguru import logger
 import datetime
 import torch
@@ -13,6 +14,12 @@ def get_parallel_degree(world_size, num_heads):
 
 # Initialize the distributed device for sequence parallelism if needed.
 def get_device(ulysses_degree, ring_degree):
+    # For Modal CPU memory snapshots: load models to CPU (no CUDA calls)
+    # before snapshot is taken. After restore, move to GPU.
+    if os.environ.get("FLASHHEAD_LOAD_DEVICE", "").lower() == "cpu":
+        logger.info("FLASHHEAD_LOAD_DEVICE=cpu, returning CPU device for snapshot")
+        return "cpu"
+
     if ulysses_degree > 1 or ring_degree > 1:
         from xfuser.core.distributed import (
             init_distributed_environment,
