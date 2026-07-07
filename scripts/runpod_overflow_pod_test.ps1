@@ -77,7 +77,7 @@ try {
     $startResponse = Invoke-RestMethod -Method Post -Uri "$PodApiBase/sessions/start" -Headers $Headers -Body $StartPayload
     Write-Host "  Start Status: $($startResponse.status)" -ForegroundColor Green
     Write-Host "  Job ID: $($startResponse.jobId)" -ForegroundColor Green
-    Write-Host "  Expected WebSocket URL: ws://$(([System.Uri]$PodApiBase).Host):8765/$SessionId?token=smoke-test-token" -ForegroundColor White
+    Write-Host "  Expected WebSocket URL: ws://$(([System.Uri]$PodApiBase).Host):8765/$SessionId (auth via Sec-WebSocket-Protocol: aivatar.<jwt>)" -ForegroundColor White
 } catch {
     Write-Error "Start session failed: $_"
     exit 1

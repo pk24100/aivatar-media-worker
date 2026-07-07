@@ -10,6 +10,8 @@ from urllib.parse import urlparse
 
 import boto3
 import requests
+import socket
+import ipaddress
 from collections import deque
 
 # Add SoulX-FlashHead to Python path
@@ -17,6 +19,71 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "SoulX-
 from flash_head.inference import get_audio_embedding, run_pipeline, get_infer_params
 
 logger = logging.getLogger("FlashHeadStreamingEngine")
+
+MAX_DOWNLOAD_BYTES = 10 * 1024 * 1024
+
+_ALLOWED_IMAGE_DOMAINS = [
+    d.strip().lower()
+    for d in os.environ.get("ALLOWED_IMAGE_DOMAINS", "").split(",")
+    if d.strip()
+]
+
+_IMAGE_MAGIC_BYTES = {
+    b"\xff\xd8\xff": "jpeg",
+    b"\x89PNG\r\n\x1a\n": "png",
+    b"RIFF": "webp",
+}
+
+
+def _is_private_ip(ip_str: str) -> bool:
+    try:
+        ip = ipaddress.ip_address(ip_str)
+        return (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_reserved
+            or ip.is_multicast
+        )
+    except ValueError:
+        return True
+
+
+def _validate_image_url(parsed):
+    hostname = parsed.hostname or ""
+    hostname_lower = hostname.lower()
+
+    if _ALLOWED_IMAGE_DOMAINS and hostname_lower not in _ALLOWED_IMAGE_DOMAINS:
+        raise ValueError(
+            f"Image URL domain '{hostname_lower}' not in allowlist. "
+            f"Allowed: {_ALLOWED_IMAGE_DOMAINS}"
+        )
+
+    try:
+        resolved = socket.getaddrinfo(hostname, None)
+        for family, _, _, _, sockaddr in resolved:
+            ip = sockaddr[0]
+            if _is_private_ip(ip):
+                raise ValueError(
+                    f"Image URL resolves to private/internal IP {ip}. "
+                    f"SSRF prevention: rejecting."
+                )
+    except socket.gaierror:
+        raise ValueError(f"Cannot resolve hostname: {hostname}")
+
+    if os.environ.get("NODE_ENV", "").lower() == "production" and parsed.scheme != "https":
+        raise ValueError("Only HTTPS URLs are allowed for image downloads in production")
+
+
+def _is_valid_image_bytes(data: bytes) -> bool:
+    if len(data) < 12:
+        return False
+    for magic, fmt in _IMAGE_MAGIC_BYTES.items():
+        if data.startswith(magic):
+            if fmt == "webp" and data[8:12] != b"WEBP":
+                continue
+            return True
+    return False
 
 
 # Streaming engine that generates lip-synced video frames from audio.
@@ -69,12 +136,31 @@ class FlashHeadStreamingEngine:
     def _resolve_avatar_path(self, avatar_image_path: str) -> str:
         parsed = urlparse(avatar_image_path)
         if parsed.scheme in ("http", "https"):
-            response = requests.get(avatar_image_path, timeout=30)
+            _validate_image_url(parsed)
+            response = requests.get(avatar_image_path, timeout=(10, 30), stream=True)
             response.raise_for_status()
-            suffix = os.path.splitext(parsed.path)[1] or ".png"
+
+            content_length = int(response.headers.get("Content-Length", 0))
+            if content_length > MAX_DOWNLOAD_BYTES:
+                raise ValueError(
+                    f"Avatar image exceeds {MAX_DOWNLOAD_BYTES} bytes (got {content_length})"
+                )
+
+            suffix = os.path.splitext(parsed.path)[1] or ".jpg"
             temp_path = os.path.join(tempfile.gettempdir(), f"avatar_{uuid.uuid4().hex}{suffix}")
+            downloaded = b""
+            for chunk in response.iter_content(chunk_size=8192):
+                downloaded += chunk
+                if len(downloaded) > MAX_DOWNLOAD_BYTES:
+                    raise ValueError(
+                        f"Avatar image exceeded {MAX_DOWNLOAD_BYTES} bytes during download"
+                    )
+
+            if not _is_valid_image_bytes(downloaded):
+                raise ValueError("Downloaded content is not a valid image (JPEG/PNG/WebP)")
+
             with open(temp_path, "wb") as handle:
-                handle.write(response.content)
+                handle.write(downloaded)
             self._temp_avatar_path = temp_path
             return temp_path
         if parsed.scheme == "s3":

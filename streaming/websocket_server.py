@@ -14,6 +14,7 @@ class WebsocketIngestionServer:
         self.port = port
         self.active_sessions: Dict[str, asyncio.Queue] = {}
         self._server: Optional[websockets.serve] = None
+        self._active_connections: Dict[str, bool] = {}
 
     # Return whether the WebSocket server is currently running.
     @property
@@ -22,6 +23,8 @@ class WebsocketIngestionServer:
 
     def register_session(self, session_id: str, token: str) -> asyncio.Queue:
         """Register a new session to receive audio, returning its queue and saving the expected token."""
+        if not token:
+            raise ValueError("ingestionToken is required")
         if session_id not in self.active_sessions:
             self.active_sessions[session_id] = {
                 "queue": asyncio.Queue(),
@@ -29,6 +32,17 @@ class WebsocketIngestionServer:
             }
             logger.info(f"Registered WebSocket session: {session_id}")
         return self.active_sessions[session_id]["queue"]
+
+    def acquire_connection(self, session_id: str) -> bool:
+        """Try to acquire a connection slot for a session. Returns False if already occupied."""
+        if session_id in self._active_connections:
+            return False
+        self._active_connections[session_id] = True
+        return True
+
+    def release_connection(self, session_id: str):
+        """Release the connection slot for a session."""
+        self._active_connections.pop(session_id, None)
 
     def unregister_session(self, session_id: str):
         """Unregister an existing session."""
@@ -51,7 +65,7 @@ class WebsocketIngestionServer:
             return
             
         expected_token = self.active_sessions[session_id].get("token")
-        if expected_token and provided_token != expected_token:
+        if not expected_token or provided_token != expected_token:
             logger.warning(f"Unauthorized connection attempt for session {session_id} (invalid token)")
             await websocket.close(code=4001, reason="Unauthorized: Invalid Token")
             return

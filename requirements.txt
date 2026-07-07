@@ -6,11 +6,9 @@ livekit>=1.0.0
 livekit-api>=1.0.0
 numpy>=1.26.4
 websockets>=12.0
-# Pure-Python WebRTC for Modal (gVisor sandbox). The native livekit-rtc Rust
-# FFI cannot establish DTLS connections through gVisor; aiortc works.
-aiortc>=1.14.0
 librosa>=0.10.1
 soundfile>=0.12.1
+av>=14.0.0
 boto3>=1.34.0
 requests>=2.31.0
 tqdm>=4.66.1
@@ -42,3 +40,4 @@ imageio-ffmpeg>=0.4.9
 opencv-python-headless>=4.12.0.88
 scikit-image>=0.22.0
 pyloudnorm>=0.1.1
+PyJWT>=2.8.0

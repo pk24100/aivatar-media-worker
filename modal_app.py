@@ -58,14 +58,9 @@ class Worker:
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = worker_concurrency
         os.environ["TORCHINDUCTOR_COMPILE_THREADS"] = "1"
         os.environ.setdefault("FLASHHEAD_HF_CACHE_DIR", "/models/huggingface-cache/hub")
-        # Use the native livekit.rtc SDK (Rust FFI) on Modal. In web_server runtime,
-        # UDP to LiveKit's IP range is blocked (error 101) but TCP (port 7881) works.
-        # single_peer_connection=True in RoomOptions makes publisher share the
-        # subscriber's TCP-connected PC, avoiding the 15s UDP-to-TCP fallback race.
-        os.environ["AIVATAR_WEBRTC_BACKEND"] = "native"
         # Enable Rust FFI debug logs (ICE, DTLS) before handler import so the
         # native livekit.rtc library picks it up at initialization time.
-        os.environ.setdefault("LIVEKIT_RTC_DEBUG", "true")
+        os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
         # Trigger FlashHeadModelPool preload at import
         import handler
         self._handler = handler

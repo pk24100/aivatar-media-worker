@@ -3,7 +3,10 @@ import contextlib
 import logging
 import os
 import time
+from collections import defaultdict
 
+import aiohttp
+import jwt as pyjwt
 from aiohttp import web
 from huggingface_hub import snapshot_download
 
@@ -13,6 +16,115 @@ from utils.model_pool import FlashHeadModelPool
 
 
 PREWARM_ROOM_TIMEOUT = 60.0
+
+# --- WebSocket Security Constants (Fixes 4, 6, 8, 15) ---
+WORKER_AUTH_SECRET = os.environ.get("WORKER_AUTH_SECRET", "")
+ALLOWED_WS_ORIGINS = set(o.strip() for o in os.environ.get("ALLOWED_WS_ORIGINS", "").split(",") if o.strip())
+MAX_AUDIO_CHUNK_BYTES = 1_048_576   # 1 MB — 5s @ 48kHz 16-bit stereo PCM
+WS_INACTIVITY_TIMEOUT = 30          # seconds without audio before WS close
+NO_AUDIO_SESSION_TIMEOUT = 300       # 5 minutes without audio before ending session
+BACKEND_INTERNAL_URL = os.environ.get("BACKEND_INTERNAL_URL", "")
+WS_AUDIO_RATE_PER_SEC = 60          # max audio messages/sec (sustained)
+WS_AUDIO_BURST = 200                # token bucket burst capacity
+WS_MAX_BYTES_PER_SEC = 192_000      # 48kHz 16-bit mono real-time ceiling
+WS_MAX_CONNECTIONS_PER_IP = 10      # max concurrent WS per IP per 60s window
+
+# --- Fix 13: One-time JWT tracking (jti -> expiry timestamp) ---
+_used_jti: dict = {}
+
+# --- Fix 15: IP-based connection throttling ---
+_ip_connections: dict = defaultdict(list)  # ip -> [timestamp, ...]
+
+
+class AudioRateLimiter:
+    """Token-bucket rate limiter for audio messages (Fix 8)."""
+
+    def __init__(self, rate_per_sec, burst, max_bytes_per_sec):
+        self.rate = float(rate_per_sec)
+        self.burst = float(burst)
+        self.tokens = float(burst)
+        self.last_refill = time.monotonic()
+        self.byte_window_start = time.monotonic()
+        self.bytes_in_window = 0
+        self.max_bytes_per_sec = max_bytes_per_sec
+
+    def allow(self, msg_size: int) -> tuple:
+        now = time.monotonic()
+        elapsed = now - self.last_refill
+        self.tokens = min(self.burst, self.tokens + elapsed * self.rate)
+        self.last_refill = now
+        if self.tokens < 1.0:
+            return False, "message rate exceeded"
+        self.tokens -= 1.0
+        window_elapsed = now - self.byte_window_start
+        if window_elapsed >= 1.0:
+            self.byte_window_start = now
+            self.bytes_in_window = 0
+        self.bytes_in_window += msg_size
+        if self.bytes_in_window > self.max_bytes_per_sec:
+            return False, "byte rate exceeded"
+        return True, ""
+
+
+def _check_ip_limit(ip: str, max_conn: int, window_sec: int = 60) -> bool:
+    """Check if an IP has exceeded the connection limit (Fix 15)."""
+    now = time.time()
+    _ip_connections[ip] = [t for t in _ip_connections[ip] if now - t < window_sec]
+    if len(_ip_connections[ip]) >= max_conn:
+        return False
+    _ip_connections[ip].append(now)
+    return True
+
+
+def _check_jti(claims: dict) -> bool:
+    """Track one-time JWT usage via jti claim (Fix 13). Returns True if valid (not used before)."""
+    jti = claims.get("jti")
+    if not jti:
+        return True  # No jti claim — skip one-time enforcement
+    exp = claims.get("exp", 0)
+    now = time.time()
+    for k, v in list(_used_jti.items()):
+        if v < now:
+            del _used_jti[k]
+    if jti in _used_jti:
+        return False
+    _used_jti[jti] = exp
+    return True
+
+
+async def _end_session_via_backend(session_id: str, reason: str = "no_audio_timeout"):
+    """Call backend POST /internal/sessions/:id/end to finalize a stale session.
+    Uses WORKER_AUTH_SECRET to mint a JWT for authentication."""
+    if not BACKEND_INTERNAL_URL:
+        logger.warning("NO_AUDIO_TIMEOUT session=%s reason=%s BACKEND_INTERNAL_URL not set, cannot end session", session_id, reason)
+        return
+
+    if not WORKER_AUTH_SECRET:
+        logger.warning("NO_AUDIO_TIMEOUT session=%s reason=%s WORKER_AUTH_SECRET not set, cannot end session", session_id, reason)
+        return
+
+    token = pyjwt.encode(
+        {"sessionId": session_id, "reason": reason, "iat": int(time.time())},
+        WORKER_AUTH_SECRET,
+        algorithm="HS256",
+    )
+
+    url = f"{BACKEND_INTERNAL_URL.rstrip('/')}/internal/sessions/{session_id}/end"
+    try:
+        async with aiohttp.ClientSession() as http_session:
+            async with http_session.post(
+                url,
+                headers={"Authorization": f"Bearer {token}"},
+                json={"reason": reason},
+                timeout=aiohttp.ClientTimeout(total=10),
+            ) as resp:
+                body = await resp.text()
+                if resp.status == 200:
+                    logger.info("NO_AUDIO_TIMEOUT session=%s backend end success status=%d", session_id, resp.status)
+                else:
+                    logger.warning("NO_AUDIO_TIMEOUT session=%s backend end failed status=%d body=%s", session_id, resp.status, body[:200])
+    except Exception as exc:
+        logger.warning("NO_AUDIO_TIMEOUT session=%s backend end error: %s", session_id, exc)
 
 
 class PrewarmRoomPool:
@@ -306,7 +418,10 @@ async def _start_pod_session(event):
         raise ValueError("No pipeline capacity available")
 
     if event.get("ingestionMethod", "websocket") == "websocket":
-        ws_server.register_session(session_id, event.get("ingestionToken", ""))
+        ingestion_token = event.get("ingestionToken", "")
+        if not ingestion_token:
+            raise ValueError("ingestionToken is required for websocket ingestion")
+        ws_server.register_session(session_id, ingestion_token)
 
     task = asyncio.create_task(_execute_streaming_event(event), name=f"session-{session_id}")
     _track_session_task(session_id, task)
@@ -481,62 +596,171 @@ async def pod_session_status(request):
 
 
 # HTTP WebSocket ingestion endpoint: receive audio for a session.
-# Approach A (self-sufficient): if the session isn't registered locally,
-# the backend may embed session config in the ?cfg= query param so the
-# WS handler can start the streaming task on first connect. This resolves
-# session affinity on Modal where /sessions/start and /ws/{id} may hit
-# different containers. Idle video covers the small pipeline-acquisition gap.
+# Auth is via signed JWT passed as Sec-WebSocket-Protocol: aivatar.<jwt>.
+# The JWT carries session config (replacing the old base64 cfg blob) and is
+# verified with WORKER_AUTH_SECRET. If the session isn't registered locally,
+# the JWT claims are used to self-sufficiently start the streaming task
+# (resolves Modal session affinity where /sessions/start and /ws/{id} may
+# hit different containers).
 async def app_websocket_ingest(request):
     session_id = request.match_info.get("session_id")
+    client_ip = request.remote
+
+    # --- Fix 9: Origin header validation ---
+    if ALLOWED_WS_ORIGINS:
+        origin = request.headers.get("Origin", "")
+        if origin not in ALLOWED_WS_ORIGINS:
+            logger.warning("WS_ORIGIN_REJECTED session=%s origin=%s ip=%s", session_id, origin, client_ip)
+            raise web.HTTPForbidden(text="Origin not allowed")
+
+    # --- Fix 15: IP-based connection throttling ---
+    if not _check_ip_limit(client_ip, WS_MAX_CONNECTIONS_PER_IP):
+        logger.warning("WS_IP_THROTTLED ip=%s session=%s", client_ip, session_id)
+        raise web.HTTPTooManyRequests(text="Too many connections from this IP")
+
+    # --- Fix 3: Extract JWT from Sec-WebSocket-Protocol ---
+    protocols = request.headers.get("Sec-WebSocket-Protocol", "")
+    auth_token = None
+    for proto in protocols.split(","):
+        proto = proto.strip()
+        if proto.startswith("aivatar."):
+            auth_token = proto[len("aivatar."):]
+            break
+
+    if not auth_token:
+        logger.warning("WS_AUTH_FAIL session=%s reason=missing_token ip=%s", session_id, client_ip)
+        raise web.HTTPUnauthorized(text="Missing auth token")
+
+    # --- Fix 1: Verify JWT ---
+    if not WORKER_AUTH_SECRET:
+        raise web.HTTPInternalServerError(text="WORKER_AUTH_SECRET not configured")
+
+    try:
+        claims = pyjwt.decode(auth_token, WORKER_AUTH_SECRET, algorithms=["HS256"])
+    except pyjwt.ExpiredSignatureError:
+        logger.warning("WS_AUTH_FAIL session=%s reason=expired_token ip=%s", session_id, client_ip)
+        raise web.HTTPUnauthorized(text="Token expired")
+    except pyjwt.InvalidTokenError:
+        logger.warning("WS_AUTH_FAIL session=%s reason=invalid_token ip=%s", session_id, client_ip)
+        raise web.HTTPUnauthorized(text="Invalid token")
+
+    # Verify session_id in JWT matches URL path
+    if claims.get("sessionId") != session_id:
+        logger.warning("WS_AUTH_FAIL session=%s reason=session_id_mismatch ip=%s", session_id, client_ip)
+        raise web.HTTPUnauthorized(text="Session ID mismatch")
+
+    # --- Fix 13: One-time JWT (jti tracking) ---
+    if not _check_jti(claims):
+        logger.warning("WS_AUTH_FAIL session=%s reason=token_already_used ip=%s", session_id, client_ip)
+        raise web.HTTPUnauthorized(text="Token already used")
+
+    # --- Self-sufficient mode: auto-start if not registered ---
     session_state = ws_server.active_sessions.get(session_id)
-
     if session_state is None:
-        encoded_cfg = request.query.get("cfg")
-        if encoded_cfg:
-            try:
-                import json
-                import base64
-                # URL-safe base64 padding restoration
-                padded = encoded_cfg + "=" * (4 - len(encoded_cfg) % 4)
-                cfg = json.loads(base64.urlsafe_b64decode(padded).decode("utf-8"))
-            except Exception as e:
-                logger.warning("Failed to decode WS session config: %s", e)
-                raise web.HTTPBadRequest(text="Invalid session config") from e
+        # Fix 7: JWT auto-start freshness check
+        iat = claims.get("iat", 0)
+        if time.time() - iat > 120:
+            logger.warning("WS_AUTH_FAIL session=%s reason=token_too_old_for_autostart ip=%s", session_id, client_ip)
+            raise web.HTTPUnauthorized(text="Token too old for auto-start")
 
-            # Pre-register the audio queue so the streaming task can find it.
-            ws_server.register_session(session_id, cfg.get("ingestionToken", ""))
+        ingestion_token = claims.get("ingestionToken", "")
+        if not ingestion_token:
+            raise web.HTTPBadRequest(text="ingestionToken missing from token claims")
 
-            # Start the streaming task if not already active on this container.
-            try:
-                await _start_pod_session(cfg)
-            except ValueError as exc:
-                if "already active" in str(exc).lower():
-                    logger.info("Session %s already active on this container", session_id)
-                else:
-                    raise web.HTTPBadRequest(text=str(exc)) from exc
+        ws_server.register_session(session_id, ingestion_token)
 
-            session_state = ws_server.active_sessions.get(session_id)
+        try:
+            await _start_pod_session(claims)
+        except ValueError as exc:
+            if "already active" in str(exc).lower():
+                logger.info("Session %s already active on this container", session_id)
+            else:
+                raise web.HTTPBadRequest(text=str(exc)) from exc
+
+        session_state = ws_server.active_sessions.get(session_id)
 
     if session_state is None:
         raise web.HTTPNotFound(text="Unknown session ID")
 
-    provided_token = request.query.get("token")
+    # --- Fix 2: Require non-empty token (fail closed) ---
+    provided_token = claims.get("ingestionToken", "")
     expected_token = session_state.get("token")
-    if expected_token and provided_token != expected_token:
+    if not expected_token or provided_token != expected_token:
+        logger.warning("WS_AUTH_FAIL session=%s reason=invalid_ingestion_token ip=%s", session_id, client_ip)
         raise web.HTTPUnauthorized(text="Unauthorized: Invalid Token")
 
-    audio_queue = session_state["queue"]
-    websocket = web.WebSocketResponse()
+    # --- Fix 5: Single connection per session ---
+    if not ws_server.acquire_connection(session_id):
+        logger.warning("WS_DUP_CONNECTION session=%s ip=%s", session_id, client_ip)
+        raise web.HTTPConflict(text="Session already has an active connection")
+
+    # --- Fix 3: Echo subprotocol for WS upgrade ---
+    websocket = web.WebSocketResponse(protocols=[f"aivatar.{auth_token}"])
     await websocket.prepare(request)
 
+    audio_queue = session_state["queue"]
+    rate_limiter = AudioRateLimiter(WS_AUDIO_RATE_PER_SEC, WS_AUDIO_BURST, WS_MAX_BYTES_PER_SEC)
+
+    # Track last audio received time for no-audio session timeout
+    session_state["last_audio_time"] = time.monotonic()
+
+    logger.info("WS_CONNECT session=%s origin=%s ip=%s", session_id, request.headers.get("Origin", ""), client_ip)
+
+    # Background task: end session if no audio for NO_AUDIO_SESSION_TIMEOUT seconds
+    async def _no_audio_watcher():
+        while True:
+            await asyncio.sleep(30)
+            elapsed = time.monotonic() - session_state.get("last_audio_time", time.monotonic())
+            if elapsed >= NO_AUDIO_SESSION_TIMEOUT:
+                logger.warning("NO_AUDIO_TIMEOUT session=%s elapsed=%.0fs threshold=%ds", session_id, elapsed, NO_AUDIO_SESSION_TIMEOUT)
+                await _end_session_via_backend(session_id, "no_audio_timeout")
+                try:
+                    await websocket.close(code=1000, reason="No audio timeout")
+                except Exception:
+                    pass
+                return
+
+    watcher_task = asyncio.create_task(_no_audio_watcher())
+
     try:
-        async for message in websocket:
+        # --- Fix 6: Inactivity timeout ---
+        while True:
+            try:
+                message = await asyncio.wait_for(
+                    websocket.receive(),
+                    timeout=WS_INACTIVITY_TIMEOUT
+                )
+            except asyncio.TimeoutError:
+                logger.info("WS_INACTIVITY_TIMEOUT session=%s ip=%s", session_id, client_ip)
+                await websocket.close(code=1000, reason="Inactivity timeout")
+                break
+
             if message.type == web.WSMsgType.BINARY:
+                # --- Fix 4: Message size limit ---
+                if len(message.data) > MAX_AUDIO_CHUNK_BYTES:
+                    logger.warning("WS_OVERSIZED session=%s size=%d max=%d ip=%s",
+                                   session_id, len(message.data), MAX_AUDIO_CHUNK_BYTES, client_ip)
+                    await websocket.close(code=1009, reason="Message too big")
+                    break
+
+                # --- Fix 8: Audio rate limiting (message count + byte rate) ---
+                allowed, reason = rate_limiter.allow(len(message.data))
+                if not allowed:
+                    logger.warning("WS_RATE_LIMIT session=%s reason=%s ip=%s", session_id, reason, client_ip)
+                    await websocket.close(code=1013, reason=f"Rate limit: {reason}")
+                    break
+
+                # Update last audio time for no-audio session timeout
+                session_state["last_audio_time"] = time.monotonic()
                 await audio_queue.put(message.data)
             elif message.type == web.WSMsgType.ERROR:
+                logger.warning("WS_ERROR session=%s ip=%s", session_id, client_ip)
                 break
     finally:
+        watcher_task.cancel()
+        ws_server.release_connection(session_id)
         await audio_queue.put(None)
+        logger.info("WS_DISCONNECT session=%s ip=%s", session_id, client_ip)
 
     return websocket
 

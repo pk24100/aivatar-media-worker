@@ -119,7 +119,7 @@ Write-Host ""
 Write-Host "=== Tests Complete ===" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "API Endpoint: https://$EndpointId.api.runpod.ai/sessions/start" -ForegroundColor White
-Write-Host "Expected websocket ingestion URL: wss://$EndpointId.api.runpod.ai/ws/$SessionId?token=smoke-test-token" -ForegroundColor White
+Write-Host "Expected websocket ingestion URL: wss://$EndpointId.api.runpod.ai/ws/$SessionId (auth via Sec-WebSocket-Protocol: aivatar.<jwt>)" -ForegroundColor White
 Write-Host ""
 Write-Host "Example curl command:" -ForegroundColor White
 Write-Host @"

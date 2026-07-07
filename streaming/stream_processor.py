@@ -61,15 +61,9 @@ async def run_streaming_session(
     ingestion_token: str = None,
     idle_video_url: str = None
 ):
-    backend = os.environ.get("AIVATAR_WEBRTC_BACKEND", "aiortc").lower()
-    if backend == "aiortc":
-        return await _run_streaming_session_aiortc(
-            room_name, livekit_token, livekit_url, pipeline, source_image, 
-            ingestion_method, session_id, ingestion_token, idle_video_url)
-    else:
-        return await _run_streaming_session_native(
-            room_name, livekit_token, livekit_url, pipeline, source_image, 
-            ingestion_method, session_id, ingestion_token, idle_video_url)
+    return await _run_streaming_session_native(
+        room_name, livekit_token, livekit_url, pipeline, source_image, 
+        ingestion_method, session_id, ingestion_token, idle_video_url)
 
 async def _run_streaming_session_native(
     room_name: str,
@@ -99,28 +93,27 @@ async def _run_streaming_session_native(
     import time
 
     # Enable Rust FFI debug logs (ICE, DTLS, etc.) — checked at callback time
-    os.environ.setdefault("LIVEKIT_RTC_DEBUG", "true")
-    # Ensure Rust FFI logs (ICE, DTLS, etc.) are visible at DEBUG level.
-    # The FFI uses logger name "livekit" (not "livekit.rtc"), so set both.
-    # DEBUG level is required to see ICE candidate gathering, connectivity
-    # checks, DTLS handshake, and SRTP negotiation — without this, we only
-    # see signal connection and final timeout, which is insufficient for
-    # diagnosing the 15s connection delay.
+    os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
+    # Rust FFI log level — set to DEBUG for ICE/DTLS diagnosis, INFO for production.
+    # DEBUG confirmed in logs7.txt that UDP to LiveKit's IP range (161.115.180.x)
+    # is blocked (error 101/ENETUNREACH) and connection succeeds via TCP port 7881.
     for _lk_name in ("livekit", "livekit.rtc", "livekit.api"):
-        logging.getLogger(_lk_name).setLevel(logging.DEBUG)
+        logging.getLogger(_lk_name).setLevel(logging.INFO)
 
     # --- Threading context diagnostic ---
     import threading as _th
     _loop = asyncio.get_event_loop()
     _logger.info(
         "[NATIVE-DIAG] threading context: thread_id=%s thread_name=%s event_loop_id=%s "
-        "AIVATAR_WEBRTC_BACKEND=%s MODAL_RUNTIME=%s",
+        "MODAL_RUNTIME=%s",
         _th.get_ident(), _th.current_thread().name, id(_loop),
-        os.environ.get("AIVATAR_WEBRTC_BACKEND", "unset"),
         os.environ.get("MODAL_RUNTIME", "unset"),
     )
 
-    # --- Network diagnostics: STUN, UDP, TCP to LiveKit media servers ---
+    # --- Network diagnostics (non-blocking, max 2s total) ---
+    # UDP to LiveKit's IP range is confirmed blocked (error 101/ENETUNREACH)
+    # from logs7.txt ICE DEBUG logs. These tests are kept as quick sanity
+    # checks with short timeouts so they don't delay room.connect().
     import socket as _sock
     import struct as _struct
     import urllib.parse as _urlparse
@@ -135,7 +128,7 @@ async def _run_streaming_session_native(
         _stun_sock.sendto(_stun_req, (_stun_host, _stun_port))
         _loop = asyncio.get_event_loop()
         _stun_resp, _stun_addr = await asyncio.wait_for(
-            _loop.sock_recvfrom(_stun_sock, 1024), timeout=5.0
+            _loop.sock_recvfrom(_stun_sock, 1024), timeout=1.0
         )
         _stun_sock.close()
         _logger.info("[NATIVE-DIAG] STUN sanity check (Google): SUCCESS (response from %s, %d bytes)", _stun_addr, len(_stun_resp))
@@ -146,7 +139,7 @@ async def _run_streaming_session_native(
         except Exception:
             pass
 
-    # 2. Resolve LiveKit server hostname and test TCP + UDP connectivity
+    # 2. Resolve LiveKit server and test TCP connectivity (quick, 1s timeout)
     try:
         _lk_parsed = _urlparse.urlparse(livekit_url)
         _lk_host = _lk_parsed.hostname
@@ -155,14 +148,14 @@ async def _run_streaming_session_native(
         _lk_ip = _lk_ips[0][4][0] if _lk_ips else None
         _logger.info("[NATIVE-DIAG] LiveKit server: host=%s resolved_ip=%s port=%s", _lk_host, _lk_ip, _lk_port)
 
-        # 2a. TCP connectivity test to LiveKit server (port 443)
+        # 2a. TCP connectivity test (quick, 1s timeout)
         try:
             _tcp_sock = _sock.socket(_sock.AF_INET, _sock.SOCK_STREAM)
             _tcp_sock.setblocking(False)
             _tcp_t0 = time.monotonic()
             await asyncio.wait_for(
                 asyncio.get_event_loop().sock_connect(_tcp_sock, (_lk_host, _lk_port)),
-                timeout=5.0,
+                timeout=1.0,
             )
             _tcp_ms = round((time.monotonic() - _tcp_t0) * 1000, 1)
             _logger.info("[NATIVE-DIAG] TCP to LiveKit %s:%d: SUCCESS in %.1fms", _lk_host, _lk_port, _tcp_ms)
@@ -174,49 +167,32 @@ async def _run_streaming_session_native(
             except Exception:
                 pass
 
-        # 2b. UDP connectivity test to LiveKit server (port 443 — typical TURN/UDP)
-        # We send a STUN binding request to the LiveKit server itself.
-        # If LiveKit's SFU responds, UDP is not blocked.
-        # If it times out, UDP may be blocked to this specific IP.
+        # 2b. UDP tests — fire-and-forget (don't block room.connect())
+        # UDP to LiveKit's IP range (161.115.180.x) is confirmed blocked
+        # via error 101 in ICE DEBUG logs. Running these as background tasks
+        # so they don't add 6s delay to the connection.
         if _lk_ip:
-            try:
-                _udp_sock = _sock.socket(_sock.AF_INET, _sock.SOCK_DGRAM)
-                _udp_sock.setblocking(False)
-                _stun_req = _struct.pack("!HHI12s", 0x0001, 0, 0x2112A442, b"\x00" * 12)
-                _udp_sock.sendto(_stun_req, (_lk_ip, 3478))  # TURN port
-                _udp_t0 = time.monotonic()
-                _udp_resp, _udp_addr = await asyncio.wait_for(
-                    asyncio.get_event_loop().sock_recvfrom(_udp_sock, 1024), timeout=3.0
-                )
-                _udp_ms = round((time.monotonic() - _udp_t0) * 1000, 1)
-                _logger.info("[NATIVE-DIAG] UDP/STUN to LiveKit SFU %s:3478: SUCCESS in %.1fms (%d bytes from %s)", _lk_ip, _udp_ms, len(_udp_resp), _udp_addr)
-            except Exception as _udp_exc:
-                _logger.warning("[NATIVE-DIAG] UDP/STUN to LiveKit SFU %s:3478: FAILED — %s", _lk_ip, _udp_exc)
-            finally:
+            async def _bg_udp_test(ip, port, label):
                 try:
-                    _udp_sock.close()
-                except Exception:
-                    pass
-
-            # 2c. UDP test to LiveKit media port 443 (some SFUs use 443/UDP)
-            try:
-                _udp_sock2 = _sock.socket(_sock.AF_INET, _sock.SOCK_DGRAM)
-                _udp_sock2.setblocking(False)
-                _stun_req = _struct.pack("!HHI12s", 0x0001, 0, 0x2112A442, b"\x00" * 12)
-                _udp_sock2.sendto(_stun_req, (_lk_ip, 443))
-                _udp_t0 = time.monotonic()
-                _udp_resp2, _udp_addr2 = await asyncio.wait_for(
-                    asyncio.get_event_loop().sock_recvfrom(_udp_sock2, 1024), timeout=3.0
-                )
-                _udp_ms2 = round((time.monotonic() - _udp_t0) * 1000, 1)
-                _logger.info("[NATIVE-DIAG] UDP/STUN to LiveKit %s:443: SUCCESS in %.1fms (%d bytes from %s)", _lk_ip, _udp_ms2, len(_udp_resp2), _udp_addr2)
-            except Exception as _udp_exc2:
-                _logger.warning("[NATIVE-DIAG] UDP/STUN to LiveKit %s:443: FAILED — %s", _lk_ip, _udp_exc2)
-            finally:
-                try:
-                    _udp_sock2.close()
-                except Exception:
-                    pass
+                    _udp_sock = _sock.socket(_sock.AF_INET, _sock.SOCK_DGRAM)
+                    _udp_sock.setblocking(False)
+                    _stun_req = _struct.pack("!HHI12s", 0x0001, 0, 0x2112A442, b"\x00" * 12)
+                    _udp_sock.sendto(_stun_req, (ip, port))
+                    _udp_t0 = time.monotonic()
+                    _udp_resp, _udp_addr = await asyncio.wait_for(
+                        asyncio.get_event_loop().sock_recvfrom(_udp_sock, 1024), timeout=3.0
+                    )
+                    _udp_ms = round((time.monotonic() - _udp_t0) * 1000, 1)
+                    _logger.info("[NATIVE-DIAG] UDP/STUN to LiveKit %s:%d: SUCCESS in %.1fms", ip, port, _udp_ms)
+                except Exception as _udp_exc:
+                    _logger.warning("[NATIVE-DIAG] UDP/STUN to LiveKit %s:%d: FAILED — %s", ip, port, _udp_exc)
+                finally:
+                    try:
+                        _udp_sock.close()
+                    except Exception:
+                        pass
+            asyncio.create_task(_bg_udp_test(_lk_ip, 3478, "TURN"))
+            asyncio.create_task(_bg_udp_test(_lk_ip, 443, "media"))
     except Exception as _resolve_exc:
         _logger.warning("[NATIVE-DIAG] LiveKit server resolution failed: %s", _resolve_exc)
 
@@ -423,8 +399,21 @@ async def _run_streaming_session_native(
                     if sr_in != sample_rate:
                         audio_array = librosa.resample(audio_array, orig_sr=sr_in, target_sr=sample_rate)
                 except Exception:
-                    # Fallback if raw PCM is sent without headers
-                    audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+                    try:
+                        import av
+                        container = av.open(io.BytesIO(audio_bytes))
+                        frames = [f.to_ndarray() for f in container.decode(audio=0)]
+                        container.close()
+                        if not frames:
+                            raise ValueError("No audio frames decoded")
+                        audio_array = np.concatenate(frames, axis=-1)
+                        sr_in = frames[0].rate
+                        if audio_array.ndim > 1:
+                            audio_array = audio_array.mean(axis=0)
+                        if sr_in != sample_rate:
+                            audio_array = librosa.resample(audio_array, orig_sr=sr_in, target_sr=sample_rate)
+                    except Exception:
+                        audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
 
                 # Audio is NOT pushed here any more — it is enqueued inside
                 # engine.run_chunk → _process_available_audio and consumed
@@ -492,193 +481,4 @@ async def _run_streaming_session_native(
         # https://docs.livekit.io/reference/python/livekit/rtc/room.html
         if room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
             await room.disconnect()
-
-
-# ------------------------------------------------------------------ #
-# aiortc backend (Modal)
-# ------------------------------------------------------------------ #
-
-async def _run_streaming_session_aiortc(
-    room_name: str,
-    livekit_token: str,
-    livekit_url: str,
-    pipeline: any,
-    source_image: str = None,
-    ingestion_method: str = "websocket",
-    session_id: str = None,
-    ingestion_token: str = None,
-    idle_video_url: str = None
-):
-    """
-    Run a streaming session using aiortc (pure Python WebRTC).
-
-    This is used on Modal where the Rust-based livekit_ffi cannot establish
-    DTLS peer connections through gVisor's sandbox. Same functionality as
-    the native path but using aiortc for WebRTC transport.
-    """
-    from streaming.aiortc.aiortc_livekit_client import AiortcLiveKitClient
-    from streaming.aiortc.aiortc_video_publisher import AiortcVideoPublisher
-    from streaming.aiortc.aiortc_audio_publisher import AiortcAudioPublisher
-
-    # client connect is handled in the retry loop below
-
-    num_channels = int(os.getenv("AUDIO_CHANNELS", "1"))
-    chunk_timeout = float(os.getenv("AUDIO_SUBSCRIBE_TIMEOUT", "15"))
-    idle_timeout_ms = int(os.getenv("IDLE_TIMEOUT_MS", "500"))
-
-    engine = None
-    publish_task = None
-    audio_publish_task = None
-    audio_publisher = None
-    client = None
-    try:
-        if not source_image:
-            raise ValueError("source_image is required for FlashHead streaming")
-
-        engine = FlashHeadStreamingEngine(
-            pipeline=pipeline,
-            avatar_image_path=source_image
-        )
-
-        sample_rate = engine.sample_rate
-
-        idle_loop = None
-        if idle_video_url:
-            idle_loop = IdleVideoLoop(idle_video_url)
-
-        state_manager = StreamStateManager(
-            live_frame_queue=engine.frame_queue,
-            idle_video=idle_loop,
-            idle_timeout_ms=idle_timeout_ms
-        )
-
-        fps = engine.tgt_fps
-
-        from streaming.aiortc.aiortc_livekit_client import LiveKitReconnectException
-        
-        max_retries = 3
-        reconnect = False
-        for attempt in range(max_retries):
-            client = AiortcLiveKitClient()
-            # Create aiortc publishers
-            video_publisher = AiortcVideoPublisher(client, fps=fps)
-            audio_publisher = AiortcAudioPublisher(
-                client,
-                sample_rate=sample_rate,
-                num_channels=num_channels,
-            )
-            
-            try:
-                await client.connect(livekit_url, livekit_token, reconnect=reconnect)
-                
-                # Publish tracks to LiveKit via aiortc
-                await client.publish_tracks(
-                    video_track=video_publisher.video_track,
-                    audio_track=audio_publisher.audio_track,
-                )
-                _logger.info("[aiortc] Tracks published, media should be flowing")
-                break
-            except LiveKitReconnectException as e:
-                _logger.info("[aiortc] Server requested reconnect to %s (resume=%s). "
-                             "Attempt %d...", e.url, e.reconnect, attempt + 1)
-                livekit_url = e.url
-                reconnect = e.reconnect
-                await client.disconnect()
-                if attempt == max_retries - 1:
-                    raise
-                continue
-            except (TimeoutError, OSError) as e:
-                _logger.warning("[aiortc] Network error on attempt %d/%d: %s",
-                                attempt + 1, max_retries, e)
-                await client.disconnect()
-                if attempt == max_retries - 1:
-                    raise
-                await asyncio.sleep(2)  # backoff before retry
-                continue
-
-        # Start the video publish loop
-        publish_task = asyncio.create_task(
-            video_publisher.publish_from_state_manager(state_manager)
-        )
-
-        # For websocket and SIP ingestion, re-publish audio to LiveKit
-        if ingestion_method in ("websocket", "sip"):
-            audio_publish_task = asyncio.create_task(
-                _audio_publish_loop(engine, audio_publisher)
-            )
-
-        if ingestion_method == "websocket":
-            from streaming.websocket_server import ws_server
-            import numpy as np
-            import librosa
-            import io
-            import soundfile as sf
-
-            audio_queue = ws_server.register_session(session_id, ingestion_token)
-
-            while True:
-                audio_bytes = await audio_queue.get()
-                if audio_bytes is None:
-                    break
-
-                try:
-                    audio_array, sr_in = sf.read(io.BytesIO(audio_bytes))
-                    if len(audio_array.shape) > 1:
-                        audio_array = audio_array.mean(axis=1)
-                    if sr_in != sample_rate:
-                        audio_array = librosa.resample(audio_array, orig_sr=sr_in, target_sr=sample_rate)
-                except Exception:
-                    audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-
-                await asyncio.to_thread(engine.run_chunk, audio_array)
-
-        elif ingestion_method == "sip":
-            from streaming.aiortc.aiortc_audio_subscriber import AiortcAudioSubscriber
-
-            sip_subscriber = AiortcAudioSubscriber(
-                client=client,
-                sample_rate=sample_rate,
-                num_channels=num_channels,
-            )
-            sip_subscriber.bind()
-
-            ready = await sip_subscriber.wait_until_ready(timeout=chunk_timeout)
-            if not ready:
-                raise RuntimeError("[aiortc] Timed out waiting for SIP audio track.")
-
-            while True:
-                audio_array = await sip_subscriber.read()
-                if audio_array is None:
-                    break
-                await asyncio.to_thread(engine.run_chunk, audio_array)
-
-        else:
-            raise ValueError(f"Unsupported ingestion_method: {ingestion_method}")
-
-        await asyncio.to_thread(engine.flush)
-        while not engine.frame_queue.empty():
-            await asyncio.sleep(0.05)
-    finally:
-        if engine is not None:
-            engine.audio_queue.put_nowait(None)
-
-        if audio_publish_task is not None:
-            with contextlib.suppress(asyncio.CancelledError):
-                await audio_publish_task
-
-        if engine is not None:
-            await asyncio.to_thread(engine.close)
-        if publish_task is not None:
-            publish_task.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await publish_task
-        if audio_publisher is not None:
-            with contextlib.suppress(Exception):
-                await audio_publisher.aclose()
-        if ingestion_method == "websocket":
-            from streaming.websocket_server import ws_server
-            ws_server.unregister_session(session_id)
-
-        if client is not None:
-            await client.disconnect()
 

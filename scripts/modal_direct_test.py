@@ -28,7 +28,6 @@ Usage:
 
 import argparse
 import asyncio
-import base64
 import json
 import os
 import pathlib
@@ -99,9 +98,10 @@ def mint_livekit_token(api_key: str, api_secret: str, room_name: str,
     return token.to_jwt()
 
 
-def encode_ws_cfg(payload: dict) -> str:
-    raw = json.dumps(payload, separators=(",", ":")).encode("utf-8")
-    return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+def mint_ws_token(payload: dict, secret: str) -> str:
+    """Mint a signed JWT for WebSocket auth via subprotocol."""
+    import jwt as pyjwt
+    return pyjwt.encode(payload, secret, algorithm="HS256")
 
 
 # ---------------------------------------------------------------------------
@@ -182,6 +182,7 @@ async def watch_keyboard(stop_event: asyncio.Event):
 async def stream_audio_ws(
     ws_url: str,
     wav_path: str,
+    ws_token: str = "",
     loop: int = -1,
     stop_event: asyncio.Event | None = None,
 ):
@@ -192,7 +193,7 @@ async def stream_audio_ws(
     print(f"\n=== Streaming audio: {wav_path} ===")
     print(f"    -> {ws_url}\n")
 
-    async with websockets.connect(ws_url) as ws:
+    async with websockets.connect(ws_url, subprotocols=[f"aivatar.{ws_token}"]) as ws:
         with wave.open(wav_path, "rb") as wf:
             sr = wf.getframerate()
             ch = wf.getnchannels()
@@ -361,7 +362,6 @@ async def main():
         "ingestionToken": ingestion_token,
     }
     result = await start_session(modal_url, payload)
-    ws_cfg = encode_ws_cfg(payload)
     print(f"  Response: {json.dumps(result, indent=2)}")
     print()
 
@@ -377,8 +377,12 @@ async def main():
     print()
 
     # ---- Step 5: Build WebSocket URL and print end session instructions ----
+    # Mint JWT for WS subprotocol auth
+    ws_auth_secret = os.getenv("WORKER_AUTH_SECRET", "test-secret")
+    ws_token = mint_ws_token(payload, ws_auth_secret)
+
     ws_base = modal_url.replace("https://", "wss://").replace("http://", "ws://")
-    ws_url = f"{ws_base}/ws/{session_id}?token={ingestion_token}&cfg={ws_cfg}"
+    ws_url = f"{ws_base}/ws/{session_id}"
 
     end_url = f"{modal_url}/sessions/{session_id}/end"
 
@@ -406,7 +410,7 @@ async def main():
                 print(f"  Looping {args.loop} time(s)")
             stop_event = asyncio.Event()
             stream_task = asyncio.create_task(
-                stream_audio_ws(ws_url, args.wav, loop=args.loop, stop_event=stop_event)
+                stream_audio_ws(ws_url, args.wav, ws_token=ws_token, loop=args.loop, stop_event=stop_event)
             )
             keyboard_task = asyncio.create_task(watch_keyboard(stop_event))
             done, pending = await asyncio.wait(
@@ -425,8 +429,9 @@ async def main():
         print("  No --wav file provided. Stream manually with:")
         print(f"    python step5_stream_audio.py --ws-url \"{ws_url}\"")
         print()
-        print("  Or use the WebSocket URL directly:")
+        print("  Or use the WebSocket URL with subprotocol auth:")
         print(f"    {ws_url}")
+        print(f"    Subprotocol: aivatar.<jwt>")
         print()
 
     # ---- Step 7: Auto-end session after streaming ----
