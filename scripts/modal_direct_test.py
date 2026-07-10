@@ -101,7 +101,14 @@ def mint_livekit_token(api_key: str, api_secret: str, room_name: str,
 def mint_ws_token(payload: dict, secret: str) -> str:
     """Mint a signed JWT for WebSocket auth via subprotocol."""
     import jwt as pyjwt
-    return pyjwt.encode(payload, secret, algorithm="HS256")
+    now = int(time.time())
+    claims = {
+        **payload,
+        "iat": now,
+        "exp": now + 300,
+        "jti": uuid.uuid4().hex,
+    }
+    return pyjwt.encode(claims, secret, algorithm="HS256")
 
 
 # ---------------------------------------------------------------------------
@@ -252,6 +259,9 @@ async def main():
     parser.add_argument("--livekit-secret",
                         default=os.getenv("LIVEKIT_API_SECRET"),
                         help="LiveKit API secret")
+    parser.add_argument("--worker-auth-secret",
+                        default=os.getenv("WORKER_AUTH_SECRET"),
+                        help="Worker auth secret used to sign /ws JWTs. Must match Modal secret WORKER_AUTH_SECRET.")
     parser.add_argument("--source-image",
                         default=os.getenv("SOURCE_IMAGE",
                             "https://i.postimg.cc/594x5VRK/Gemini-Generated-Image-e3xw6se3xw6se3xw.png?dl=1"),
@@ -277,6 +287,8 @@ async def main():
         missing.append("--livekit-key / LIVEKIT_API_KEY")
     if not args.livekit_secret:
         missing.append("--livekit-secret / LIVEKIT_API_SECRET")
+    if not args.worker_auth_secret:
+        missing.append("--worker-auth-secret / WORKER_AUTH_SECRET")
     if missing:
         print("ERROR: Missing required arguments:")
         for m in missing:
@@ -378,8 +390,7 @@ async def main():
 
     # ---- Step 5: Build WebSocket URL and print end session instructions ----
     # Mint JWT for WS subprotocol auth
-    ws_auth_secret = os.getenv("WORKER_AUTH_SECRET", "test-secret")
-    ws_token = mint_ws_token(payload, ws_auth_secret)
+    ws_token = mint_ws_token(payload, args.worker_auth_secret)
 
     ws_base = modal_url.replace("https://", "wss://").replace("http://", "ws://")
     ws_url = f"{ws_base}/ws/{session_id}"

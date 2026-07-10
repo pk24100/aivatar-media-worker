@@ -3,6 +3,7 @@ import os
 import sys
 import numpy as np
 import logging
+import time
 import uuid
 import tempfile
 from queue import Queue
@@ -13,6 +14,8 @@ import requests
 import socket
 import ipaddress
 from collections import deque
+
+from utils.default_avatar_cache import default_avatar_cache
 
 # Add SoulX-FlashHead to Python path
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "SoulX-FlashHead"))
@@ -89,7 +92,7 @@ def _is_valid_image_bytes(data: bytes) -> bool:
 # Streaming engine that generates lip-synced video frames from audio.
 class FlashHeadStreamingEngine:
     # Initialize engine with pipeline, avatar path, and inference params.
-    def __init__(self, pipeline, avatar_image_path: str = None, seed: int = 42):
+    def __init__(self, pipeline, avatar_image_path: str = None, seed: int = 42, auto_prepare_avatar: bool = True):
         self.pipeline = pipeline
         self.seed = seed
         self.infer_params = get_infer_params()
@@ -113,7 +116,7 @@ class FlashHeadStreamingEngine:
         self._prepared = False
         self._temp_avatar_path = None
 
-        if avatar_image_path:
+        if avatar_image_path and auto_prepare_avatar:
             self.prepare_avatar(avatar_image_path)
 
     # Prepare the pipeline with the avatar image for inference.
@@ -134,27 +137,32 @@ class FlashHeadStreamingEngine:
 
     # Resolve avatar URL/path to a local file, downloading if needed.
     def _resolve_avatar_path(self, avatar_image_path: str) -> str:
+        cached_avatar_path = default_avatar_cache.get_cached_path(avatar_image_path)
+        if cached_avatar_path:
+            logger.info("Using cached default avatar for %s -> %s", avatar_image_path, cached_avatar_path)
+            return cached_avatar_path
+
         parsed = urlparse(avatar_image_path)
         if parsed.scheme in ("http", "https"):
             _validate_image_url(parsed)
-            response = requests.get(avatar_image_path, timeout=(10, 30), stream=True)
-            response.raise_for_status()
+            with requests.get(avatar_image_path, timeout=(10, 30), stream=True, headers={"Referer": "https://facemode.io"}) as response:
+                response.raise_for_status()
 
-            content_length = int(response.headers.get("Content-Length", 0))
-            if content_length > MAX_DOWNLOAD_BYTES:
-                raise ValueError(
-                    f"Avatar image exceeds {MAX_DOWNLOAD_BYTES} bytes (got {content_length})"
-                )
-
-            suffix = os.path.splitext(parsed.path)[1] or ".jpg"
-            temp_path = os.path.join(tempfile.gettempdir(), f"avatar_{uuid.uuid4().hex}{suffix}")
-            downloaded = b""
-            for chunk in response.iter_content(chunk_size=8192):
-                downloaded += chunk
-                if len(downloaded) > MAX_DOWNLOAD_BYTES:
+                content_length = int(response.headers.get("Content-Length", 0))
+                if content_length > MAX_DOWNLOAD_BYTES:
                     raise ValueError(
-                        f"Avatar image exceeded {MAX_DOWNLOAD_BYTES} bytes during download"
+                        f"Avatar image exceeds {MAX_DOWNLOAD_BYTES} bytes (got {content_length})"
                     )
+
+                suffix = os.path.splitext(parsed.path)[1] or ".jpg"
+                temp_path = os.path.join(tempfile.gettempdir(), f"avatar_{uuid.uuid4().hex}{suffix}")
+                downloaded = b""
+                for chunk in response.iter_content(chunk_size=8192):
+                    downloaded += chunk
+                    if len(downloaded) > MAX_DOWNLOAD_BYTES:
+                        raise ValueError(
+                            f"Avatar image exceeded {MAX_DOWNLOAD_BYTES} bytes during download"
+                        )
 
             if not _is_valid_image_bytes(downloaded):
                 raise ValueError("Downloaded content is not a valid image (JPEG/PNG/WebP)")
@@ -190,10 +198,9 @@ class FlashHeadStreamingEngine:
         # cycle of max(slice_realtime, inference_time) instead of
         # slice_realtime + inference_time, keeping production matched to
         # consumption at 25 fps.
-        import time as _time
         slice_realtime = self.slice_len / float(self.tgt_fps)  # e.g. 24/25 = 0.96s
         while len(self.pending_audio) >= self.slice_samples:
-            now = _time.monotonic()
+            now = time.monotonic()
             if hasattr(self, '_last_slice_time') and (now - self._last_slice_time) < slice_realtime:
                 # Not enough real-time has elapsed since the last slice STARTED.
                 # Wait for the next run_chunk call to try again.
@@ -216,9 +223,9 @@ class FlashHeadStreamingEngine:
                 self.audio_start_idx,
                 self.audio_end_idx,
             )
-            _t0 = _time.monotonic()
+            _t0 = time.monotonic()
             video = run_pipeline(self.pipeline, audio_embedding)
-            _infer_ms = round((_time.monotonic() - _t0) * 1000, 1)
+            _infer_ms = round((time.monotonic() - _t0) * 1000, 1)
             video = video[self.motion_frames_num:]
             _n_frames = video.shape[0]
             for i in range(video.shape[0]):
@@ -241,13 +248,21 @@ class FlashHeadStreamingEngine:
         )
         self._process_available_audio()
 
-    # Pad and process any remaining buffered audio.
-    def flush(self):
+    # Pad and process one final real-time slice. Returns whether audio remains.
+    def flush(self) -> bool:
         if self.pending_audio:
             pad = (-len(self.pending_audio)) % self.slice_samples
             if pad:
                 self.pending_audio.extend([0.0] * pad)
             self._process_available_audio()
+        return bool(self.pending_audio)
+
+    # Return the delay before the next slice can be generated at the target FPS.
+    def next_slice_delay(self) -> float:
+        if not hasattr(self, '_last_slice_time'):
+            return 0.0
+        slice_realtime = self.slice_len / float(self.tgt_fps)
+        return max(0.0, slice_realtime - (time.monotonic() - self._last_slice_time))
 
     # Clear queues and clean up temporary avatar files.
     def close(self):

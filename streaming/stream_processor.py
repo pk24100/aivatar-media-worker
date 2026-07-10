@@ -4,6 +4,8 @@ import contextlib
 import logging
 import os
 
+import numpy as np
+
 from livekit import rtc
 
 from streaming.flashhead_streaming import FlashHeadStreamingEngine
@@ -15,6 +17,21 @@ from streaming.state_manager import StreamStateManager
 from streaming.idle_video import IdleVideoLoop
 
 _logger = logging.getLogger("stream_processor")
+
+
+def _decode_raw_pcm(audio_bytes: bytes, num_channels: int) -> np.ndarray:
+    """Decode the WebSocket ingestion contract: signed 16-bit little-endian PCM."""
+    bytes_per_frame = 2 * num_channels
+    if len(audio_bytes) % bytes_per_frame:
+        raise ValueError(
+            f"Raw PCM payload has {len(audio_bytes)} bytes, which is not aligned to "
+            f"{num_channels} channel(s) of 16-bit audio"
+        )
+
+    audio_array = np.frombuffer(audio_bytes, dtype="<i2").astype(np.float32) / 32768.0
+    if num_channels > 1:
+        audio_array = audio_array.reshape(-1, num_channels).mean(axis=1)
+    return audio_array
 
 
 async def _audio_publish_loop(engine, audio_publisher):
@@ -59,11 +76,12 @@ async def run_streaming_session(
     ingestion_method: str = "websocket",
     session_id: str = None,
     ingestion_token: str = None,
-    idle_video_url: str = None
+    idle_video_url: str = None,
+    preconnected_room: any = None,
 ):
     return await _run_streaming_session_native(
         room_name, livekit_token, livekit_url, pipeline, source_image, 
-        ingestion_method, session_id, ingestion_token, idle_video_url)
+        ingestion_method, session_id, ingestion_token, idle_video_url, preconnected_room)
 
 async def _run_streaming_session_native(
     room_name: str,
@@ -74,7 +92,8 @@ async def _run_streaming_session_native(
     ingestion_method: str = "websocket",
     session_id: str = None,
     ingestion_token: str = None,
-    idle_video_url: str = None
+    idle_video_url: str = None,
+    preconnected_room: any = None,
 ):
     """
     Run a streaming session with FlashHead Lite model.
@@ -89,6 +108,7 @@ async def _run_streaming_session_native(
         session_id: Unique session identifier
         ingestion_token: Token for websocket ingestion
         idle_video_url: URL for idle video loop
+        preconnected_room: Already-connected LiveKit room claimed from prewarm pool
     """
     import time
 
@@ -205,61 +225,18 @@ async def _run_streaming_session_native(
         _diag_events.append(entry)
         _logger.info("[NATIVE-DIAG] %s", entry)
 
+    def _pub_sid(pub):
+        return getattr(pub, "sid", getattr(pub, "track_sid", "unknown"))
+
     _logger.info("Connecting to LiveKit room=%s url=%s session=%s", room_name, livekit_url, session_id)
 
     max_retries = 3
     last_error = None
-    room = None
-    for attempt in range(max_retries):
-        # Create a FRESH rtc.Room() for each retry attempt.
-        # Reusing the same Room object after a failed connect corrupts the
-        # Rust FFI server's internal state, causing "timed out waiting for
-        # ReadyForRoomEventRequest" panics on subsequent sessions.
-        if room is not None:
-            try:
-                if room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
-                    await room.disconnect()
-            except Exception:
-                pass
-            room = None
-
-        room = rtc.Room()
-
-        @room.on("connected")
-        def on_connected():
-            _diag("connected")
-
-        @room.on("disconnected")
-        def on_disconnected():
-            _diag("disconnected", state=str(room.connection_state))
-
+    room = preconnected_room
+    if room is not None:
         @room.on("connection_quality_changed")
         def on_quality_changed(quality):
             _diag("quality_changed", quality=str(quality))
-
-        @room.on("reconnecting")
-        def on_reconnecting():
-            _diag("reconnecting")
-
-        @room.on("reconnected")
-        def on_reconnected():
-            _diag("reconnected")
-
-        @room.on("track_published")
-        def on_track_published(pub, participant):
-            _diag("track_published", sid=pub.track_sid)
-
-        @room.on("track_unpublished")
-        def on_track_unpublished(pub, participant):
-            _diag("track_unpublished", sid=pub.track_sid)
-
-        @room.on("track_subscribed")
-        def on_track_subscribed(track, pub, participant):
-            _diag("track_subscribed", sid=pub.track_sid, kind=track.kind)
-
-        @room.on("track_subscription_failed")
-        def on_track_subscription_failed(track_sid, participant):
-            _diag("track_subscription_failed", sid=track_sid)
 
         @room.on("participant_connected")
         def on_participant_connected(participant):
@@ -274,50 +251,121 @@ async def _run_streaming_session_native(
             _diag("local_track_published", sid=pub.sid, kind=pub.kind)
 
         _logger.info(
-            "[NATIVE-DIAG] room.connect() attempt %d/%d starting | RoomOptions: auto_subscribe=True single_peer_connection=True connect_timeout=45.0 | url=%s",
-            attempt + 1, max_retries, livekit_url,
+            "Reusing pre-connected LiveKit room=%s session=%s connection_state=%s local_participant_identity=%s",
+            room_name,
+            session_id,
+            room.connection_state,
+            room.local_participant.identity if room.local_participant else "N/A",
         )
-        conn_t0 = time.monotonic()
-        try:
-            await room.connect(
-                livekit_url,
-                livekit_token,
-                options=rtc.RoomOptions(
-                    auto_subscribe=True,
-                    single_peer_connection=True,
-                    connect_timeout=45.0,
-                ),
-            )
-            conn_ms = round((time.monotonic() - conn_t0) * 1000, 1)
+    else:
+        for attempt in range(max_retries):
+            # Create a FRESH rtc.Room() for each retry attempt.
+            # Reusing the same Room object after a failed connect corrupts the
+            # Rust FFI server's internal state, causing "timed out waiting for
+            # ReadyForRoomEventRequest" panics on subsequent sessions.
+            if room is not None:
+                try:
+                    if room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
+                        await room.disconnect()
+                except Exception:
+                    pass
+                room = None
+
+            room = rtc.Room()
+
+            @room.on("connected")
+            def on_connected():
+                _diag("connected")
+
+            @room.on("disconnected")
+            def on_disconnected():
+                _diag("disconnected", state=str(room.connection_state))
+
+            @room.on("connection_quality_changed")
+            def on_quality_changed(quality):
+                _diag("quality_changed", quality=str(quality))
+
+            @room.on("reconnecting")
+            def on_reconnecting():
+                _diag("reconnecting")
+
+            @room.on("reconnected")
+            def on_reconnected():
+                _diag("reconnected")
+
+            @room.on("track_published")
+            def on_track_published(pub, participant):
+                _diag("track_published", sid=_pub_sid(pub))
+
+            @room.on("track_unpublished")
+            def on_track_unpublished(pub, participant):
+                _diag("track_unpublished", sid=_pub_sid(pub))
+
+            @room.on("track_subscribed")
+            def on_track_subscribed(track, pub, participant):
+                _diag("track_subscribed", sid=_pub_sid(pub), kind=track.kind)
+
+            @room.on("track_subscription_failed")
+            def on_track_subscription_failed(track_sid, participant):
+                _diag("track_subscription_failed", sid=track_sid)
+
+            @room.on("participant_connected")
+            def on_participant_connected(participant):
+                _diag("participant_connected", identity=participant.identity)
+
+            @room.on("participant_disconnected")
+            def on_participant_disconnected(participant):
+                _diag("participant_disconnected", identity=participant.identity)
+
+            @room.on("local_track_published")
+            def on_local_track_published(pub):
+                _diag("local_track_published", sid=pub.sid, kind=pub.kind)
+
             _logger.info(
-                "Successfully connected to LiveKit room=%s (attempt %d, %.1f ms). events=%d",
-                room_name, attempt + 1, conn_ms, len(_diag_events)
+                "[NATIVE-DIAG] room.connect() attempt %d/%d starting | RoomOptions: auto_subscribe=True single_peer_connection=True connect_timeout=45.0 | url=%s",
+                attempt + 1, max_retries, livekit_url,
             )
-            _logger.info(
-                "[NATIVE-DIAG] post-connect state: connection_state=%s local_participant_identity=%s",
-                room.connection_state,
-                room.local_participant.identity if room.local_participant else "N/A",
-            )
-            break
-        except Exception as exc:
-            conn_ms = round((time.monotonic() - conn_t0) * 1000, 1)
-            last_error = exc
-            _logger.warning(
-                "LiveKit connect failed (attempt %d/%d, %.1f ms): %s. "
-                "connection_state=%s diag_events=%s",
-                attempt + 1, max_retries, conn_ms, exc,
-                room.connection_state if room else "N/A",
-                _diag_events,
-                exc_info=True,
-            )
-            if attempt < max_retries - 1:
-                await asyncio.sleep(2 ** attempt)  # exponential backoff: 1s, 2s
-            else:
-                raise ConnectionError(
-                    f"Failed to connect to LiveKit after {max_retries} attempts. "
-                    f"Final state={room.connection_state if room else 'N/A'} "
-                    f"Events={_diag_events}"
-                ) from last_error
+            conn_t0 = time.monotonic()
+            try:
+                await room.connect(
+                    livekit_url,
+                    livekit_token,
+                    options=rtc.RoomOptions(
+                        auto_subscribe=True,
+                        single_peer_connection=True,
+                        connect_timeout=45.0,
+                    ),
+                )
+                conn_ms = round((time.monotonic() - conn_t0) * 1000, 1)
+                _logger.info(
+                    "Successfully connected to LiveKit room=%s (attempt %d, %.1f ms). events=%d",
+                    room_name, attempt + 1, conn_ms, len(_diag_events)
+                )
+                _logger.info(
+                    "[NATIVE-DIAG] post-connect state: connection_state=%s local_participant_identity=%s",
+                    room.connection_state,
+                    room.local_participant.identity if room.local_participant else "N/A",
+                )
+                break
+            except Exception as exc:
+                conn_ms = round((time.monotonic() - conn_t0) * 1000, 1)
+                last_error = exc
+                _logger.warning(
+                    "LiveKit connect failed (attempt %d/%d, %.1f ms): %s. "
+                    "connection_state=%s diag_events=%s",
+                    attempt + 1, max_retries, conn_ms, exc,
+                    room.connection_state if room else "N/A",
+                    _diag_events,
+                    exc_info=True,
+                )
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(2 ** attempt)  # exponential backoff: 1s, 2s
+                else:
+                    raise ConnectionError(
+                        f"Failed to connect to LiveKit after {max_retries} attempts. "
+                        f"Final state={room.connection_state if room else 'N/A'} "
+                        f"Events={_diag_events}"
+                    ) from last_error
 
     # We will read sample_rate from the engine's model params instead of env
     num_channels = int(os.getenv("AUDIO_CHANNELS", "1"))
@@ -335,7 +383,16 @@ async def _run_streaming_session_native(
 
         engine = FlashHeadStreamingEngine(
             pipeline=pipeline,
-            avatar_image_path=source_image
+            avatar_image_path=source_image,
+            auto_prepare_avatar=False,
+        )
+        prep_t0 = time.monotonic()
+        await asyncio.to_thread(engine.prepare_avatar, source_image)
+        _logger.info(
+            "Prepared avatar for session=%s source=%s in %.1f ms",
+            session_id,
+            source_image,
+            (time.monotonic() - prep_t0) * 1000,
         )
 
         sample_rate = engine.sample_rate
@@ -375,10 +432,6 @@ async def _run_streaming_session_native(
 
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
-            import numpy as np
-            import librosa
-            import io
-            import soundfile as sf
             
             # Register the session with the WS server
             audio_queue = ws_server.register_session(session_id, ingestion_token)
@@ -389,31 +442,11 @@ async def _run_streaming_session_native(
                 if audio_bytes is None:
                     # End of stream signaled
                     break
-                    
-                # Robust audio decoding and resampling to match model expectations
-                try:
-                    # sf.read handles WAV, FLAC, OGG, etc. and gives float32
-                    audio_array, sr_in = sf.read(io.BytesIO(audio_bytes))
-                    if len(audio_array.shape) > 1:
-                        audio_array = audio_array.mean(axis=1) # mix down to mono
-                    if sr_in != sample_rate:
-                        audio_array = librosa.resample(audio_array, orig_sr=sr_in, target_sr=sample_rate)
-                except Exception:
-                    try:
-                        import av
-                        container = av.open(io.BytesIO(audio_bytes))
-                        frames = [f.to_ndarray() for f in container.decode(audio=0)]
-                        container.close()
-                        if not frames:
-                            raise ValueError("No audio frames decoded")
-                        audio_array = np.concatenate(frames, axis=-1)
-                        sr_in = frames[0].rate
-                        if audio_array.ndim > 1:
-                            audio_array = audio_array.mean(axis=0)
-                        if sr_in != sample_rate:
-                            audio_array = librosa.resample(audio_array, orig_sr=sr_in, target_sr=sample_rate)
-                    except Exception:
-                        audio_array = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+                     
+                # WebSocket payloads are raw PCM, not self-contained audio files.
+                # Trying container decoders per 100 ms payload produces libav errors
+                # and adds avoidable work before the known PCM fallback.
+                audio_array = _decode_raw_pcm(audio_bytes, num_channels)
 
                 # Audio is NOT pushed here any more — it is enqueued inside
                 # engine.run_chunk → _process_available_audio and consumed
@@ -447,7 +480,23 @@ async def _run_streaming_session_native(
         else:
             raise ValueError(f"Unsupported ingestion_method: {ingestion_method}")
 
-        await asyncio.to_thread(engine.flush)
+        # Gnani can deliver TTS faster than real time. Keep the session alive and
+        # drain every padded slice at the engine's real-time cadence so no tail
+        # audio is discarded when the ingestion WebSocket closes.
+        drain_started_at = time.monotonic()
+        drain_cycles = 0
+        while True:
+            has_pending_audio = await asyncio.to_thread(engine.flush)
+            drain_cycles += 1
+            if not has_pending_audio:
+                break
+            await asyncio.sleep(engine.next_slice_delay())
+        _logger.info(
+            "Drained final audio session=%s cycles=%d elapsed=%.1fms",
+            session_id,
+            drain_cycles,
+            (time.monotonic() - drain_started_at) * 1000,
+        )
         while not engine.frame_queue.empty():
             await asyncio.sleep(0.05)
     finally:
@@ -479,6 +528,6 @@ async def _run_streaming_session_native(
         # livekit-rtc 1.x: Room exposes `connection_state` (enum) -- the old
         # `room.connected` boolean was removed. See:
         # https://docs.livekit.io/reference/python/livekit/rtc/room.html
-        if room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
+        if room is not None and room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
             await room.disconnect()
 

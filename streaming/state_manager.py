@@ -10,6 +10,9 @@ from streaming.idle_video import IdleVideoLoop
 
 logger = logging.getLogger(__name__)
 
+MAX_LIVE_FRAME_QUEUE = 36
+TARGET_LIVE_FRAME_QUEUE = 30
+
 # Possible states of the avatar stream.
 class StreamState(Enum):
     LIVE = "live"
@@ -81,17 +84,16 @@ class StreamStateManager:
         if self.state == StreamState.LIVE:
             try:
                 frame = self.live_frame_queue.get_nowait()
-                # If the queue has built up beyond ~2 slices, skip to the
-                # freshest frame.  This prevents video from lagging behind
-                # audio when the engine produces a burst of frames (e.g.
-                # during initial buffering or after a WebSocket reconnect).
+                # Keep the normal slice buffer, but recover before delayed
+                # video can visibly lag realtime audio after a publisher stall.
                 _drained = 0
-                while self.live_frame_queue.qsize() > 48:
-                    frame = self.live_frame_queue.get_nowait()
-                    _drained += 1
+                if self.live_frame_queue.qsize() > MAX_LIVE_FRAME_QUEUE:
+                    while self.live_frame_queue.qsize() > TARGET_LIVE_FRAME_QUEUE:
+                        frame = self.live_frame_queue.get_nowait()
+                        _drained += 1
                 if _drained > 0:
                     logger.info(
-                        "[SM] Drained %d stale frames from live queue (qsize now %d)",
+                        "[SM] Dropped %d stale frames to protect A/V sync (qsize now %d)",
                         _drained, self.live_frame_queue.qsize(),
                     )
                 self.last_live_frame = frame

@@ -62,11 +62,10 @@ class VideoPublisher:
         playing video faster than the audio.
         """
         frame_interval = 1.0 / float(self.fps)
+        next_frame_deadline = time.monotonic()
         _none_count = 0
         _first_frame_logged = False
         while True:
-            _cycle_start = time.monotonic()
-
             frame = await asyncio.to_thread(state_manager.get_next_frame)
 
             if frame is None:
@@ -76,8 +75,8 @@ class VideoPublisher:
                         "[VP-DIAG] No frame yet (None count=%d, ~%.1fs waiting). Track not created.",
                         _none_count, _none_count * frame_interval,
                     )
-                _elapsed = time.monotonic() - _cycle_start
-                await asyncio.sleep(max(0, frame_interval - _elapsed))
+                next_frame_deadline += frame_interval
+                await asyncio.sleep(max(0, next_frame_deadline - time.monotonic()))
                 continue
 
             _none_count = 0
@@ -91,13 +90,10 @@ class VideoPublisher:
             await self._ensure_track(frame)
             await self._send_frame(frame)
 
-            # Real-time pacing: sleep only the remaining time to maintain
-            # target FPS.  asyncio.sleep(frame_interval) alone sleeps for
-            # AT LEAST frame_interval, but to_thread + _send_frame add
-            # ~8-10ms overhead, dropping effective FPS to ~21 and causing
-            # slow-motion video.
-            _elapsed = time.monotonic() - _cycle_start
-            await asyncio.sleep(max(0, frame_interval - _elapsed))
+            # Advance from a fixed deadline so timer jitter cannot accumulate
+            # into visible A/V drift during a long tail drain.
+            next_frame_deadline += frame_interval
+            await asyncio.sleep(max(0, next_frame_deadline - time.monotonic()))
 
         # Unreachable unless the task is cancelled, but here for safety.
         await self._cleanup()

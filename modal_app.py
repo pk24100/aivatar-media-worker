@@ -35,6 +35,7 @@ image = (
     )
     .add_local_dir("streaming", "/app/streaming", copy=True)
     .add_local_dir("utils", "/app/utils", copy=True)
+    .add_local_dir("config", "/app/config", copy=True)
     .add_local_dir("SoulX-FlashHead", "/app/SoulX-FlashHead", copy=True)
     .add_local_dir("models/wav2vec2-base-960h", "/app/models/wav2vec2-base-960h", copy=True)
     .add_local_file("handler.py", "/app/handler.py", copy=True)
@@ -68,8 +69,8 @@ class Worker:
     def load(self):
         import sys
         sys.path.insert(0, "/app")
-        # Worker concurrency is driven by env var (default 1 on Modal L4, 3 on RunPod)
-        worker_concurrency = os.getenv("AIVATAR_WORKER_CONCURRENCY", "1")
+        # Worker concurrency is driven by env var (default 3 for L40S)
+        worker_concurrency = os.getenv("AIVATAR_WORKER_CONCURRENCY", "3")
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = worker_concurrency
         os.environ["TORCHINDUCTOR_COMPILE_THREADS"] = "1"
         # Load models to CPU for snapshotting (no CUDA calls before snapshot)
@@ -79,7 +80,21 @@ class Worker:
         os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
         # Trigger FlashHeadModelPool preload at import - loads to CPU
         import handler
+        from utils.default_avatar_cache import default_avatar_cache
         self._handler = handler
+        cache_status = default_avatar_cache.preload()
+        if cache_status["manifestFound"]:
+            print(
+                f"[modal] Default avatar manifest loaded: cachedAvatarCount={cache_status['cachedAvatarCount']} "
+                f"failed={len(cache_status['failedAvatarIds'])}",
+                flush=True,
+            )
+        else:
+            print(
+                f"[modal] Default avatar manifest not found at {cache_status['manifestPath']} - "
+                "falling back to per-session URL fetch",
+                flush=True,
+            )
         print("[modal] Models loaded to CPU for snapshot", flush=True)
 
     @modal.enter(snap=False)
@@ -128,16 +143,10 @@ class Worker:
 
         asyncio.run(_warmup())
 
-        # Pre-warm WebRTC routes to LiveKit media servers.
-        # In Modal's web_server runtime, TCP routes to LiveKit's media IP range
-        # (161.115.x.x) can take ~15s to become routable on cold containers.
-        # We create N pre-warm rooms (N = AIVATAR_WORKER_CONCURRENCY) that stay
-        # connected, warming the route. When a real session arrives, it claims
-        # a pre-warmed room via /room/claim — same SFU node → warm route → <2s connect.
-        # Pre-warm rooms auto-expire after 60s if not claimed.
-        self._prewarm_webrtc_routes()
+        # Pre-warm rooms must be created on the same aiohttp event loop that
+        # later publishes tracks on them. The server loop handles that in serve().
 
-    def _prewarm_webrtc_routes(self):
+    async def _prewarm_webrtc_routes(self):
         """Create N pre-warm LiveKit rooms and add them to the prewarm pool."""
         import asyncio
         import time
@@ -151,63 +160,59 @@ class Worker:
             print("[prewarm] Skipping — LIVEKIT_URL/API_KEY/API_SECRET not set", flush=True)
             return
 
-        pool_size = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "1"))
+        # Pre-warm one LiveKit room per available model pipeline so /readyz
+        # prewarmRoomsAvailable matches the worker's configured concurrency.
+        pool_size = self._handler.WORKER_POOL_SIZE
 
-        async def _prewarm():
-            from livekit import rtc
-            from livekit.api import AccessToken, VideoGrants
+        from livekit import rtc
+        from livekit.api import AccessToken, VideoGrants
 
-            prewarm_pool = self._handler.prewarm_pool
+        prewarm_pool = self._handler.prewarm_pool
 
-            for i in range(pool_size):
-                room_name = f"prewarm-{uuid.uuid4().hex[:8]}"
-                token = (
-                    AccessToken(api_key, api_secret)
-                    .with_identity(f"prewarm-{room_name}")
-                    .with_name("Modal Pre-Warm")
-                    .with_grants(
-                        VideoGrants(
-                            room_join=True,
-                            room=room_name,
-                            can_publish=False,
-                            can_subscribe=False,
-                        )
+        for i in range(pool_size):
+            room_name = f"prewarm-{uuid.uuid4().hex[:8]}"
+            token = (
+                AccessToken(api_key, api_secret)
+                .with_identity(f"prewarm-{room_name}")
+                .with_name("Modal Pre-Warm")
+                .with_grants(
+                    VideoGrants(
+                        room_join=True,
+                        room=room_name,
+                        can_publish=True,
+                        can_subscribe=True,
                     )
-                ).to_jwt()
+                )
+            ).to_jwt()
 
-                room = rtc.Room()
-                t0 = time.monotonic()
-                try:
-                    print(f"[prewarm] Connecting to {livekit_url} room={room_name} ({i+1}/{pool_size})...", flush=True)
-                    await room.connect(
-                        livekit_url,
-                        token,
-                        options=rtc.RoomOptions(
-                            auto_subscribe=False,
-                            single_peer_connection=True,
-                            connect_timeout=30.0,
-                        ),
-                    )
-                    elapsed = round((time.monotonic() - t0) * 1000, 1)
-                    print(f"[prewarm] Connected in {elapsed} ms, adding to pool", flush=True)
-                    await prewarm_pool.add(room_name, room, f"prewarm-{room_name}", token)
-                except Exception as exc:
-                    print(f"[prewarm] Failed for room {room_name} (non-fatal): {exc}", flush=True)
+            room = rtc.Room()
+            t0 = time.monotonic()
+            try:
+                print(f"[prewarm] Connecting to {livekit_url} room={room_name} ({i+1}/{pool_size})...", flush=True)
+                await room.connect(
+                    livekit_url,
+                    token,
+                    options=rtc.RoomOptions(
+                        auto_subscribe=False,
+                        single_peer_connection=True,
+                        connect_timeout=30.0,
+                    ),
+                )
+                elapsed = round((time.monotonic() - t0) * 1000, 1)
+                print(f"[prewarm] Connected in {elapsed} ms, adding to pool", flush=True)
+                await prewarm_pool.add(room_name, room, f"prewarm-{room_name}", token)
+            except Exception as exc:
+                print(f"[prewarm] Failed for room {room_name} (non-fatal): {exc}", flush=True)
 
-            print(f"[prewarm] Pool ready: {prewarm_pool.available_count()}/{pool_size} rooms available", flush=True)
+        print(f"[prewarm] Pool ready: {prewarm_pool.available_count()}/{pool_size} rooms available", flush=True)
 
-            # Start background cleanup task for expired pre-warm rooms.
+        if getattr(self, "_prewarm_cleanup_task", None) is None:
             async def _cleanup_loop():
                 while True:
                     await asyncio.sleep(10)
                     await prewarm_pool.cleanup_expired()
 
-            asyncio.create_task(_cleanup_loop())
-
-        try:
-            asyncio.run(_prewarm())
-        except Exception as exc:
-            print(f"[prewarm] Event loop error (non-fatal): {exc}", flush=True)
+            self._prewarm_cleanup_task = asyncio.create_task(_cleanup_loop())
 
     @modal.web_server(8000, startup_timeout=600)
     def serve(self):
@@ -235,7 +240,13 @@ class Worker:
             asyncio.set_event_loop(loop)
 
             async def _start():
+                # Recreate the pool on the aiohttp server loop so claimed rooms
+                # and session publishers share the same event-loop ownership.
+                self._handler.prewarm_pool = self._handler.PrewarmRoomPool(
+                    size=self._handler.WORKER_POOL_SIZE
+                )
                 application = await build_app()
+                await self._prewarm_webrtc_routes()
                 runner = web.AppRunner(application)
                 await runner.setup()
                 site = web.TCPSite(runner, "0.0.0.0", 8000)

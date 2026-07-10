@@ -155,6 +155,10 @@ class PrewarmRoomPool:
         self._claimed[entry["roomName"]] = entry
         return entry
 
+    def take_claimed(self, room_name):
+        """Remove and return a claimed room without disconnecting it."""
+        return self._claimed.pop(room_name, None)
+
     async def release(self, room_name):
         # First try the claimed map (normal path after claim).
         entry = self._claimed.pop(room_name, None)
@@ -268,7 +272,7 @@ def _resolve_flashhead_ckpt_dir():
 FLASHHEAD_CKPT_DIR = _resolve_flashhead_ckpt_dir()
 
 # Initialize model pool globally so it happens during FlashBoot
-model_pool = FlashHeadModelPool(size=WORKER_POOL_SIZE, ckpt_dir=FLASHHEAD_CKPT_DIR, wav2vec_dir=WAV2VEC_DIR)
+model_pool = FlashHeadModelPool(max_size=WORKER_POOL_SIZE, ckpt_dir=FLASHHEAD_CKPT_DIR, wav2vec_dir=WAV2VEC_DIR)
 prewarm_pool = PrewarmRoomPool(size=WORKER_POOL_SIZE)
 _ws_started = False
 _ws_lock = asyncio.Lock()
@@ -354,16 +358,44 @@ async def _execute_streaming_event(event):
         )
         logger.info("[handler] Minted worker token for room %s (no client token provided)", room_name)
 
-    # Disconnect the pre-warm participant BEFORE connecting the real session.
-    # This must be awaited (not fire-and-forget) to avoid DuplicateIdentity.
     import time as _htime
-    _release_t0 = _htime.monotonic()
-    try:
-        await prewarm_pool.release(room_name)
-    except Exception as exc:
-        logger.warning("[handler] Failed to release pre-warm room %s: %s", room_name, exc)
-    _release_ms = round((_htime.monotonic() - _release_t0) * 1000, 1)
-    logger.info("[handler] prewarm_pool.release() took %.1fms for room %s", _release_ms, room_name)
+
+    preconnected_room = None
+    prewarm_entry = prewarm_pool.take_claimed(room_name)
+    if prewarm_entry is not None:
+        candidate_room = prewarm_entry.get("room")
+        try:
+            from livekit import rtc
+            current_loop = asyncio.get_running_loop()
+            room_loop = getattr(candidate_room, "_loop", None)
+            if room_loop is not None and room_loop is not current_loop:
+                logger.warning(
+                    "[handler] Cannot reuse pre-warm room %s: event loop mismatch room_loop=%s current_loop=%s",
+                    room_name,
+                    id(room_loop),
+                    id(current_loop),
+                )
+            elif candidate_room and candidate_room.connection_state != rtc.ConnectionState.CONN_DISCONNECTED:
+                preconnected_room = candidate_room
+                logger.info(
+                    "[handler] Reusing pre-warmed LiveKit room %s connection_state=%s identity=%s",
+                    room_name,
+                    candidate_room.connection_state,
+                    candidate_room.local_participant.identity if candidate_room.local_participant else "N/A",
+                )
+        except Exception as exc:
+            logger.warning("[handler] Cannot reuse pre-warm room %s: %s", room_name, exc)
+
+    if preconnected_room is None:
+        # Fallback path for BYOLR, pool miss, expired room, loop mismatch, or
+        # Modal routing /room/claim and /sessions/start to different containers.
+        _release_t0 = _htime.monotonic()
+        try:
+            await prewarm_pool.release(room_name)
+        except Exception as exc:
+            logger.warning("[handler] Failed to release pre-warm room %s: %s", room_name, exc)
+        _release_ms = round((_htime.monotonic() - _release_t0) * 1000, 1)
+        logger.info("[handler] prewarm_pool.release() took %.1fms for room %s", _release_ms, room_name)
 
     _acquire_t0 = _htime.monotonic()
     model_instance = await model_pool.acquire()
@@ -382,6 +414,7 @@ async def _execute_streaming_event(event):
             session_id=session_id,
             ingestion_token=ingestion_token,
             idle_video_url=idle_video_url,
+            preconnected_room=preconnected_room,
         )
         _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
         logger.info("[handler] run_streaming_session() completed in %.1fms for %s", _session_ms, session_id)
@@ -413,7 +446,12 @@ async def _start_pod_session(event):
     if not session_id:
         raise ValueError("sessionId or roomName is required")
     if session_id in _active_sessions:
-        raise ValueError(f"Session {session_id} is already active")
+        logger.info("Session %s already active; treating start request as idempotent", session_id)
+        return {
+            "jobId": session_id,
+            "status": "ALREADY_STARTED",
+            "sessionId": session_id,
+        }
     if model_pool.get_available_count() <= 0:
         raise ValueError("No pipeline capacity available")
 
@@ -603,12 +641,14 @@ async def pod_session_status(request):
 # (resolves Modal session affinity where /sessions/start and /ws/{id} may
 # hit different containers).
 async def app_websocket_ingest(request):
+    request_received_at = time.monotonic()
     session_id = request.match_info.get("session_id")
     client_ip = request.remote
+    origin = request.headers.get("Origin", "")
+    logger.info("WS_REQUEST_RECEIVED session=%s origin=%s ip=%s", session_id, origin, client_ip)
 
     # --- Fix 9: Origin header validation ---
     if ALLOWED_WS_ORIGINS:
-        origin = request.headers.get("Origin", "")
         if origin not in ALLOWED_WS_ORIGINS:
             logger.warning("WS_ORIGIN_REJECTED session=%s origin=%s ip=%s", session_id, origin, client_ip)
             raise web.HTTPForbidden(text="Origin not allowed")
@@ -704,7 +744,13 @@ async def app_websocket_ingest(request):
     # Track last audio received time for no-audio session timeout
     session_state["last_audio_time"] = time.monotonic()
 
-    logger.info("WS_CONNECT session=%s origin=%s ip=%s", session_id, request.headers.get("Origin", ""), client_ip)
+    logger.info(
+        "WS_CONNECT session=%s origin=%s ip=%s handlerMs=%.1f",
+        session_id,
+        origin,
+        client_ip,
+        (time.monotonic() - request_received_at) * 1000,
+    )
 
     # Background task: end session if no audio for NO_AUDIO_SESSION_TIMEOUT seconds
     async def _no_audio_watcher():
@@ -730,6 +776,11 @@ async def app_websocket_ingest(request):
                     websocket.receive(),
                     timeout=WS_INACTIVITY_TIMEOUT
                 )
+            except RuntimeError as exc:
+                if "WebSocket connection is closed" in str(exc):
+                    logger.info("WS_CLOSED session=%s ip=%s", session_id, client_ip)
+                    break
+                raise
             except asyncio.TimeoutError:
                 logger.info("WS_INACTIVITY_TIMEOUT session=%s ip=%s", session_id, client_ip)
                 await websocket.close(code=1000, reason="Inactivity timeout")
