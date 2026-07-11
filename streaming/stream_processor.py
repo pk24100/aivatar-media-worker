@@ -3,6 +3,7 @@ import asyncio
 import contextlib
 import logging
 import os
+import time
 
 import numpy as np
 
@@ -32,6 +33,40 @@ def _decode_raw_pcm(audio_bytes: bytes, num_channels: int) -> np.ndarray:
     if num_channels > 1:
         audio_array = audio_array.reshape(-1, num_channels).mean(axis=1)
     return audio_array
+
+
+async def _drain_utterance(engine, session_id: str, session_state: dict) -> None:
+    """Finish queued speech without ending the persistent media session."""
+    had_pending_media = bool(engine.pending_audio) or not engine.frame_queue.empty()
+    session_state["is_draining"] = True
+    drain_started_at = time.monotonic()
+    drain_cycles = 0
+    _logger.info("UTTERANCE_DRAIN_STARTED session=%s", session_id)
+
+    try:
+        while True:
+            has_pending_audio = await asyncio.to_thread(engine.flush)
+            drain_cycles += 1
+            if not has_pending_audio:
+                break
+            await asyncio.sleep(engine.next_slice_delay())
+
+        while not engine.frame_queue.empty():
+            await asyncio.sleep(0.05)
+
+        # AudioSource can retain one slice after its matching frames leave the queue.
+        if had_pending_media:
+            await asyncio.sleep(engine.slice_len / float(engine.tgt_fps))
+    finally:
+        session_state["is_draining"] = False
+        session_state["last_activity_time"] = time.monotonic()
+
+    _logger.info(
+        "UTTERANCE_DRAIN_COMPLETED session=%s cycles=%d elapsed=%.1fms",
+        session_id,
+        drain_cycles,
+        (time.monotonic() - drain_started_at) * 1000,
+    )
 
 
 async def _audio_publish_loop(engine, audio_publisher):
@@ -435,18 +470,46 @@ async def _run_streaming_session_native(
             
             # Register the session with the WS server
             audio_queue = ws_server.register_session(session_id, ingestion_token)
+            session_state = ws_server.active_sessions[session_id]
+            session_ended = False
             
             while True:
-                # Wait for raw audio bytes from the websocket
-                audio_bytes = await audio_queue.get()
-                if audio_bytes is None:
-                    # End of stream signaled
+                # Binary messages are PCM; dictionaries are handler control events.
+                next_slice_delay = await asyncio.to_thread(engine.next_live_slice_delay)
+                if next_slice_delay is None:
+                    audio_event = await audio_queue.get()
+                elif next_slice_delay <= 0:
+                    # Gnani can pause between packets while a complete slice is already
+                    # buffered. Generate at the real-time deadline instead of repeating
+                    # the previous video frame until another packet arrives.
+                    await asyncio.to_thread(engine.process_pending_audio)
+                    continue
+                else:
+                    try:
+                        audio_event = await asyncio.wait_for(
+                            audio_queue.get(),
+                            timeout=next_slice_delay,
+                        )
+                    except asyncio.TimeoutError:
+                        await asyncio.to_thread(engine.process_pending_audio)
+                        continue
+                if audio_event is None:
+                    session_ended = True
                     break
-                     
+
+                if isinstance(audio_event, dict):
+                    control_type = audio_event.get("type")
+                    if control_type == "end_utterance":
+                        await _drain_utterance(engine, session_id, session_state)
+                    elif control_type == "end_session":
+                        session_ended = True
+                        break
+                    continue
+                      
                 # WebSocket payloads are raw PCM, not self-contained audio files.
                 # Trying container decoders per 100 ms payload produces libav errors
                 # and adds avoidable work before the known PCM fallback.
-                audio_array = _decode_raw_pcm(audio_bytes, num_channels)
+                audio_array = _decode_raw_pcm(audio_event, num_channels)
 
                 # Audio is NOT pushed here any more — it is enqueued inside
                 # engine.run_chunk → _process_available_audio and consumed
@@ -480,25 +543,12 @@ async def _run_streaming_session_native(
         else:
             raise ValueError(f"Unsupported ingestion_method: {ingestion_method}")
 
-        # Gnani can deliver TTS faster than real time. Keep the session alive and
-        # drain every padded slice at the engine's real-time cadence so no tail
-        # audio is discarded when the ingestion WebSocket closes.
-        drain_started_at = time.monotonic()
-        drain_cycles = 0
-        while True:
-            has_pending_audio = await asyncio.to_thread(engine.flush)
-            drain_cycles += 1
-            if not has_pending_audio:
-                break
-            await asyncio.sleep(engine.next_slice_delay())
-        _logger.info(
-            "Drained final audio session=%s cycles=%d elapsed=%.1fms",
-            session_id,
-            drain_cycles,
-            (time.monotonic() - drain_started_at) * 1000,
-        )
-        while not engine.frame_queue.empty():
-            await asyncio.sleep(0.05)
+        if ingestion_method == "websocket":
+            # An explicit session end or remote disconnect closes this pipeline.
+            if session_ended:
+                await _drain_utterance(engine, session_id, session_state)
+        else:
+            await _drain_utterance(engine, session_id, {"is_draining": False})
     finally:
         # Enqueue the audio sentinel BEFORE closing the engine so the
         # _audio_publish_loop can drain any remaining audio and then exit
@@ -523,6 +573,10 @@ async def _run_streaming_session_native(
                 await audio_publisher.aclose()
         if ingestion_method == "websocket":
             from streaming.websocket_server import ws_server
+            session_state = ws_server.active_sessions.get(session_id)
+            idle_watcher = session_state.get("idle_watcher") if session_state else None
+            if idle_watcher is not None and idle_watcher is not asyncio.current_task():
+                idle_watcher.cancel()
             ws_server.unregister_session(session_id)
             
         # livekit-rtc 1.x: Room exposes `connection_state` (enum) -- the old

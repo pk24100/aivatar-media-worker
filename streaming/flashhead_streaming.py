@@ -264,6 +264,16 @@ class FlashHeadStreamingEngine:
         slice_realtime = self.slice_len / float(self.tgt_fps)
         return max(0.0, slice_realtime - (time.monotonic() - self._last_slice_time))
 
+    def next_live_slice_delay(self):
+        """Return the next generation deadline only when a full live slice is buffered."""
+        if len(self.pending_audio) < self.slice_samples:
+            return None
+        return self.next_slice_delay()
+
+    def process_pending_audio(self):
+        """Generate a due live slice even when no new WebSocket packet arrives."""
+        self._process_available_audio()
+
     # Clear queues and clean up temporary avatar files.
     def close(self):
         self.pending_audio.clear()

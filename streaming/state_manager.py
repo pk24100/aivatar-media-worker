@@ -43,6 +43,7 @@ class StreamStateManager:
         self.state = StreamState.IDLE if (idle_video and idle_video.is_valid()) else StreamState.LIVE
         self.last_frame_time = time.time()
         self.last_live_frame: Optional[np.ndarray] = None
+        self.last_frame_source = "none"
         
         self.transition_frames: List[np.ndarray] = []
         self.transition_idx = 0
@@ -98,12 +99,14 @@ class StreamStateManager:
                     )
                 self.last_live_frame = frame
                 self.last_frame_time = current_time
+                self.last_frame_source = "live"
                 return frame
             except Empty:
                 if current_time - self.last_frame_time > self.idle_timeout:
                     self._start_transition_to_idle()
                     return self.get_next_frame()
                 else:
+                    self.last_frame_source = "repeated_live"
                     return self.last_live_frame
                     
         # === STATE: IDLE ===
@@ -114,8 +117,10 @@ class StreamStateManager:
                 return self.get_next_frame()
                 
             if self.idle_video and self.idle_video.is_valid():
+                self.last_frame_source = "idle"
                 return self.idle_video.get_next_frame()
             else:
+                self.last_frame_source = "repeated_live"
                 return self.last_live_frame
                 
         # === STATE: TRANSITION_TO_IDLE ===
@@ -128,6 +133,7 @@ class StreamStateManager:
             if self.transition_idx < len(self.transition_frames):
                 frame = self.transition_frames[self.transition_idx]
                 self.transition_idx += 1
+                self.last_frame_source = "transition_to_idle"
                 return frame
             else:
                 self.state = StreamState.IDLE
@@ -148,14 +154,18 @@ class StreamStateManager:
                     )
                     self.transition_idx = 0
                 except Empty:
+                    self.last_frame_source = "idle"
                     return self.idle_video.get_next_frame()
             
             if self.transition_idx < len(self.transition_frames):
                 frame = self.transition_frames[self.transition_idx]
                 self.transition_idx += 1
+                self.last_frame_source = "transition_to_live"
                 return frame
             else:
                 self.state = StreamState.LIVE
+                self.last_frame_source = "live"
                 return self._first_live_frame
 
+        self.last_frame_source = "repeated_live"
         return self.last_live_frame

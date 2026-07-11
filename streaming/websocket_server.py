@@ -44,6 +44,10 @@ class WebsocketIngestionServer:
         """Release the connection slot for a session."""
         self._active_connections.pop(session_id, None)
 
+    def has_connection(self, session_id: str) -> bool:
+        """Return whether a session currently owns its ingestion connection."""
+        return session_id in self._active_connections
+
     def unregister_session(self, session_id: str):
         """Unregister an existing session."""
         if session_id in self.active_sessions:

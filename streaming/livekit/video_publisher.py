@@ -26,6 +26,12 @@ class VideoPublisher:
         self.track = None
         self._width = 0
         self._height = 0
+        self._last_capture_at = None
+        self._metrics_started_at = time.monotonic()
+        self._metrics_frames = 0
+        self._metrics_repeated_live_frames = 0
+        self._metrics_max_gap_ms = 0.0
+        self._metrics_max_capture_ms = 0.0
 
     # Publish frames from a raw queue at the target FPS.
     async def publish_from_queue(self, frame_queue):
@@ -88,7 +94,7 @@ class VideoPublisher:
                 _first_frame_logged = True
 
             await self._ensure_track(frame)
-            await self._send_frame(frame)
+            await self._send_frame(frame, getattr(state_manager, "last_frame_source", "unknown"))
 
             # Advance from a fixed deadline so timer jitter cannot accumulate
             # into visible A/V drift during a long tail drain.
@@ -122,7 +128,7 @@ class VideoPublisher:
         _logger.info("[VP-DIAG] publish_track() completed in %.1f ms", _pub_ms)
 
     # Convert and send a frame to the LiveKit video source.
-    async def _send_frame(self, frame: np.ndarray):
+    async def _send_frame(self, frame: np.ndarray, frame_source: str = "live"):
         if frame is None or frame.ndim < 2:
             return
         if self.video_source is None:
@@ -149,7 +155,44 @@ class VideoPublisher:
             rtc.VideoBufferType.RGBA,
             rgba.tobytes(),
         )
+        now = time.monotonic()
+        if self._last_capture_at is not None:
+            gap_ms = (now - self._last_capture_at) * 1000
+            self._metrics_max_gap_ms = max(self._metrics_max_gap_ms, gap_ms)
+            if gap_ms > max(80.0, 2_000.0 / self.fps):
+                _logger.warning(
+                    "VIDEO_PUBLISH_GAP gapMs=%.1f targetFps=%d frameSource=%s",
+                    gap_ms,
+                    self.fps,
+                    frame_source,
+                )
+        self._last_capture_at = now
+
+        capture_started_at = time.monotonic()
         self.video_source.capture_frame(video_frame)
+        capture_ms = (time.monotonic() - capture_started_at) * 1000
+        self._metrics_frames += 1
+        self._metrics_max_capture_ms = max(self._metrics_max_capture_ms, capture_ms)
+        if frame_source == "repeated_live":
+            self._metrics_repeated_live_frames += 1
+
+        elapsed = time.monotonic() - self._metrics_started_at
+        if elapsed >= 5.0:
+            _logger.info(
+                "VIDEO_PUBLISH_METRICS windowMs=%.0f frames=%d effectiveFps=%.1f "
+                "repeatedLiveFrames=%d maxGapMs=%.1f maxCaptureMs=%.1f",
+                elapsed * 1000,
+                self._metrics_frames,
+                self._metrics_frames / elapsed,
+                self._metrics_repeated_live_frames,
+                self._metrics_max_gap_ms,
+                self._metrics_max_capture_ms,
+            )
+            self._metrics_started_at = time.monotonic()
+            self._metrics_frames = 0
+            self._metrics_repeated_live_frames = 0
+            self._metrics_max_gap_ms = 0.0
+            self._metrics_max_capture_ms = 0.0
 
     # Disconnect from the room if still connected.
     async def _cleanup(self):

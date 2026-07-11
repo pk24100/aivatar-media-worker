@@ -1,5 +1,6 @@
 import asyncio
 import contextlib
+import json
 import logging
 import os
 import time
@@ -21,8 +22,9 @@ PREWARM_ROOM_TIMEOUT = 60.0
 WORKER_AUTH_SECRET = os.environ.get("WORKER_AUTH_SECRET", "")
 ALLOWED_WS_ORIGINS = set(o.strip() for o in os.environ.get("ALLOWED_WS_ORIGINS", "").split(",") if o.strip())
 MAX_AUDIO_CHUNK_BYTES = 1_048_576   # 1 MB — 5s @ 48kHz 16-bit stereo PCM
-WS_INACTIVITY_TIMEOUT = 30          # seconds without audio before WS close
-NO_AUDIO_SESSION_TIMEOUT = 300       # 5 minutes without audio before ending session
+WS_INACTIVITY_TIMEOUT = int(os.environ.get("WS_INACTIVITY_TIMEOUT", "45"))
+NO_AUDIO_SESSION_TIMEOUT = int(os.environ.get("NO_AUDIO_SESSION_TIMEOUT", "120"))
+SESSION_IDLE_CHECK_INTERVAL = int(os.environ.get("SESSION_IDLE_CHECK_INTERVAL", "5"))
 BACKEND_INTERNAL_URL = os.environ.get("BACKEND_INTERNAL_URL", "")
 WS_AUDIO_RATE_PER_SEC = 60          # max audio messages/sec (sustained)
 WS_AUDIO_BURST = 200                # token bucket burst capacity
@@ -125,6 +127,37 @@ async def _end_session_via_backend(session_id: str, reason: str = "no_audio_time
                     logger.warning("NO_AUDIO_TIMEOUT session=%s backend end failed status=%d body=%s", session_id, resp.status, body[:200])
     except Exception as exc:
         logger.warning("NO_AUDIO_TIMEOUT session=%s backend end error: %s", session_id, exc)
+
+
+async def _watch_session_idle(session_id: str, session_state: dict) -> None:
+    """End only this session after it has been inactive outside a tail drain."""
+    while True:
+        await asyncio.sleep(SESSION_IDLE_CHECK_INTERVAL)
+        if session_state.get("ending"):
+            return
+        if session_state.get("is_draining"):
+            continue
+
+        elapsed = time.monotonic() - session_state.get("last_activity_time", time.monotonic())
+        if elapsed < NO_AUDIO_SESSION_TIMEOUT:
+            continue
+
+        session_state["ending"] = True
+        logger.info(
+            "SESSION_IDLE_TIMEOUT session=%s elapsed=%.0fs threshold=%ds",
+            session_id,
+            elapsed,
+            NO_AUDIO_SESSION_TIMEOUT,
+        )
+        await session_state["queue"].put({"type": "end_session", "reason": "no_audio_timeout"})
+        await _end_session_via_backend(session_id, "no_audio_timeout")
+
+        websocket = session_state.get("websocket")
+        if websocket is not None:
+            with contextlib.suppress(Exception):
+                await websocket.send_json({"type": "session_ending", "reason": "no_audio_timeout"})
+                await websocket.close(code=1000, reason="Session inactivity timeout")
+        return
 
 
 class PrewarmRoomPool:
@@ -434,6 +467,10 @@ def _track_session_task(session_id, task):
     # Remove session from tracking when the task completes.
     def _cleanup(_task):
         _active_sessions.pop(session_id, None)
+        session_state = ws_server.active_sessions.get(session_id)
+        idle_watcher = session_state.get("idle_watcher") if session_state else None
+        if idle_watcher is not None and idle_watcher is not asyncio.current_task():
+            idle_watcher.cancel()
 
     task.add_done_callback(_cleanup)
 
@@ -697,6 +734,8 @@ async def app_websocket_ingest(request):
     # --- Self-sufficient mode: auto-start if not registered ---
     session_state = ws_server.active_sessions.get(session_id)
     if session_state is None:
+        if claims.get("reconnect") is True:
+            raise web.HTTPConflict(text="Session is not ready for reconnect")
         # Fix 7: JWT auto-start freshness check
         iat = claims.get("iat", 0)
         if time.time() - iat > 120:
@@ -722,12 +761,19 @@ async def app_websocket_ingest(request):
     if session_state is None:
         raise web.HTTPNotFound(text="Unknown session ID")
 
+    if session_state.get("ending"):
+        raise web.HTTPGone(text="Session is ending")
+
     # --- Fix 2: Require non-empty token (fail closed) ---
     provided_token = claims.get("ingestionToken", "")
     expected_token = session_state.get("token")
     if not expected_token or provided_token != expected_token:
-        logger.warning("WS_AUTH_FAIL session=%s reason=invalid_ingestion_token ip=%s", session_id, client_ip)
-        raise web.HTTPUnauthorized(text="Unauthorized: Invalid Token")
+        if provided_token and claims.get("reconnect") is True and not ws_server.has_connection(session_id):
+            session_state["token"] = provided_token
+            logger.info("WS_RECONNECT_TOKEN_ROTATED session=%s ip=%s", session_id, client_ip)
+        else:
+            logger.warning("WS_AUTH_FAIL session=%s reason=invalid_ingestion_token ip=%s", session_id, client_ip)
+            raise web.HTTPUnauthorized(text="Unauthorized: Invalid Token")
 
     # --- Fix 5: Single connection per session ---
     if not ws_server.acquire_connection(session_id):
@@ -741,8 +787,15 @@ async def app_websocket_ingest(request):
     audio_queue = session_state["queue"]
     rate_limiter = AudioRateLimiter(WS_AUDIO_RATE_PER_SEC, WS_AUDIO_BURST, WS_MAX_BYTES_PER_SEC)
 
-    # Track last audio received time for no-audio session timeout
-    session_state["last_audio_time"] = time.monotonic()
+    session_state.setdefault("last_activity_time", time.monotonic())
+    session_state.setdefault("is_draining", False)
+    session_state["connection_lost"] = False
+    session_state["websocket"] = websocket
+    if session_state.get("idle_watcher") is None or session_state["idle_watcher"].done():
+        session_state["idle_watcher"] = asyncio.create_task(
+            _watch_session_idle(session_id, session_state),
+            name=f"idle-watcher-{session_id}",
+        )
 
     logger.info(
         "WS_CONNECT session=%s origin=%s ip=%s handlerMs=%.1f",
@@ -751,22 +804,6 @@ async def app_websocket_ingest(request):
         client_ip,
         (time.monotonic() - request_received_at) * 1000,
     )
-
-    # Background task: end session if no audio for NO_AUDIO_SESSION_TIMEOUT seconds
-    async def _no_audio_watcher():
-        while True:
-            await asyncio.sleep(30)
-            elapsed = time.monotonic() - session_state.get("last_audio_time", time.monotonic())
-            if elapsed >= NO_AUDIO_SESSION_TIMEOUT:
-                logger.warning("NO_AUDIO_TIMEOUT session=%s elapsed=%.0fs threshold=%ds", session_id, elapsed, NO_AUDIO_SESSION_TIMEOUT)
-                await _end_session_via_backend(session_id, "no_audio_timeout")
-                try:
-                    await websocket.close(code=1000, reason="No audio timeout")
-                except Exception:
-                    pass
-                return
-
-    watcher_task = asyncio.create_task(_no_audio_watcher())
 
     try:
         # --- Fix 6: Inactivity timeout ---
@@ -801,17 +838,53 @@ async def app_websocket_ingest(request):
                     await websocket.close(code=1013, reason=f"Rate limit: {reason}")
                     break
 
-                # Update last audio time for no-audio session timeout
-                session_state["last_audio_time"] = time.monotonic()
+                session_state["last_activity_time"] = time.monotonic()
                 await audio_queue.put(message.data)
+            elif message.type == web.WSMsgType.TEXT:
+                try:
+                    control = json.loads(message.data)
+                except json.JSONDecodeError:
+                    await websocket.close(code=1003, reason="Invalid control message")
+                    break
+
+                control_type = control.get("type") if isinstance(control, dict) else None
+                if control_type == "keepalive":
+                    continue
+                if control_type == "end_utterance":
+                    session_state["is_draining"] = True
+                    session_state["last_activity_time"] = time.monotonic()
+                    await audio_queue.put({
+                        "type": "end_utterance",
+                        "utteranceId": control.get("utteranceId"),
+                    })
+                    logger.info("UTTERANCE_END_RECEIVED session=%s", session_id)
+                    continue
+                if control_type == "end_session":
+                    session_state["ending"] = True
+                    await audio_queue.put({"type": "end_session", "reason": "client_requested"})
+                    logger.info("SESSION_END_RECEIVED session=%s", session_id)
+                    break
+
+                await websocket.close(code=1003, reason="Unsupported control message")
+                break
             elif message.type == web.WSMsgType.ERROR:
                 logger.warning("WS_ERROR session=%s ip=%s", session_id, client_ip)
                 break
     finally:
-        watcher_task.cancel()
+        session_task = _active_sessions.get(session_id)
         ws_server.release_connection(session_id)
-        await audio_queue.put(None)
-        logger.info("WS_DISCONNECT session=%s ip=%s", session_id, client_ip)
+        if session_state.get("websocket") is websocket:
+            session_state["websocket"] = None
+
+        if session_state.get("ending"):
+            if session_task is not None:
+                with contextlib.suppress(asyncio.CancelledError, Exception):
+                    await session_task
+            logger.info("WS_SESSION_ENDED session=%s ip=%s", session_id, client_ip)
+        else:
+            # Keep the pipeline alive while the relay performs its two reconnect attempts.
+            session_state["connection_lost"] = True
+            logger.info("WS_CONNECTION_LOST session=%s ip=%s", session_id, client_ip)
 
     return websocket
 

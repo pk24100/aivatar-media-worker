@@ -47,10 +47,10 @@ app = modal.App("aivatar-worker", image=image)
 
 
 @app.cls(
-    gpu="L4",
+    gpu="L40S",
     min_containers=1,
     scaledown_window=15,
-    timeout=600,
+    timeout=1800,
     #volumes={"/models": models_volume},
     secrets=[
         modal.Secret.from_name("huggingface-secret"),
