@@ -4,6 +4,7 @@ import contextlib
 import logging
 import os
 import time
+from urllib.parse import urlsplit, urlunsplit
 
 import numpy as np
 
@@ -18,6 +19,194 @@ from streaming.state_manager import StreamStateManager
 from streaming.idle_video import IdleVideoLoop
 
 _logger = logging.getLogger("stream_processor")
+RTC_STATS_INTERVAL_SECONDS = float(os.getenv("LIVEKIT_RTC_STATS_INTERVAL_SECONDS", "0"))
+
+
+def _short_url(value: str) -> str:
+    """Remove query strings and fragments, which can contain long credentials."""
+    try:
+        parsed = urlsplit(value)
+        return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+    except ValueError:
+        return value.split("?", 1)[0].split("#", 1)[0]
+
+
+def _short_stat_id(value: str) -> str:
+    return str(value)[-8:] if value else "unknown"
+
+
+def _rtc_stat_id(entry) -> str:
+    for field in (
+        "codec",
+        "inbound_rtp",
+        "outbound_rtp",
+        "remote_inbound_rtp",
+        "remote_outbound_rtp",
+        "media_source",
+        "media_playout",
+        "peer_connection",
+        "data_channel",
+        "transport",
+        "candidate_pair",
+        "local_candidate",
+        "remote_candidate",
+        "certificate",
+        "stream",
+        "track",
+    ):
+        if entry.HasField(field):
+            return getattr(entry, field).rtc.id
+    return ""
+
+
+async def _publisher_rtc_metrics_loop(room, room_name: str, session_id: str) -> None:
+    """Log publisher transport health without emitting a record for every frame."""
+    previous_frames = {}
+    previous_bytes = {}
+
+    while True:
+        await asyncio.sleep(RTC_STATS_INTERVAL_SECONDS)
+        if room.connection_state == rtc.ConnectionState.CONN_DISCONNECTED:
+            return
+
+        try:
+            publisher_stats = (await room.get_rtc_stats()).publisher_stats
+        except Exception as exc:
+            _logger.warning(
+                "LIVEKIT_PUBLISHER_RTC_FAILED session=%s room=%s errorType=%s error=%s",
+                session_id,
+                room_name,
+                type(exc).__name__,
+                exc,
+            )
+            continue
+
+        entries_by_id = {
+            _rtc_stat_id(entry): entry
+            for entry in publisher_stats
+            if _rtc_stat_id(entry)
+        }
+        outbound = []
+        transports = []
+        candidates = []
+
+        for entry in publisher_stats:
+            if entry.HasField("outbound_rtp"):
+                payload = entry.outbound_rtp
+                stats = payload.outbound
+                stats_key = payload.rtc.id or f"outbound-{len(outbound)}"
+                previous = previous_frames.get(stats_key)
+                previous_frames[stats_key] = stats.frames_sent
+                frame_delta = None if previous is None else stats.frames_sent - previous
+                outbound.append(
+                    "stream=%d framesSent=%d framesDelta=%s framesEncoded=%d fps=%.1f nack=%d pli=%d"
+                    % (
+                        len(outbound),
+                        stats.frames_sent,
+                        "initial" if frame_delta is None else frame_delta,
+                        stats.frames_encoded,
+                        stats.frames_per_second,
+                        stats.nack_count,
+                        stats.pli_count,
+                    )
+                )
+            elif entry.HasField("transport"):
+                payload = entry.transport
+                stats = payload.transport
+                stats_key = payload.rtc.id or f"transport-{len(transports)}"
+                previous = previous_bytes.get(stats_key)
+                previous_bytes[stats_key] = stats.bytes_sent
+                byte_delta = None if previous is None else stats.bytes_sent - previous
+                transports.append(
+                    "transport=%d ice=%s dtls=%s packetsSent=%d bytesSent=%d bytesDelta=%s selectedPair=%s"
+                    % (
+                        len(transports),
+                        stats.ice_state,
+                        stats.dtls_state,
+                        stats.packets_sent,
+                        stats.bytes_sent,
+                        "initial" if byte_delta is None else byte_delta,
+                        _short_stat_id(stats.selected_candidate_pair_id),
+                    )
+                )
+                pair_entry = entries_by_id.get(stats.selected_candidate_pair_id)
+                if pair_entry is None or not pair_entry.HasField("candidate_pair"):
+                    continue
+                pair = pair_entry.candidate_pair.candidate_pair
+                local_entry = entries_by_id.get(pair.local_candidate_id)
+                remote_entry = entries_by_id.get(pair.remote_candidate_id)
+                local = local_entry.local_candidate.candidate if local_entry and local_entry.HasField("local_candidate") else None
+                remote = remote_entry.remote_candidate.candidate if remote_entry and remote_entry.HasField("remote_candidate") else None
+                candidates.append(
+                    "selectedPair=%s state=%s local=%s/%s remote=%s/%s rttMs=%.1f"
+                    % (
+                        _short_stat_id(stats.selected_candidate_pair_id),
+                        pair.state,
+                        local.protocol if local else "unknown",
+                        local.candidate_type if local else "unknown",
+                        remote.protocol if remote else "unknown",
+                        remote.candidate_type if remote else "unknown",
+                        pair.current_round_trip_time * 1000,
+                    )
+                )
+            elif entry.HasField("candidate_pair"):
+                pair = entry.candidate_pair.candidate_pair
+                candidates.append(
+                    "pair=%d state=%s rttMs=%.1f outgoingBitrate=%d"
+                    % (
+                        len(candidates),
+                        pair.state,
+                        pair.current_round_trip_time * 1000,
+                        pair.available_outgoing_bitrate,
+                    )
+                )
+            elif entry.HasField("local_candidate"):
+                candidate = entry.local_candidate.candidate
+                candidates.append(
+                    "local=%s/%s relay=%s"
+                    % (
+                        candidate.protocol,
+                        candidate.candidate_type,
+                        candidate.relay_protocol or "none",
+                    )
+                )
+            elif entry.HasField("remote_candidate"):
+                candidate = entry.remote_candidate.candidate
+                candidates.append(
+                    "remote=%s/%s relay=%s"
+                    % (
+                        candidate.protocol,
+                        candidate.candidate_type,
+                        candidate.relay_protocol or "none",
+                    )
+                )
+
+        if not outbound and not transports:
+            continue
+
+        _logger.info(
+            "LIVEKIT_PUBLISHER_RTC session=%s room=%s outbound=[%s] transport=[%s] candidate=[%s]",
+            session_id,
+            room_name,
+            "; ".join(outbound) or "none",
+            "; ".join(transports) or "none",
+            "; ".join(candidates) or "none",
+        )
+
+
+def _log_rtc_metrics_task_failure(task, session_id: str, room_name: str) -> None:
+    if task.cancelled():
+        return
+    error = task.exception()
+    if error is not None:
+        _logger.error(
+            "LIVEKIT_PUBLISHER_RTC_TASK_FAILED session=%s room=%s errorType=%s error=%s",
+            session_id,
+            room_name,
+            type(error).__name__,
+            error,
+            exc_info=(type(error), error, error.__traceback__),
+        )
 
 
 def _decode_raw_pcm(audio_bytes: bytes, num_channels: int) -> np.ndarray:
@@ -165,92 +354,6 @@ async def _run_streaming_session_native(
         os.environ.get("MODAL_RUNTIME", "unset"),
     )
 
-    # --- Network diagnostics (non-blocking, max 2s total) ---
-    # UDP to LiveKit's IP range is confirmed blocked (error 101/ENETUNREACH)
-    # from logs7.txt ICE DEBUG logs. These tests are kept as quick sanity
-    # checks with short timeouts so they don't delay room.connect().
-    import socket as _sock
-    import struct as _struct
-    import urllib.parse as _urlparse
-
-    # 1. STUN sanity check (UDP to Google STUN — tests general UDP egress)
-    try:
-        _stun_host = "stun.l.google.com"
-        _stun_port = 19302
-        _stun_req = _struct.pack("!HHI12s", 0x0001, 0, 0x2112A442, b"\x00" * 12)
-        _stun_sock = _sock.socket(_sock.AF_INET, _sock.SOCK_DGRAM)
-        _stun_sock.setblocking(False)
-        _stun_sock.sendto(_stun_req, (_stun_host, _stun_port))
-        _loop = asyncio.get_event_loop()
-        _stun_resp, _stun_addr = await asyncio.wait_for(
-            _loop.sock_recvfrom(_stun_sock, 1024), timeout=1.0
-        )
-        _stun_sock.close()
-        _logger.info("[NATIVE-DIAG] STUN sanity check (Google): SUCCESS (response from %s, %d bytes)", _stun_addr, len(_stun_resp))
-    except Exception as _stun_exc:
-        _logger.warning("[NATIVE-DIAG] STUN sanity check (Google): FAILED — %s", _stun_exc)
-        try:
-            _stun_sock.close()
-        except Exception:
-            pass
-
-    # 2. Resolve LiveKit server and test TCP connectivity (quick, 1s timeout)
-    try:
-        _lk_parsed = _urlparse.urlparse(livekit_url)
-        _lk_host = _lk_parsed.hostname
-        _lk_port = _lk_parsed.port or (443 if _lk_parsed.scheme == "wss" else 80)
-        _lk_ips = _sock.getaddrinfo(_lk_host, None, _sock.AF_INET)
-        _lk_ip = _lk_ips[0][4][0] if _lk_ips else None
-        _logger.info("[NATIVE-DIAG] LiveKit server: host=%s resolved_ip=%s port=%s", _lk_host, _lk_ip, _lk_port)
-
-        # 2a. TCP connectivity test (quick, 1s timeout)
-        try:
-            _tcp_sock = _sock.socket(_sock.AF_INET, _sock.SOCK_STREAM)
-            _tcp_sock.setblocking(False)
-            _tcp_t0 = time.monotonic()
-            await asyncio.wait_for(
-                asyncio.get_event_loop().sock_connect(_tcp_sock, (_lk_host, _lk_port)),
-                timeout=1.0,
-            )
-            _tcp_ms = round((time.monotonic() - _tcp_t0) * 1000, 1)
-            _logger.info("[NATIVE-DIAG] TCP to LiveKit %s:%d: SUCCESS in %.1fms", _lk_host, _lk_port, _tcp_ms)
-            _tcp_sock.close()
-        except Exception as _tcp_exc:
-            _logger.warning("[NATIVE-DIAG] TCP to LiveKit %s:%d: FAILED — %s", _lk_host, _lk_port, _tcp_exc)
-            try:
-                _tcp_sock.close()
-            except Exception:
-                pass
-
-        # 2b. UDP tests — fire-and-forget (don't block room.connect())
-        # UDP to LiveKit's IP range (161.115.180.x) is confirmed blocked
-        # via error 101 in ICE DEBUG logs. Running these as background tasks
-        # so they don't add 6s delay to the connection.
-        if _lk_ip:
-            async def _bg_udp_test(ip, port, label):
-                try:
-                    _udp_sock = _sock.socket(_sock.AF_INET, _sock.SOCK_DGRAM)
-                    _udp_sock.setblocking(False)
-                    _stun_req = _struct.pack("!HHI12s", 0x0001, 0, 0x2112A442, b"\x00" * 12)
-                    _udp_sock.sendto(_stun_req, (ip, port))
-                    _udp_t0 = time.monotonic()
-                    _udp_resp, _udp_addr = await asyncio.wait_for(
-                        asyncio.get_event_loop().sock_recvfrom(_udp_sock, 1024), timeout=3.0
-                    )
-                    _udp_ms = round((time.monotonic() - _udp_t0) * 1000, 1)
-                    _logger.info("[NATIVE-DIAG] UDP/STUN to LiveKit %s:%d: SUCCESS in %.1fms", ip, port, _udp_ms)
-                except Exception as _udp_exc:
-                    _logger.warning("[NATIVE-DIAG] UDP/STUN to LiveKit %s:%d: FAILED — %s", ip, port, _udp_exc)
-                finally:
-                    try:
-                        _udp_sock.close()
-                    except Exception:
-                        pass
-            asyncio.create_task(_bg_udp_test(_lk_ip, 3478, "TURN"))
-            asyncio.create_task(_bg_udp_test(_lk_ip, 443, "media"))
-    except Exception as _resolve_exc:
-        _logger.warning("[NATIVE-DIAG] LiveKit server resolution failed: %s", _resolve_exc)
-
     # Capture every observable event for root-cause diagnosis
     _diag_events = []
     _diag_t0 = time.monotonic()
@@ -263,27 +366,75 @@ async def _run_streaming_session_native(
     def _pub_sid(pub):
         return getattr(pub, "sid", getattr(pub, "track_sid", "unknown"))
 
-    _logger.info("Connecting to LiveKit room=%s url=%s session=%s", room_name, livekit_url, session_id)
+    _logger.info("Connecting to LiveKit room=%s url=%s session=%s", room_name, _short_url(livekit_url), session_id)
 
     max_retries = 3
     last_error = None
     room = preconnected_room
-    if room is not None:
-        @room.on("connection_quality_changed")
-        def on_quality_changed(quality):
-            _diag("quality_changed", quality=str(quality))
 
-        @room.on("participant_connected")
+    def _bind_room_diagnostics(target_room):
+        @target_room.on("connected")
+        def on_connected(*_args):
+            _diag("connected", state=str(target_room.connection_state))
+
+        @target_room.on("disconnected")
+        def on_disconnected(*args):
+            _diag(
+                "disconnected",
+                state=str(target_room.connection_state),
+                reason=str(args[0]) if args else None,
+            )
+
+        @target_room.on("connection_state_changed")
+        def on_connection_state_changed(state):
+            _diag("connection_state_changed", state=str(state))
+
+        @target_room.on("connection_quality_changed")
+        def on_quality_changed(participant, quality):
+            _diag(
+                "quality_changed",
+                participant=participant.identity,
+                quality=str(quality),
+            )
+
+        @target_room.on("reconnecting")
+        def on_reconnecting(*_args):
+            _diag("reconnecting")
+
+        @target_room.on("reconnected")
+        def on_reconnected(*_args):
+            _diag("reconnected", state=str(target_room.connection_state))
+
+        @target_room.on("track_published")
+        def on_track_published(pub, participant):
+            _diag("track_published", sid=_pub_sid(pub), participant=participant.identity)
+
+        @target_room.on("track_unpublished")
+        def on_track_unpublished(pub, participant):
+            _diag("track_unpublished", sid=_pub_sid(pub), participant=participant.identity)
+
+        @target_room.on("track_subscribed")
+        def on_track_subscribed(track, pub, participant):
+            _diag("track_subscribed", sid=_pub_sid(pub), kind=track.kind, participant=participant.identity)
+
+        @target_room.on("track_subscription_failed")
+        def on_track_subscription_failed(track_sid, participant):
+            _diag("track_subscription_failed", sid=track_sid, participant=participant.identity)
+
+        @target_room.on("participant_connected")
         def on_participant_connected(participant):
             _diag("participant_connected", identity=participant.identity)
 
-        @room.on("participant_disconnected")
+        @target_room.on("participant_disconnected")
         def on_participant_disconnected(participant):
             _diag("participant_disconnected", identity=participant.identity)
 
-        @room.on("local_track_published")
-        def on_local_track_published(pub):
-            _diag("local_track_published", sid=pub.sid, kind=pub.kind)
+        @target_room.on("local_track_published")
+        def on_local_track_published(pub, *_args):
+            _diag("local_track_published", sid=_pub_sid(pub), kind=pub.kind)
+
+    if room is not None:
+        _bind_room_diagnostics(room)
 
         _logger.info(
             "Reusing pre-connected LiveKit room=%s session=%s connection_state=%s local_participant_identity=%s",
@@ -307,58 +458,11 @@ async def _run_streaming_session_native(
                 room = None
 
             room = rtc.Room()
-
-            @room.on("connected")
-            def on_connected():
-                _diag("connected")
-
-            @room.on("disconnected")
-            def on_disconnected():
-                _diag("disconnected", state=str(room.connection_state))
-
-            @room.on("connection_quality_changed")
-            def on_quality_changed(quality):
-                _diag("quality_changed", quality=str(quality))
-
-            @room.on("reconnecting")
-            def on_reconnecting():
-                _diag("reconnecting")
-
-            @room.on("reconnected")
-            def on_reconnected():
-                _diag("reconnected")
-
-            @room.on("track_published")
-            def on_track_published(pub, participant):
-                _diag("track_published", sid=_pub_sid(pub))
-
-            @room.on("track_unpublished")
-            def on_track_unpublished(pub, participant):
-                _diag("track_unpublished", sid=_pub_sid(pub))
-
-            @room.on("track_subscribed")
-            def on_track_subscribed(track, pub, participant):
-                _diag("track_subscribed", sid=_pub_sid(pub), kind=track.kind)
-
-            @room.on("track_subscription_failed")
-            def on_track_subscription_failed(track_sid, participant):
-                _diag("track_subscription_failed", sid=track_sid)
-
-            @room.on("participant_connected")
-            def on_participant_connected(participant):
-                _diag("participant_connected", identity=participant.identity)
-
-            @room.on("participant_disconnected")
-            def on_participant_disconnected(participant):
-                _diag("participant_disconnected", identity=participant.identity)
-
-            @room.on("local_track_published")
-            def on_local_track_published(pub):
-                _diag("local_track_published", sid=pub.sid, kind=pub.kind)
+            _bind_room_diagnostics(room)
 
             _logger.info(
                 "[NATIVE-DIAG] room.connect() attempt %d/%d starting | RoomOptions: auto_subscribe=True single_peer_connection=True connect_timeout=45.0 | url=%s",
-                attempt + 1, max_retries, livekit_url,
+                attempt + 1, max_retries, _short_url(livekit_url),
             )
             conn_t0 = time.monotonic()
             try:
@@ -411,6 +515,7 @@ async def _run_streaming_session_native(
     publish_task = None
     audio_publish_task = None
     audio_publisher = None
+    rtc_metrics_task = None
     try:
         # Create FlashHead engine with pipeline and avatar image
         if not source_image:
@@ -463,6 +568,15 @@ async def _run_streaming_session_native(
         if ingestion_method in ("websocket", "sip"):
             audio_publish_task = asyncio.create_task(
                 _audio_publish_loop(engine, audio_publisher)
+            )
+
+        if RTC_STATS_INTERVAL_SECONDS > 0:
+            rtc_metrics_task = asyncio.create_task(
+                _publisher_rtc_metrics_loop(room, room_name, session_id),
+                name=f"rtc-metrics-{session_id}",
+            )
+            rtc_metrics_task.add_done_callback(
+                lambda task: _log_rtc_metrics_task_failure(task, session_id, room_name)
             )
 
         if ingestion_method == "websocket":
@@ -550,6 +664,11 @@ async def _run_streaming_session_native(
         else:
             await _drain_utterance(engine, session_id, {"is_draining": False})
     finally:
+        if rtc_metrics_task is not None:
+            rtc_metrics_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError, Exception):
+                await rtc_metrics_task
+
         # Enqueue the audio sentinel BEFORE closing the engine so the
         # _audio_publish_loop can drain any remaining audio and then exit
         # cleanly.  Without this, the task blocks forever on queue.get().

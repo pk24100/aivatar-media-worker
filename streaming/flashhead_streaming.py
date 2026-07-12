@@ -115,6 +115,11 @@ class FlashHeadStreamingEngine:
         self.audio_queue = Queue()
         self._prepared = False
         self._temp_avatar_path = None
+        self._metrics_started_at = time.monotonic()
+        self._metrics_input_samples = 0
+        self._metrics_slices = 0
+        self._metrics_inference_total_ms = 0.0
+        self._metrics_inference_max_ms = 0.0
 
         if avatar_image_path and auto_prepare_avatar:
             self.prepare_avatar(avatar_image_path)
@@ -208,10 +213,6 @@ class FlashHeadStreamingEngine:
             # Stamp the start time BEFORE inference so the wait period
             # overlaps with inference time.
             self._last_slice_time = now
-            logger.info(
-                "[ENGINE] Processing audio slice: pending=%d samples, slice_samples=%d, frame_queue=%d",
-                len(self.pending_audio), self.slice_samples, self.frame_queue.qsize(),
-            )
             human_speech_array = np.array(
                 [self.pending_audio.popleft() for _ in range(self.slice_samples)],
                 dtype=np.float32,
@@ -231,10 +232,42 @@ class FlashHeadStreamingEngine:
             for i in range(video.shape[0]):
                 self.frame_queue.put_nowait(video[i].cpu().numpy().astype(np.uint8))
             self.audio_queue.put_nowait(human_speech_array)
-            logger.info(
-                "[ENGINE] Slice done: inference=%.1fms, frames=%d, frame_queue=%d, audio_queue=%d",
-                _infer_ms, _n_frames, self.frame_queue.qsize(), self.audio_queue.qsize(),
-            )
+            self._metrics_slices += 1
+            self._metrics_inference_total_ms += _infer_ms
+            self._metrics_inference_max_ms = max(self._metrics_inference_max_ms, _infer_ms)
+            self._log_metrics()
+
+    def _log_metrics(self, force: bool = False):
+        elapsed = time.monotonic() - self._metrics_started_at
+        if not force and elapsed < 5.0:
+            return
+        if elapsed <= 0:
+            return
+
+        average_inference_ms = (
+            self._metrics_inference_total_ms / self._metrics_slices
+            if self._metrics_slices else 0.0
+        )
+        logger.info(
+            "ENGINE_METRICS windowMs=%.0f inputSamples=%d inputRateHz=%.0f "
+            "pendingSamples=%d pendingSeconds=%.2f slices=%d avgInferenceMs=%.1f "
+            "maxInferenceMs=%.1f frameQueue=%d audioQueue=%d",
+            elapsed * 1000,
+            self._metrics_input_samples,
+            self._metrics_input_samples / elapsed,
+            len(self.pending_audio),
+            len(self.pending_audio) / float(self.sample_rate),
+            self._metrics_slices,
+            average_inference_ms,
+            self._metrics_inference_max_ms,
+            self.frame_queue.qsize(),
+            self.audio_queue.qsize(),
+        )
+        self._metrics_started_at = time.monotonic()
+        self._metrics_input_samples = 0
+        self._metrics_slices = 0
+        self._metrics_inference_total_ms = 0.0
+        self._metrics_inference_max_ms = 0.0
 
     # Feed an audio chunk into the engine and trigger frame generation.
     def run_chunk(self, audio_data: np.ndarray):
@@ -242,10 +275,8 @@ class FlashHeadStreamingEngine:
             raise RuntimeError("Avatar not prepared. Call prepare_avatar() first.")
         audio_array = np.asarray(audio_data, dtype=np.float32).reshape(-1)
         self.pending_audio.extend(audio_array.tolist())
-        logger.info(
-            "[ENGINE] run_chunk: received=%d samples, pending=%d/%d (need %d for slice)",
-            len(audio_array), len(self.pending_audio), self.slice_samples, self.slice_samples,
-        )
+        self._metrics_input_samples += len(audio_array)
+        self._log_metrics()
         self._process_available_audio()
 
     # Pad and process one final real-time slice. Returns whether audio remains.
@@ -276,6 +307,7 @@ class FlashHeadStreamingEngine:
 
     # Clear queues and clean up temporary avatar files.
     def close(self):
+        self._log_metrics(force=True)
         self.pending_audio.clear()
         self.audio_context.clear()
         while not self.frame_queue.empty():

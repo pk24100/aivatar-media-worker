@@ -16,7 +16,30 @@ No Modal Volume or pre-download script needed.
 """
 
 import os
+import logging
+import re
 import modal
+
+
+class _ShortenLiveKitWebSocketUrlFilter(logging.Filter):
+    """Keep LiveKit signaling logs useful without exposing long query payloads."""
+
+    _url_pattern = re.compile(r"\bwss?://[^\s?]+(?:\?[^\s]*)?")
+
+    def filter(self, record):
+        if not record.name.startswith("livekit"):
+            return True
+
+        message = record.getMessage()
+
+        def _shorten(match):
+            return match.group(0).split("?", 1)[0]
+
+        shortened = self._url_pattern.sub(_shorten, message)
+        if shortened != message:
+            record.msg = shortened
+            record.args = ()
+        return True
 
 image = (
     modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.02-py3")
@@ -219,7 +242,6 @@ class Worker:
         import sys
         sys.path.insert(0, "/app")
         import asyncio
-        import logging
         import threading
         from aiohttp import web
         from app_factory import build_app
@@ -233,6 +255,8 @@ class Worker:
             stream=sys.stdout,
             force=True,
         )
+        for handler in logging.getLogger().handlers:
+            handler.addFilter(_ShortenLiveKitWebSocketUrlFilter())
         logger = logging.getLogger("modal_app")
 
         def _run():

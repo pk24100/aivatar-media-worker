@@ -207,14 +207,10 @@ class PrewarmRoomPool:
         # clean it up on idle timeout.
         async def _bg_disconnect():
             try:
-                _t0 = time.monotonic()
-                logger.info("[prewarm] Starting fire-and-forget disconnect for %s", room_name)
                 await entry["room"].disconnect()
-                logger.info("[prewarm] Fire-and-forget disconnect completed for %s in %.1fms", room_name, (time.monotonic() - _t0) * 1000)
             except Exception as e:
                 logger.warning("[prewarm] Fire-and-forget disconnect failed for %s: %s", room_name, e)
         asyncio.create_task(_bg_disconnect())
-        logger.info("[prewarm] Released room %s (disconnect fire-and-forget)", room_name)
 
     async def cleanup_expired(self):
         now = time.monotonic()
