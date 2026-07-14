@@ -1,0 +1,58 @@
+# Full standalone Dockerfile for the Vast.ai idle-video generator.
+#
+# Unlike Dockerfile.idle-generator (which is a thin overlay on the streaming
+# worker base image), this Dockerfile builds from the NGC PyTorch base and
+# bakes in BOTH the FlashHead Lite weights (~6 GB) and wav2vec2 (~360 MB).
+#
+# Vast Serverless has no Hugging Face model cache (unlike RunPod) and no
+# .run_commands() build step (unlike Modal), so the model weights must be
+# present inside the image at /app/models/.
+#
+# Build prerequisites:
+#   1. Run scripts/download_models.sh with DOWNLOAD_FLASHHEAD=1 on the build
+#      host so that models/SoulX-FlashHead-1_3B/ and models/wav2vec2-base-960h/
+#      exist in the build context.
+#   2. Remove models/SoulX-FlashHead-1_3B/Model_Pro if present (pro checkpoint
+#      not needed for Lite inference, saves ~4 GB).
+#
+# Build:
+#   cd aivatar-media-worker
+#   docker buildx build --platform linux/amd64 \
+#     -f Dockerfile.idle-generator-full \
+#     -t pk24100/aivatar-idle-video-generator:v1 \
+#     --push .
+
+FROM nvcr.io/nvidia/pytorch:26.02-py3
+
+# NGC PyTorch 26.02 ships CUDA 13.1.1 with a matched torch + triton + transformer-engine.
+# Do NOT override torch with the public wheel index (e.g. cu128) -- doing so installs a
+# Triton that has no PTX table for CUDA 13.1 and breaks torch.compile() at runtime with
+# "Triton only support CUDA 10.0 or higher, but got CUDA version: 13.1".
+
+RUN apt-get update && apt-get install -y \
+    git git-lfs ffmpeg libsndfile1 wget ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt /app/requirements.txt
+# Install ninja first (build dep for flash-attn). Then install flash-attn against the
+# image's bundled torch (no --index-url, no version pin). flash-attn install is best-
+# effort: SoulX-FlashHead falls back to PyTorch SDPA if flash-attn isn't importable.
+RUN pip3 install --upgrade pip && \
+    pip3 install ninja && \
+    (pip3 install flash-attn --no-build-isolation || \
+     echo "flash-attn install failed; falling back to PyTorch SDPA at runtime") && \
+    pip3 install --no-cache-dir -r /app/requirements.txt
+
+# Copy FlashHead source package (Python code, configs, not weights)
+COPY SoulX-FlashHead /app/SoulX-FlashHead
+
+# Bake model weights into the image (~6.4 GB total)
+COPY models/SoulX-FlashHead-1_3B /app/models/SoulX-FlashHead-1_3B
+COPY models/wav2vec2-base-960h /app/models/wav2vec2-base-960h
+
+# Copy the idle generator entrypoint
+COPY idle_generator.py /app/idle_generator.py
+
+CMD ["python3", "-u", "idle_generator.py"]

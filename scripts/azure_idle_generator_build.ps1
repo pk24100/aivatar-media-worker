@@ -1,20 +1,40 @@
-# Azure Slim Docker Builder Setup Script
-# This script automates the Azure VM setup and remote Linux preparation steps for building
-# the slim AiVatar media worker image (wav2vec2 baked, FlashHead loaded from RunPod cached HF model).
-# Usage: Fill in the configuration values below and run: .\azure_slim_build_vm_setup.ps1
+# Azure Idle Generator Full Docker Build Script
+#
+# Builds the Vast.ai idle-video generator image with FlashHead Lite weights
+# (~6 GB) and wav2vec2 (~360 MB) baked directly into the Docker image.
+#
+# Vast Serverless has no Hugging Face model cache (unlike RunPod) and no
+# .run_commands() build step (unlike Modal), so model weights MUST be baked
+# into the image. This script downloads both models on the Azure VM, then
+# builds and pushes the full image using Dockerfile.idle-generator-full.
+#
+# Two modes:
+#   1. Fully automated: set $env:DOCKER_HUB_USER and $env:DOCKER_HUB_TOKEN
+#      before running. The script auto-logs in, builds, pushes, and offers
+#      to delete the resource group.
+#   2. Interactive (default): uses device-code login and prints the manual
+#      build command for you to run over SSH.
+#
+# Usage:
+#   .\azure_idle_generator_build.ps1
+#
+# Or fully automated:
+#   $env:DOCKER_HUB_USER = "pk24100"
+#   $env:DOCKER_HUB_TOKEN = "dckr_pat_xxx"
+#   .\azure_idle_generator_build.ps1
 
 # ===============================
 # CONFIGURATION - Fill these in
 # ===============================
 $Location             = "australiaeast"
-$ResourceGroup        = "aivatar-slim-builder-rg"
-$VmName               = "aivatar-slim-builder-vm"
-$NsgName              = "aivatar-slim-builder-nsg"
-$PublicIpName         = "aivatar-slim-builder-pip"
+$ResourceGroup        = "aivatar-idle-gen-builder-rg"
+$VmName               = "aivatar-idle-gen-builder-vm"
+$NsgName              = "aivatar-idle-gen-builder-nsg"
+$PublicIpName         = "aivatar-idle-gen-builder-pip"
 $AdminUser            = "azureuser"
 $VmSize               = "Standard_D2s_v3"
 $VmImage              = "Ubuntu2204"
-$OsDiskGb             = 64
+$OsDiskGb             = 80
 $StorageSku           = "Premium_LRS"
 $SwapSizeGb           = 4
 $SshPrivateKeyPath    = "$HOME\.ssh\id_rsa"
@@ -23,8 +43,8 @@ $RepoUrl              = "https://github.com/pk24100/aivatar-media-worker.git"
 $RepoBranch           = "test2"
 $RepoDirectoryName    = "aivatar-media-worker"
 $WorkRoot             = "/home/$AdminUser/work"
-$ProjectSubdirectory  = "aivatar-media-worker"
-$DockerImageTag       = "pk24100/aivatar-worker:flashhead-lite-v3"
+$DockerImageTag       = "pk24100/aivatar-idle-video-generator:v1"
+$Dockerfile           = "Dockerfile.idle-generator-full"
 
 # ===============================
 # DO NOT EDIT BELOW THIS LINE
@@ -140,13 +160,23 @@ if ($RepoUrl -eq "https://github.com/<owner>/<repo>.git" -or $RepoDirectoryName 
     throw "Set both `$RepoUrl and `$RepoDirectoryName before running this script."
 }
 
-Write-Host "=== Azure Slim Docker Builder Setup ===" -ForegroundColor Cyan
+$AutoLogin = $false
+if ($env:DOCKER_HUB_USER -and $env:DOCKER_HUB_TOKEN) {
+    $AutoLogin = $true
+    Write-Host "Docker Hub credentials detected - fully automated mode enabled." -ForegroundColor Green
+}
+
+Write-Host "=== Azure Idle Generator Full Docker Builder ===" -ForegroundColor Cyan
+Write-Host "  Image tag:    $DockerImageTag" -ForegroundColor White
+Write-Host "  Dockerfile:   $Dockerfile" -ForegroundColor White
+Write-Host "  FlashHead:    BAKED into image (~6 GB)" -ForegroundColor White
+Write-Host "  wav2vec2:     BAKED into image (~360 MB)" -ForegroundColor White
 Write-Host ""
 
 Write-Host "Step 1: Creating resource group '$ResourceGroup' in '$Location'..." -ForegroundColor Yellow
 Run-Az -Arguments @("group", "create", "--name", $ResourceGroup, "--location", $Location, "--output", "table")
 
-Write-Host "Step 2: Creating VM '$VmName'..." -ForegroundColor Yellow
+Write-Host "Step 2: Creating VM '$VmName' (D2s_v3, ${OsDiskGb}GB disk)..." -ForegroundColor Yellow
 Run-Az -Arguments @(
     "vm", "create",
     "--resource-group", $ResourceGroup,
@@ -192,7 +222,7 @@ Write-Host "Step 5: Waiting for SSH to become available..." -ForegroundColor Yel
 Wait-ForSsh -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath
 Write-Host "  SSH is ready." -ForegroundColor Green
 
-Write-Host "Step 6-13: Running remote Linux setup, Docker Buildx setup, and wav2vec2-only model download..." -ForegroundColor Yellow
+Write-Host "Step 6-13: Running remote Linux setup, Docker Buildx, and model downloads (FlashHead + wav2vec2)..." -ForegroundColor Yellow
 $RemoteScript = @"
 set -euo pipefail
 
@@ -253,12 +283,19 @@ else
 fi
 sg docker -c 'docker buildx inspect --bootstrap'
 
+# Download BOTH FlashHead (~6 GB) and wav2vec2 (~360 MB)
 sudo python3 -m pip install -U "huggingface_hub[cli]"
 chmod +x scripts/download_models.sh
-./scripts/download_models.sh
-if [ -d models/wav2vec2-base-960h ]; then
-  du -sh models/wav2vec2-base-960h
-fi
+DOWNLOAD_FLASHHEAD=1 ./scripts/download_models.sh
+
+# Remove pro checkpoint if present (not needed for Lite inference, saves ~4 GB)
+rm -rf models/SoulX-FlashHead-1_3B/Model_Pro || true
+
+echo ""
+echo "=== Model sizes ==="
+du -sh models/SoulX-FlashHead-1_3B
+du -sh models/wav2vec2-base-960h
+echo ""
 
 echo "REMOTE_PROJECT_DIR=$WorkRoot/$RepoDirectoryName"
 echo "BUILDX_BUILDER=aivatar-builder"
@@ -268,10 +305,32 @@ Invoke-RemoteScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPriv
 Write-Host ""
 Write-Host "=== Setup Complete ===" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Starting remote Docker login (device-code flow)..." -ForegroundColor Yellow
-Write-Host "Complete the Docker device-code login in your browser when prompted." -ForegroundColor White
 
-$BuildScript = @"
+if ($AutoLogin) {
+    Write-Host "Step 14: Auto Docker login and build/push..." -ForegroundColor Yellow
+    $BuildScript = @"
+set -euo pipefail
+
+cd "$WorkRoot/$RepoDirectoryName"
+
+sg docker -c 'docker version'
+sg docker -c 'docker buildx use aivatar-builder'
+echo '$env:DOCKER_HUB_TOKEN' | sg docker -c 'docker login -u $env:DOCKER_HUB_USER --password-stdin'
+sg docker -c 'docker buildx build --platform linux/amd64 -f $Dockerfile -t $DockerImageTag --cache-from type=registry,ref=pk24100/aivatar-idle-video-generator:buildcache --cache-to type=registry,ref=pk24100/aivatar-idle-video-generator:buildcache,mode=max --push .'
+"@
+    Invoke-RemoteInteractiveScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $BuildScript
+
+    Write-Host ""
+    Write-Host "Build and push completed." -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Cleanup:" -ForegroundColor White
+    Write-Host "  az group delete --name $ResourceGroup --yes --no-wait" -ForegroundColor Green
+}
+else {
+    Write-Host "Starting remote Docker login (device-code flow)..." -ForegroundColor Yellow
+    Write-Host "Complete the Docker device-code login in your browser when prompted." -ForegroundColor White
+
+    $LoginScript = @"
 set -euo pipefail
 
 cd "$WorkRoot/$RepoDirectoryName"
@@ -280,15 +339,16 @@ sg docker -c 'docker version'
 sg docker -c 'docker buildx use aivatar-builder'
 sg docker -c 'docker login'
 "@
-Invoke-RemoteInteractiveScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $BuildScript
+    Invoke-RemoteInteractiveScript -HostName $VmPublicIp -UserName $AdminUser -KeyPath $SshPrivateKeyPath -ScriptContent $LoginScript
 
-Write-Host ""
-Write-Host "Docker login complete. Build and push the slim image MANUALLY over SSH:" -ForegroundColor Green
-Write-Host ""
-Write-Host "  ssh -i `"$SshPrivateKeyPath`" $AdminUser@$VmPublicIp" -ForegroundColor White
-Write-Host "  cd $WorkRoot/$RepoDirectoryName" -ForegroundColor White
-Write-Host "  sg docker -c 'docker buildx use aivatar-builder'" -ForegroundColor White
-Write-Host "  sg docker -c 'docker buildx build --platform linux/amd64 -t $DockerImageTag --cache-from type=registry,ref=pk24100/aivatar-worker:buildcache --cache-to type=registry,ref=pk24100/aivatar-worker:buildcache,mode=max --push .'" -ForegroundColor White
-Write-Host ""
-Write-Host "Cleanup when finished:" -ForegroundColor White
-Write-Host "  az group delete --name $ResourceGroup --yes --no-wait" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Docker login complete. Build and push the idle generator image MANUALLY over SSH:" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "  ssh -i `"$SshPrivateKeyPath`" $AdminUser@$VmPublicIp" -ForegroundColor White
+    Write-Host "  cd $WorkRoot/$RepoDirectoryName" -ForegroundColor White
+    Write-Host "  sg docker -c 'docker buildx use aivatar-builder'" -ForegroundColor White
+    Write-Host "  sg docker -c 'docker buildx build --platform linux/amd64 -f $Dockerfile -t $DockerImageTag --cache-from type=registry,ref=pk24100/aivatar-idle-video-generator:buildcache --cache-to type=registry,ref=pk24100/aivatar-idle-video-generator:buildcache,mode=max --push .'" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Cleanup when finished:" -ForegroundColor White
+    Write-Host "  az group delete --name $ResourceGroup --yes --no-wait" -ForegroundColor Green
+}
