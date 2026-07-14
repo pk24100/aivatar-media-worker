@@ -92,7 +92,15 @@ def _is_valid_image_bytes(data: bytes) -> bool:
 # Streaming engine that generates lip-synced video frames from audio.
 class FlashHeadStreamingEngine:
     # Initialize engine with pipeline, avatar path, and inference params.
-    def __init__(self, pipeline, avatar_image_path: str = None, seed: int = 42, auto_prepare_avatar: bool = True):
+    def __init__(
+        self,
+        pipeline,
+        avatar_image_path: str = None,
+        seed: int = 42,
+        auto_prepare_avatar: bool = True,
+        frame_queue: Queue = None,
+        audio_queue: Queue = None,
+    ):
         self.pipeline = pipeline
         self.seed = seed
         self.infer_params = get_infer_params()
@@ -111,8 +119,8 @@ class FlashHeadStreamingEngine:
         self.audio_start_idx = self.audio_end_idx - self.frame_num
         self.audio_context = deque([0.0] * self.cached_audio_samples, maxlen=self.cached_audio_samples)
         self.pending_audio = deque()
-        self.frame_queue = Queue()
-        self.audio_queue = Queue()
+        self.frame_queue = frame_queue or Queue()
+        self.audio_queue = audio_queue or Queue()
         self._prepared = False
         self._temp_avatar_path = None
         self._metrics_started_at = time.monotonic()

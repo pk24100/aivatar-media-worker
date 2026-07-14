@@ -48,6 +48,7 @@ class StreamStateManager:
         self.transition_frames: List[np.ndarray] = []
         self.transition_idx = 0
         self._first_live_frame = None
+        self._transition_live_frames: List[np.ndarray] = []
         self._transition_start_idle_idx = 0
         
     # Begin crossfade transition from live to idle playback.
@@ -75,6 +76,7 @@ class StreamStateManager:
         self.transition_idx = 0
         self.state = StreamState.TRANSITION_TO_LIVE
         self._first_live_frame = None
+        self._transition_live_frames = []
         logger.debug("Starting transition to LIVE")
 
     # Return the next frame based on current stream state.
@@ -111,8 +113,9 @@ class StreamStateManager:
                     
         # === STATE: IDLE ===
         elif self.state == StreamState.IDLE:
-            # Check if there's any new live frame arrived
-            if self.live_frame_queue.qsize() > 0:
+            # Buffer the full crossfade window before leaving idle. A single
+            # generated frame produces a visibly static transition.
+            if self.live_frame_queue.qsize() >= self.crossfade_frames:
                 self._start_transition_to_live()
                 return self.get_next_frame()
                 
@@ -126,7 +129,7 @@ class StreamStateManager:
         # === STATE: TRANSITION_TO_IDLE ===
         elif self.state == StreamState.TRANSITION_TO_IDLE:
             # If live frame arrives during transition, abort and go back to live
-            if self.live_frame_queue.qsize() > 0:
+            if self.live_frame_queue.qsize() >= self.crossfade_frames:
                 self._start_transition_to_live()
                 return self.get_next_frame()
                 
@@ -143,12 +146,15 @@ class StreamStateManager:
         elif self.state == StreamState.TRANSITION_TO_LIVE:
             if self._first_live_frame is None:
                 try:
-                    first_live = self.live_frame_queue.get_nowait()
-                    self._first_live_frame = first_live
-                    self.last_live_frame = first_live
+                    self._transition_live_frames = [
+                        self.live_frame_queue.get_nowait()
+                        for _ in range(self.crossfade_frames)
+                    ]
+                    self._first_live_frame = self._transition_live_frames[0]
+                    self.last_live_frame = self._transition_live_frames[-1]
                     self.last_frame_time = current_time
                     self.transition_frames = self.idle_video.crossfade_from_idle(
-                        first_live,
+                        self._transition_live_frames,
                         self._transition_start_idle_idx,
                         self.crossfade_frames
                     )
@@ -165,7 +171,7 @@ class StreamStateManager:
             else:
                 self.state = StreamState.LIVE
                 self.last_frame_source = "live"
-                return self._first_live_frame
+                return self._transition_live_frames[-1]
 
         self.last_frame_source = "repeated_live"
         return self.last_live_frame

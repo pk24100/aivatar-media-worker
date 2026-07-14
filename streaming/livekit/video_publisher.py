@@ -24,6 +24,7 @@ class VideoPublisher:
         self.track_name = track_name
         self.video_source = None
         self.track = None
+        self.first_frame_published = asyncio.Event()
         self._width = 0
         self._height = 0
         self._last_capture_at = None
@@ -124,6 +125,7 @@ class VideoPublisher:
         _logger.info("[VP-DIAG] Calling publish_track()...")
         _pub_t0 = time.monotonic()
         await self.room.local_participant.publish_track(self.track, options)
+        self.first_frame_published.set()
         _pub_ms = round((time.monotonic() - _pub_t0) * 1000, 1)
         _logger.info("[VP-DIAG] publish_track() completed in %.1f ms", _pub_ms)
 

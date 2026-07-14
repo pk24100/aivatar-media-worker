@@ -306,6 +306,32 @@ prewarm_pool = PrewarmRoomPool(size=WORKER_POOL_SIZE)
 _ws_started = False
 _ws_lock = asyncio.Lock()
 _active_sessions = {}
+_model_ready_event = None
+_model_init_error = None
+
+
+def configure_model_readiness(ready: bool):
+    """Initialize model readiness on the aiohttp loop that owns sessions."""
+    global _model_ready_event, _model_init_error
+    _model_ready_event = asyncio.Event()
+    _model_init_error = None
+    if ready:
+        _model_ready_event.set()
+
+
+def mark_model_ready(error: Exception = None):
+    global _model_init_error
+    _model_init_error = error
+    if _model_ready_event is not None:
+        _model_ready_event.set()
+
+
+async def wait_for_model_ready():
+    if _model_ready_event is None:
+        return
+    await _model_ready_event.wait()
+    if _model_init_error is not None:
+        raise RuntimeError("FlashHead model initialization failed") from _model_init_error
 
 # Verify FlashHead and Wav2Vec model directories exist.
 def _verify_models():
@@ -368,6 +394,7 @@ async def _execute_streaming_event(event):
     livekit_token = event.get("livekitToken")
     source_image = event.get("sourceImage")
     idle_video_url = event.get("idleVideoUrl")
+    idle_video_key = event.get("idleVideoKey")
     ingestion_method = event.get("ingestionMethod", "websocket")
     session_id = event.get("sessionId", room_name)
     ingestion_token = event.get("ingestionToken", "")
@@ -426,23 +453,21 @@ async def _execute_streaming_event(event):
         _release_ms = round((_htime.monotonic() - _release_t0) * 1000, 1)
         logger.info("[handler] prewarm_pool.release() took %.1fms for room %s", _release_ms, room_name)
 
-    _acquire_t0 = _htime.monotonic()
-    model_instance = await model_pool.acquire()
-    _acquire_ms = round((_htime.monotonic() - _acquire_t0) * 1000, 1)
-    logger.info("[handler] model_pool.acquire() took %.1fms", _acquire_ms)
-
     _session_t0 = _htime.monotonic()
     try:
         await run_streaming_session(
             room_name=room_name,
             livekit_token=livekit_token,
             livekit_url=_get_livekit_url(event),
-            pipeline=model_instance,
+            pipeline=None,
+            model_pool=model_pool,
+            model_ready_waiter=wait_for_model_ready,
             source_image=source_image,
             ingestion_method=ingestion_method,
             session_id=session_id,
             ingestion_token=ingestion_token,
             idle_video_url=idle_video_url,
+            idle_video_key=idle_video_key,
             preconnected_room=preconnected_room,
         )
         _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
@@ -452,8 +477,6 @@ async def _execute_streaming_event(event):
         _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
         logger.error("[handler] Streaming session failed for %s after %.1fms: %s", session_id, _session_ms, exc, exc_info=True)
         return {"status": "error", "mode": "streaming", "sessionId": session_id, "error": str(exc)}
-    finally:
-        model_pool.release(model_instance)
 
 
 # Track an active session task and clean up when it finishes.
@@ -541,10 +564,14 @@ async def pod_health(_request):
 
 # HTTP readiness endpoint: report whether the worker is ready.
 async def pod_ready(_request):
-    ready = ws_server.is_running
+    server_ready = ws_server.is_running
+    models_ready = _model_ready_event is None or (_model_ready_event.is_set() and _model_init_error is None)
+    ready = server_ready and models_ready
     return web.json_response({
         "ready": ready,
         "status": "READY" if ready else "STARTING",
+        "serverReady": server_ready,
+        "modelsReady": models_ready,
         "runtimeMode": "load_balancer",
         "poolSize": WORKER_POOL_SIZE,
         "availablePipelines": model_pool.get_available_count(),
@@ -606,9 +633,15 @@ async def app_ping(_request):
 # HTTP handler to start a new streaming session.
 async def pod_session_start(request):
     event = await request.json()
-    logger.info("[pod_session_start] Received event: %s", event)
+    logger.info(
+        "[pod_session_start] Received session=%s room=%s ingestion=%s hasIdleAsset=%s",
+        event.get("sessionId"),
+        event.get("roomName"),
+        event.get("ingestionMethod", "websocket"),
+        bool(event.get("idleVideoKey") or event.get("idleVideoUrl")),
+    )
     if not _is_streaming(event):
-        logger.warning("[pod_session_start] Not streaming mode: %s", event)
+        logger.warning("[pod_session_start] Not streaming mode for session=%s", event.get("sessionId"))
         raise web.HTTPBadRequest(text='Only streaming mode is supported')
 
     try:
@@ -889,6 +922,7 @@ async def app_websocket_ingest(request):
 async def run_pod_app():
     from app_factory import build_app
 
+    configure_model_readiness(ready=True)
     app = await build_app()
 
     runner = web.AppRunner(app)

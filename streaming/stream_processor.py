@@ -4,6 +4,7 @@ import contextlib
 import logging
 import os
 import time
+from queue import Queue
 from urllib.parse import urlsplit, urlunsplit
 
 import numpy as np
@@ -295,28 +296,34 @@ async def run_streaming_session(
     room_name: str,
     livekit_token: str,
     livekit_url: str,
-    pipeline: any,
+    pipeline: any = None,
+    model_pool: any = None,
+    model_ready_waiter: any = None,
     source_image: str = None,
     ingestion_method: str = "websocket",
     session_id: str = None,
     ingestion_token: str = None,
     idle_video_url: str = None,
+    idle_video_key: str = None,
     preconnected_room: any = None,
 ):
     return await _run_streaming_session_native(
-        room_name, livekit_token, livekit_url, pipeline, source_image, 
-        ingestion_method, session_id, ingestion_token, idle_video_url, preconnected_room)
+        room_name, livekit_token, livekit_url, pipeline, model_pool, model_ready_waiter, source_image,
+        ingestion_method, session_id, ingestion_token, idle_video_url, idle_video_key, preconnected_room)
 
 async def _run_streaming_session_native(
     room_name: str,
     livekit_token: str,
     livekit_url: str,
-    pipeline: any,
+    pipeline: any = None,
+    model_pool: any = None,
+    model_ready_waiter: any = None,
     source_image: str = None,
     ingestion_method: str = "websocket",
     session_id: str = None,
     ingestion_token: str = None,
     idle_video_url: str = None,
+    idle_video_key: str = None,
     preconnected_room: any = None,
 ):
     """
@@ -326,12 +333,15 @@ async def _run_streaming_session_native(
         room_name: LiveKit room name
         livekit_token: LiveKit token for authentication
         livekit_url: LiveKit server URL
-        pipeline: FlashHeadPipeline instance from the model pool
+        pipeline: Optional pre-acquired FlashHeadPipeline instance
+        model_pool: Pool used after idle publishing when no pipeline is supplied
+        model_ready_waiter: Awaitable that gates GPU model initialization
         source_image: URL or path to the avatar/source image
         ingestion_method: Audio ingestion method (websocket, sip)
         session_id: Unique session identifier
         ingestion_token: Token for websocket ingestion
         idle_video_url: URL for idle video loop
+        idle_video_key: Immutable idle asset key for the default snapshot cache
         preconnected_room: Already-connected LiveKit room claimed from prewarm pool
     """
     import time
@@ -506,26 +516,79 @@ async def _run_streaming_session_native(
                         f"Events={_diag_events}"
                     ) from last_error
 
-    # We will read sample_rate from the engine's model params instead of env
+    # We can publish a target-sized idle track before touching a GPU pipeline.
+    # This lets viewers see the same LiveKit track while model warmup and avatar
+    # preparation complete in the background.
+    from flash_head.inference import get_infer_params
+
+    infer_params = get_infer_params()
     num_channels = int(os.getenv("AUDIO_CHANNELS", "1"))
     chunk_timeout = float(os.getenv("AUDIO_SUBSCRIBE_TIMEOUT", "15"))
     idle_timeout_ms = int(os.getenv("IDLE_TIMEOUT_MS", "500"))
-
+    live_frame_queue = Queue()
     engine = None
     publish_task = None
     audio_publish_task = None
     audio_publisher = None
     rtc_metrics_task = None
     try:
-        # Create FlashHead engine with pipeline and avatar image
+        # Load a default snapshot-cached clip when available. Custom clips are
+        # intentionally fetched per session and decoded outside the aiohttp loop.
+        idle_loop = None
+        if idle_video_key or idle_video_url:
+            from utils.default_idle_video_cache import default_idle_video_cache
+
+            cached_idle_bytes = default_idle_video_cache.get_bytes(idle_video_key)
+            idle_loop = await asyncio.to_thread(
+                IdleVideoLoop,
+                idle_video_url,
+                video_bytes=cached_idle_bytes,
+            )
+            idle_loop.normalize(infer_params["width"], infer_params["height"])
+        if idle_loop is None or not idle_loop.is_valid():
+            idle_loop = await asyncio.to_thread(
+                IdleVideoLoop.fallback_from_source_image,
+                source_image,
+                infer_params["width"],
+                infer_params["height"],
+            )
+            if idle_loop.is_valid():
+                _logger.info("IDLE_FALLBACK_PUBLISHED session=%s", session_id)
+
+        state_manager = StreamStateManager(
+            live_frame_queue=live_frame_queue,
+            idle_video=idle_loop,
+            idle_timeout_ms=idle_timeout_ms
+        )
+
+        fps = infer_params["tgt_fps"]
+        publisher = VideoPublisher(room, fps=fps)
+        publish_task = asyncio.create_task(publisher.publish_from_state_manager(state_manager))
+
+        if idle_loop and idle_loop.is_valid():
+            try:
+                await asyncio.wait_for(publisher.first_frame_published.wait(), timeout=15)
+                _logger.info("IDLE_TRACK_PUBLISHED session=%s room=%s", session_id, room_name)
+            except asyncio.TimeoutError:
+                raise RuntimeError("Timed out publishing the idle video track")
+
+        if model_ready_waiter is not None:
+            await model_ready_waiter()
+        if pipeline is None:
+            if model_pool is None:
+                raise RuntimeError("pipeline or model_pool is required for streaming")
+            pipeline = await model_pool.acquire()
+
         if not source_image:
             raise ValueError("source_image is required for FlashHead streaming")
-
         engine = FlashHeadStreamingEngine(
             pipeline=pipeline,
             avatar_image_path=source_image,
             auto_prepare_avatar=False,
+            frame_queue=live_frame_queue,
         )
+        sample_rate = engine.sample_rate
+
         prep_t0 = time.monotonic()
         await asyncio.to_thread(engine.prepare_avatar, source_image)
         _logger.info(
@@ -534,23 +597,6 @@ async def _run_streaming_session_native(
             source_image,
             (time.monotonic() - prep_t0) * 1000,
         )
-
-        sample_rate = engine.sample_rate
-
-        # Initialize idle video loop if URL provided
-        idle_loop = None
-        if idle_video_url:
-            idle_loop = IdleVideoLoop(idle_video_url)
-
-        state_manager = StreamStateManager(
-            live_frame_queue=engine.frame_queue,
-            idle_video=idle_loop,
-            idle_timeout_ms=idle_timeout_ms
-        )
-
-        fps = engine.tgt_fps
-        publisher = VideoPublisher(room, fps=fps)
-        publish_task = asyncio.create_task(publisher.publish_from_state_manager(state_manager))
 
         # Republish the ingested audio to LiveKit so subscribers hear speech in
         # sync with the lip-synced video. Without this, the viewer sees the
@@ -683,6 +729,8 @@ async def _run_streaming_session_native(
 
         if engine is not None:
             await asyncio.to_thread(engine.close)
+        if pipeline is not None and model_pool is not None:
+            model_pool.release(pipeline)
         if publish_task is not None:
             publish_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):

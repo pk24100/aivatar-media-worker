@@ -6,9 +6,8 @@ Manual prerequisites:
 1. modal secret create huggingface-secret HUGGING_FACE_HUB_TOKEN=hf_xxx
 2. modal secret create livekit-secret LIVEKIT_API_KEY=... LIVEKIT_API_SECRET=... LIVEKIT_URL=wss://...
 3. modal secret create aivatar-worker-secret LIVEKIT_URL=...
-# 4. modal volume create aivatar-models
-# 5. modal deploy modal_app.py
-4. modal deploy modal_app.py
+4. modal secret create aivatar-idle-video-r2 IDLE_VIDEO_R2_ENDPOINT=... IDLE_VIDEO_R2_ACCESS_KEY_ID=... IDLE_VIDEO_R2_SECRET_ACCESS_KEY=...
+5. modal deploy modal_app.py
 
 FlashHead model weights are baked into the image at build time via
 snapshot_download from pkam24100/aivatar-flashhead-model.
@@ -79,6 +78,7 @@ app = modal.App("aivatar-worker", image=image)
         modal.Secret.from_name("huggingface-secret"),
         modal.Secret.from_name("livekit-secret"),
         modal.Secret.from_name("aivatar-worker-secret"),
+        modal.Secret.from_name("aivatar-idle-video-r2"),
     ],
     enable_memory_snapshot=True,
     # NOTE: GPU snapshots are alpha. Using CPU-only snapshots (stable) which
@@ -104,8 +104,10 @@ class Worker:
         # Trigger FlashHeadModelPool preload at import - loads to CPU
         import handler
         from utils.default_avatar_cache import default_avatar_cache
+        from utils.default_idle_video_cache import default_idle_video_cache
         self._handler = handler
         cache_status = default_avatar_cache.preload()
+        idle_cache_status = default_idle_video_cache.preload()
         if cache_status["manifestFound"]:
             print(
                 f"[modal] Default avatar manifest loaded: cachedAvatarCount={cache_status['cachedAvatarCount']} "
@@ -118,56 +120,60 @@ class Worker:
                 "falling back to per-session URL fetch",
                 flush=True,
             )
+        print(
+            f"[modal] Default idle cache: cachedIdleVideoCount={idle_cache_status['cachedIdleVideoCount']} "
+            f"failed={len(idle_cache_status['failedIdleVideoKeys'])}",
+            flush=True,
+        )
         print("[modal] Models loaded to CPU for snapshot", flush=True)
 
     @modal.enter(snap=False)
     def restore(self):
         import sys
         sys.path.insert(0, "/app")
-        import torch
-
-        # Move models from CPU to GPU after snapshot restore
+        # The CPU-loaded pool remains inside the stable memory snapshot. GPU
+        # transfer and CUDA warmup run after the HTTP server starts so a session
+        # can publish idle media while model readiness is pending.
         os.environ.pop("FLASHHEAD_LOAD_DEVICE", None)
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"[modal] Restoring from snapshot, moving models to {device}", flush=True)
-        self._handler.model_pool.move_to_device(device)
-        print("[modal] Models moved to GPU", flush=True)
 
-        # Warm-up: run dummy inference to pre-compile CUDA kernels
+    async def _initialize_models(self):
+        import asyncio
+        import torch
         from flash_head.inference import get_base_data, get_audio_embedding, run_pipeline, get_infer_params
         from PIL import Image
         import numpy as np
 
-        dummy_img_path = "/tmp/warmup_avatar.png"
-        Image.new("RGB", (512, 512), color=(128, 128, 128)).save(dummy_img_path)
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        try:
+            print(f"[modal] Initializing models on {device} after server bind", flush=True)
+            await asyncio.to_thread(self._handler.model_pool.move_to_device, device)
+            print("[modal] Models moved to GPU", flush=True)
 
-        import asyncio
-
-        async def _warmup():
+            dummy_img_path = "/tmp/warmup_avatar.png"
+            Image.new("RGB", (512, 512), color=(128, 128, 128)).save(dummy_img_path)
             pipeline = await self._handler.model_pool.acquire()
             try:
-                get_base_data(pipeline, dummy_img_path, base_seed=42, use_face_crop=False)
-                print("[modal] pipeline params warmed up, running dummy generate() to pre-warm CUDA kernels...")
+                def _warm_pipeline():
+                    get_base_data(pipeline, dummy_img_path, base_seed=42, use_face_crop=False)
+                    params = get_infer_params()
+                    sr = params["sample_rate"]
+                    cached_dur = params["cached_audio_duration"]
+                    frame_num = params["frame_num"]
+                    tgt_fps = params["tgt_fps"]
+                    audio_end_idx = cached_dur * tgt_fps
+                    audio_start_idx = audio_end_idx - frame_num
+                    dummy_audio = np.zeros(cached_dur * sr, dtype=np.float32)
+                    audio_emb = get_audio_embedding(pipeline, dummy_audio, audio_start_idx, audio_end_idx)
+                    run_pipeline(pipeline, audio_emb)
 
-                params = get_infer_params()
-                sr = params["sample_rate"]
-                cached_dur = params["cached_audio_duration"]
-                frame_num = params["frame_num"]
-                tgt_fps = params["tgt_fps"]
-                audio_end_idx = cached_dur * tgt_fps
-                audio_start_idx = audio_end_idx - frame_num
-
-                dummy_audio = np.zeros(cached_dur * sr, dtype=np.float32)
-                audio_emb = get_audio_embedding(pipeline, dummy_audio, audio_start_idx, audio_end_idx)
-                run_pipeline(pipeline, audio_emb)
-                print("[modal] warmup generate() completed — CUDA kernels pre-warmed, first session will be fast")
+                await asyncio.to_thread(_warm_pipeline)
+                print("[modal] warmup generate() completed - CUDA kernels pre-warmed", flush=True)
             finally:
                 self._handler.model_pool.release(pipeline)
-
-        asyncio.run(_warmup())
-
-        # Pre-warm rooms must be created on the same aiohttp event loop that
-        # later publishes tracks on them. The server loop handles that in serve().
+            self._handler.mark_model_ready()
+        except Exception as exc:
+            self._handler.mark_model_ready(exc)
+            logging.getLogger("modal_app").exception("Model initialization failed")
 
     async def _prewarm_webrtc_routes(self):
         """Create N pre-warm LiveKit rooms and add them to the prewarm pool."""
@@ -269,12 +275,14 @@ class Worker:
                 self._handler.prewarm_pool = self._handler.PrewarmRoomPool(
                     size=self._handler.WORKER_POOL_SIZE
                 )
+                self._handler.configure_model_readiness(ready=False)
                 application = await build_app()
-                await self._prewarm_webrtc_routes()
                 runner = web.AppRunner(application)
                 await runner.setup()
                 site = web.TCPSite(runner, "0.0.0.0", 8000)
                 await site.start()
+                self._model_init_task = asyncio.create_task(self._initialize_models())
+                self._prewarm_task = asyncio.create_task(self._prewarm_webrtc_routes())
                 import asyncio as _aio
                 logger.info("aiohttp site started thread=%s event_loop=%s", threading.get_ident(), id(_aio.get_event_loop()))
                 await asyncio.Event().wait()
