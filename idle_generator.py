@@ -1,8 +1,13 @@
-"""Vast Serverless entrypoint for asynchronous, avatar-specific idle clips.
+"""Idle video generation entrypoint for asynchronous, avatar-specific idle clips.
 
 This service deliberately has no LiveKit or WebSocket responsibilities. The
 backend grants each request a source GET URL, an exact output PUT URL, and a
 short-lived callback token. It never receives long-lived R2 credentials.
+
+When used with Modal (modal_idle_video_generator.py), the pipeline is loaded
+once at container boot and set via set_pipeline() for CPU memory snapshot reuse.
+When _PIPELINE is None (standalone/Vast Docker mode), it falls back to calling
+get_pipeline() on each request.
 """
 import asyncio
 import hashlib
@@ -23,6 +28,13 @@ from flash_head.inference import get_audio_embedding, get_infer_params, get_pipe
 
 MAX_SOURCE_IMAGE_BYTES = 10 * 1024 * 1024
 GENERATION_LOCK = asyncio.Lock()
+
+_PIPELINE = None
+
+
+def set_pipeline(pipeline):
+    global _PIPELINE
+    _PIPELINE = pipeline
 
 
 def _download_source(url: str) -> str:
@@ -51,9 +63,12 @@ def _download_source(url: str) -> str:
 
 
 def _generate_idle_clip(source_path: str, output_path: str, duration_seconds: float) -> tuple[int, int, int, int]:
-    ckpt_dir = os.getenv("FLASHHEAD_CKPT_DIR", "/app/models/SoulX-FlashHead-1_3B")
-    wav2vec_dir = os.getenv("WAV2VEC_DIR", "/app/models/wav2vec2-base-960h")
-    pipeline = get_pipeline(1, ckpt_dir, "lite", wav2vec_dir)
+    if _PIPELINE is not None:
+        pipeline = _PIPELINE
+    else:
+        ckpt_dir = os.getenv("FLASHHEAD_CKPT_DIR", "/app/models/SoulX-FlashHead-1_3B")
+        wav2vec_dir = os.getenv("WAV2VEC_DIR", "/app/models/wav2vec2-base-960h")
+        pipeline = get_pipeline(1, ckpt_dir, "lite", wav2vec_dir)
     get_base_data(pipeline, source_path, base_seed=42, use_face_crop=False)
     params = get_infer_params()
     fps = int(params["tgt_fps"])
@@ -160,7 +175,18 @@ async def generate(request: web.Request):
             return web.json_response({"error": str(exc)}, status=500)
 
 
+async def healthz(request: web.Request):
+    return web.json_response({"status": "ok"})
+
+
+async def readyz(request: web.Request):
+    ready = _PIPELINE is not None
+    return web.json_response({"ready": ready, "pipeline_loaded": ready}, status=200 if ready else 503)
+
+
 app = web.Application(client_max_size=1024 * 1024)
+app.router.add_get("/healthz", healthz)
+app.router.add_get("/readyz", readyz)
 app.router.add_post("/generate", generate)
 
 
