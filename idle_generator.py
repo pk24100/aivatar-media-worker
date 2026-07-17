@@ -18,9 +18,11 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "SoulX-FlashHead"))
 
+import cv2
 import imageio.v2 as imageio
 import numpy as np
 import requests
+import torch
 from aiohttp import web
 
 from flash_head.inference import get_audio_embedding, get_infer_params, get_pipeline, get_base_data, run_pipeline
@@ -30,6 +32,74 @@ MAX_SOURCE_IMAGE_BYTES = 10 * 1024 * 1024
 GENERATION_LOCK = asyncio.Lock()
 
 _PIPELINE = None
+
+_EYE_CASCADE = None
+
+
+def _get_eye_cascade():
+    global _EYE_CASCADE
+    if _EYE_CASCADE is None:
+        paths = [
+            cv2.data.haarcascades + "haarcascade_eye.xml",
+            cv2.data.haarcascades + "haarcascade_eye_tree_eyeglasses.xml",
+            "/usr/share/opencv4/haarcascades/haarcascade_eye.xml",
+            "/usr/local/share/opencv4/haarcascades/haarcascade_eye.xml",
+        ]
+        for p in paths:
+            try:
+                cascade = cv2.CascadeClassifier(p)
+                if not cascade.empty():
+                    _EYE_CASCADE = cascade
+                    break
+            except Exception:
+                continue
+    return _EYE_CASCADE
+
+
+def _detect_eyes(frame):
+    """Detect eye regions using cv2 Haar cascade. Returns list of (cx, cy, w, h) boxes."""
+    cascade = _get_eye_cascade()
+    if cascade is None or cascade.empty():
+        return []
+    gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+    eyes = cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(15, 15))
+    result = []
+    for (ex, ey, ew, eh) in eyes:
+        result.append((ex + ew // 2, ey + eh // 2, int(ew * 1.4), int(eh * 2.0)))
+    return result
+
+
+def _apply_2d_sway(frames, fps,
+                    sway_pixels=3.0, sway_rate_hz=0.15):
+    """Apply head sway as 2D post-processing.
+
+    Operates in pixel space using cv2 affine transforms.
+    Avatar-agnostic: produces identical visible motion regardless
+    of face type (real human, animated, custom).
+    Eye blinking is handled by FlashHead model via murmuring audio.
+    """
+    n = len(frames)
+    if n == 0:
+        return frames
+
+    h, w = frames[0].shape[:2]
+    processed = []
+    for i, frame in enumerate(frames):
+        t = i / fps
+
+        # Head sway: smooth sinusoidal translation + slight rotation
+        dx = sway_pixels * np.sin(2.0 * np.pi * sway_rate_hz * t)
+        dy = sway_pixels * 0.4 * np.sin(2.0 * np.pi * sway_rate_hz * 0.7 * t + 0.5)
+        angle = 0.3 * np.sin(2.0 * np.pi * sway_rate_hz * 0.5 * t)
+
+        M = cv2.getRotationMatrix2D((w / 2, h / 2), angle, 1.0)
+        M[0, 2] += dx
+        M[1, 2] += dy
+        sway_frame = cv2.warpAffine(frame, M, (w, h), borderMode=cv2.BORDER_REFLECT_101)
+
+        processed.append(sway_frame)
+
+    return processed
 
 
 def set_pipeline(pipeline):
@@ -79,13 +149,68 @@ def _generate_idle_clip(source_path: str, output_path: str, duration_seconds: fl
     audio_end_idx = cached_duration * fps
     audio_start_idx = audio_end_idx - int(params["frame_num"])
     target_frames = max(fps, round(duration_seconds * fps))
-    silent_audio = np.zeros(cached_duration * sample_rate, dtype=np.float32)
+    audio_samples = cached_duration * sample_rate
+    murmur_amplitude = float(os.getenv("IDLE_MURMUR_AMPLITUDE", "0.03"))
+    motion_perturbation = float(os.getenv("IDLE_MOTION_PERTURBATION", "0.04"))
+    rng = np.random.default_rng(42)
+    torch_rng = torch.Generator(device=pipeline.device).manual_seed(42)
     frames = []
+    slice_idx = 0
 
+    # Generate video with FlashHead using low-amplitude murmuring audio.
+    # The murmuring audio (glottal pulses + formants) produces wav2vec2
+    # embeddings that drive FlashHead's natural eye blink generation at
+    # the correct facial positions. A small latent perturbation prevents
+    # autoregressive convergence so motion continues across all 8 seconds.
+    # 2D sway is applied as post-processing for consistent body movement.
     while len(frames) < target_frames:
-        embedding = get_audio_embedding(pipeline, silent_audio, audio_start_idx, audio_end_idx)
+        if slice_idx == 0:
+            # First slice: silence audio to avoid initial lip movement.
+            # The model's first generation is most sensitive to audio
+            # embeddings - murmuring here causes visible lip motion.
+            idle_audio = np.zeros(audio_samples, dtype=np.float32)
+        else:
+            t = np.arange(audio_samples, dtype=np.float32) / sample_rate
+            slice_offset = slice_idx * (int(params["frame_num"]) - int(params["motion_frames_num"])) / fps
+
+            f0 = 150.0
+            voicing = 0.5 + 0.5 * np.sin(2.0 * np.pi * 0.15 * (t + slice_offset))
+            glottal = np.sign(np.sin(2.0 * np.pi * f0 * (t + slice_offset))) * voicing
+            formant1 = np.sin(2.0 * np.pi * 700.0 * (t + slice_offset)) * 0.3
+            formant2 = np.sin(2.0 * np.pi * 1200.0 * (t + slice_offset)) * 0.2
+            murmur = murmur_amplitude * (glottal * 0.5 + formant1 + formant2).astype(np.float32)
+            murmur *= (0.6 + 0.4 * np.sin(2.0 * np.pi * 0.08 * (t + slice_offset))).astype(np.float32)
+            murmur += (0.01 * rng.standard_normal(audio_samples)).astype(np.float32)
+            idle_audio = murmur.astype(np.float32)
+
+        embedding = get_audio_embedding(pipeline, idle_audio, audio_start_idx, audio_end_idx)
+
         video = run_pipeline(pipeline, embedding)[int(params["motion_frames_num"]):]
         frames.extend(frame.cpu().numpy().astype(np.uint8) for frame in video)
+
+        # Small latent perturbation to prevent autoregressive convergence.
+        if motion_perturbation > 0 and slice_idx > 0:
+            lmf = pipeline.latent_motion_frames
+            lmf_std = lmf.std()
+            if lmf_std > 0:
+                perturbation = torch.randn(
+                    lmf.shape, generator=torch_rng,
+                    device=lmf.device, dtype=lmf.dtype,
+                ) * (motion_perturbation * lmf_std)
+                pipeline.latent_motion_frames = lmf + perturbation
+
+        slice_idx += 1
+
+    # Apply 2D post-processing: head sway only.
+    # Eye blinking comes from FlashHead model via murmuring audio.
+    sway_pixels = float(os.getenv("IDLE_SWAY_PIXELS", "3.0"))
+    sway_rate_hz = float(os.getenv("IDLE_SWAY_RATE_HZ", "0.15"))
+
+    frames = _apply_2d_sway(
+        frames[:target_frames], fps,
+        sway_pixels=sway_pixels,
+        sway_rate_hz=sway_rate_hz,
+    )
 
     with imageio.get_writer(
         output_path,
@@ -107,7 +232,7 @@ def _upload_and_complete(payload: dict):
         source_path = _download_source(payload["sourceGetUrl"])
         fd, output_path = tempfile.mkstemp(suffix=".mp4")
         os.close(fd)
-        duration_seconds = float(payload.get("durationSeconds", 4))
+        duration_seconds = float(payload.get("durationSeconds", 15))
         width, height, fps, duration_ms = _generate_idle_clip(source_path, output_path, duration_seconds)
         output_bytes = Path(output_path).read_bytes()
         sha256 = hashlib.sha256(output_bytes).hexdigest()
