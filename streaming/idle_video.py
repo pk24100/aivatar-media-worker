@@ -11,7 +11,8 @@ from urllib.parse import urlparse
 import requests
 
 logger = logging.getLogger(__name__)
-MAX_IDLE_VIDEO_FRAMES = int(os.getenv("IDLE_VIDEO_MAX_FRAMES", "250"))
+MAX_IDLE_VIDEO_BYTES = int(os.getenv("IDLE_VIDEO_MAX_BYTES", str(20 * 1024 * 1024)))
+MAX_IDLE_VIDEO_FRAMES = int(os.getenv("IDLE_VIDEO_MAX_FRAMES", "750"))
 MAX_IDLE_VIDEO_DIMENSION = int(os.getenv("IDLE_VIDEO_MAX_DIMENSION", "1024"))
 
 class IdleVideoLoop:
@@ -81,7 +82,14 @@ class IdleVideoLoop:
                 image = cv2.imread(source_image, cv2.IMREAD_COLOR)
             if image is None:
                 return loop
-            frame = cv2.cvtColor(cv2.resize(image, (width, height)), cv2.COLOR_BGR2RGB)
+            source_height, source_width = image.shape[:2]
+            scale = max(width / source_width, height / source_height)
+            resized_width = max(width, int(np.ceil(source_width * scale)))
+            resized_height = max(height, int(np.ceil(source_height * scale)))
+            resized = cv2.resize(image, (resized_width, resized_height), interpolation=cv2.INTER_LINEAR)
+            left = (resized_width - width) // 2
+            top = (resized_height - height) // 2
+            frame = cv2.cvtColor(resized[top:top + height, left:left + width], cv2.COLOR_BGR2RGB)
             loop.frames = [frame]
             loop.total_frames = 1
             return loop
@@ -113,7 +121,6 @@ class IdleVideoLoop:
 
     @staticmethod
     def _download(url: str) -> str:
-        max_bytes = int(os.getenv("IDLE_VIDEO_MAX_BYTES", str(8 * 1024 * 1024)))
         fd, temp_path = tempfile.mkstemp(suffix=".mp4")
         total = 0
         try:
@@ -124,8 +131,8 @@ class IdleVideoLoop:
                         if not chunk:
                             continue
                         total += len(chunk)
-                        if total > max_bytes:
-                            raise ValueError(f"idle video exceeds {max_bytes} bytes")
+                        if total > MAX_IDLE_VIDEO_BYTES:
+                            raise ValueError(f"idle video exceeds {MAX_IDLE_VIDEO_BYTES} bytes")
                         handle.write(chunk)
             return temp_path
         except Exception:

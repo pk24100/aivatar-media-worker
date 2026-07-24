@@ -244,6 +244,8 @@ FLASHHEAD_HF_REPO_ID = DEFAULT_FLASHHEAD_HF_REPO_ID
 FLASHHEAD_HF_CACHE_DIR = DEFAULT_FLASHHEAD_HF_CACHE_DIR
 FLASHHEAD_HF_TOKEN = os.getenv("HUGGING_FACE_HUB_TOKEN") or os.getenv("HF_TOKEN")
 WORKER_POOL_SIZE = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "3"))
+if WORKER_POOL_SIZE < 1:
+    raise ValueError("AIVATAR_WORKER_CONCURRENCY must be at least 1")
 WORKER_HTTP_HOST = os.getenv("AIVATAR_HTTP_HOST", "0.0.0.0")
 WORKER_HTTP_PORT = int(os.getenv("AIVATAR_HTTP_PORT", "8000"))
 
@@ -300,8 +302,19 @@ def _resolve_flashhead_ckpt_dir():
 
 FLASHHEAD_CKPT_DIR = _resolve_flashhead_ckpt_dir()
 
-# Initialize model pool globally so it happens during FlashBoot
-model_pool = FlashHeadModelPool(max_size=WORKER_POOL_SIZE, ckpt_dir=FLASHHEAD_CKPT_DIR, wav2vec_dir=WAV2VEC_DIR)
+# Modal's CPU snapshot only needs one immediately usable pipeline. The remaining
+# capacity is loaded after restore while that first session can already stream.
+INITIAL_PIPELINE_COUNT = (
+    1
+    if os.getenv("FLASHHEAD_LOAD_DEVICE", "").lower() == "cpu"
+    else WORKER_POOL_SIZE
+)
+model_pool = FlashHeadModelPool(
+    max_size=WORKER_POOL_SIZE,
+    initial_size=INITIAL_PIPELINE_COUNT,
+    ckpt_dir=FLASHHEAD_CKPT_DIR,
+    wav2vec_dir=WAV2VEC_DIR,
+)
 prewarm_pool = PrewarmRoomPool(size=WORKER_POOL_SIZE)
 _ws_started = False
 _ws_lock = asyncio.Lock()
@@ -566,17 +579,22 @@ async def pod_health(_request):
 async def pod_ready(_request):
     server_ready = ws_server.is_running
     models_ready = _model_ready_event is None or (_model_ready_event.is_set() and _model_init_error is None)
-    ready = server_ready and models_ready
+    prewarm_rooms_available = prewarm_pool.available_count()
+    # A listening HTTP server is not session-ready until it can hand the
+    # backend a connected LiveKit room for the first viewer.
+    prewarm_ready = prewarm_rooms_available > 0
+    ready = server_ready and models_ready and prewarm_ready
     return web.json_response({
         "ready": ready,
         "status": "READY" if ready else "STARTING",
         "serverReady": server_ready,
         "modelsReady": models_ready,
+        "prewarmReady": prewarm_ready,
         "runtimeMode": "load_balancer",
         "poolSize": WORKER_POOL_SIZE,
         "availablePipelines": model_pool.get_available_count(),
         "activeSessions": len(_active_sessions),
-        "prewarmRoomsAvailable": prewarm_pool.available_count(),
+        "prewarmRoomsAvailable": prewarm_rooms_available,
     }, status=200 if ready else 503)
 
 

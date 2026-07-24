@@ -20,6 +20,19 @@ import re
 import modal
 
 
+WORKER_APP_NAME = os.getenv("AIVATAR_MODAL_APP_NAME", "aivatar-worker")
+WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "3"))
+if WORKER_CONCURRENCY < 1:
+    raise ValueError("AIVATAR_WORKER_CONCURRENCY must be at least 1")
+PREWARM_CONNECT_TIMEOUT_SECONDS = float(
+    os.getenv("AIVATAR_PREWARM_CONNECT_TIMEOUT_SECONDS", "8")
+)
+PREWARM_MAX_ATTEMPTS = max(1, int(os.getenv("AIVATAR_PREWARM_MAX_ATTEMPTS", "3")))
+PREWARM_RETRY_DELAY_SECONDS = float(
+    os.getenv("AIVATAR_PREWARM_RETRY_DELAY_SECONDS", "1")
+)
+
+
 class _ShortenLiveKitWebSocketUrlFilter(logging.Filter):
     """Keep LiveKit signaling logs useful without exposing long query payloads."""
 
@@ -42,6 +55,7 @@ class _ShortenLiveKitWebSocketUrlFilter(logging.Filter):
 
 image = (
     modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.02-py3")
+    .env({"AIVATAR_WORKER_CONCURRENCY": str(WORKER_CONCURRENCY)})
     .apt_install("git", "git-lfs", "ffmpeg", "libsndfile1", "wget", "ca-certificates")
     .pip_install("ninja")
     .run_commands("pip install flash-attn --no-build-isolation || true")
@@ -64,44 +78,42 @@ image = (
     .add_local_file("app_factory.py", "/app/app_factory.py", copy=True)
 )
 
-app = modal.App("aivatar-worker", image=image)
+app = modal.App(WORKER_APP_NAME, image=image)
 #models_volume = modal.Volume.from_name("aivatar-models", create_if_missing=True)
 
 
-@app.cls(
-    gpu="L40S",
-    min_containers=1,
-    scaledown_window=15,
-    timeout=1800,
+worker_cls_config = {
+    "gpu": "L4",
+    "min_containers": 1,
+    "scaledown_window": 15,
+    "timeout": 1800,
     #volumes={"/models": models_volume},
-    secrets=[
+    "secrets": [
         modal.Secret.from_name("huggingface-secret"),
         modal.Secret.from_name("livekit-secret"),
         modal.Secret.from_name("aivatar-worker-secret"),
         modal.Secret.from_name("aivatar-idle-video-r2"),
     ],
-    enable_memory_snapshot=True,
-    # NOTE: GPU snapshots are alpha. Using CPU-only snapshots (stable) which
-    # skip disk I/O + deserialization but still pay CPU->GPU transfer.
-    # Modal auto-invalidates snapshots when code or image changes (e.g. model
-    # weight updates create a new image layer). No manual key needed.
-)
-@modal.concurrent(max_inputs=3)
+    "enable_memory_snapshot": True,
+}
+
+
+@app.cls(**worker_cls_config)
+@modal.concurrent(max_inputs=WORKER_CONCURRENCY)
 class Worker:
     @modal.enter(snap=True)
     def load(self):
         import sys
         sys.path.insert(0, "/app")
-        # Worker concurrency is driven by env var (default 3 for L40S)
-        worker_concurrency = os.getenv("AIVATAR_WORKER_CONCURRENCY", "3")
-        os.environ["AIVATAR_WORKER_CONCURRENCY"] = worker_concurrency
+        # Keep the model pool aligned with the deployment's input concurrency.
+        os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
         os.environ["TORCHINDUCTOR_COMPILE_THREADS"] = "1"
-        # Load models to CPU for snapshotting (no CUDA calls before snapshot)
+        # CPU snapshots are stable and intentionally make no CUDA calls.
         os.environ["FLASHHEAD_LOAD_DEVICE"] = "cpu"
         # Enable Rust FFI debug logs (ICE, DTLS) before handler import so the
         # native livekit.rtc library picks it up at initialization time.
         os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
-        # Trigger FlashHeadModelPool preload at import - loads to CPU
+        # Trigger the snapshot bootstrap pipeline preload on CPU.
         import handler
         from utils.default_avatar_cache import default_avatar_cache
         from utils.default_idle_video_cache import default_idle_video_cache
@@ -125,48 +137,64 @@ class Worker:
             f"failed={len(idle_cache_status['failedIdleVideoKeys'])}",
             flush=True,
         )
-        print("[modal] Models loaded to CPU for snapshot", flush=True)
+        print("[modal] Bootstrap pipeline loaded to CPU for snapshot", flush=True)
 
     @modal.enter(snap=False)
     def restore(self):
-        import sys
-        sys.path.insert(0, "/app")
-        # The CPU-loaded pool remains inside the stable memory snapshot. GPU
-        # transfer and CUDA warmup run after the HTTP server starts so a session
-        # can publish idle media while model readiness is pending.
+        # The CPU-loaded bootstrap pipeline remains in the stable memory snapshot.
+        # GPU transfer and CUDA warmup run after the snapshot is restored.
         os.environ.pop("FLASHHEAD_LOAD_DEVICE", None)
 
-    async def _initialize_models(self):
-        import asyncio
+    @staticmethod
+    def _warm_pipeline(pipeline):
         import torch
         from flash_head.inference import get_base_data, get_audio_embedding, run_pipeline, get_infer_params
         from PIL import Image
         import numpy as np
 
+        dummy_img_path = "/tmp/warmup_avatar.png"
+        Image.new("RGB", (512, 512), color=(128, 128, 128)).save(dummy_img_path)
+        get_base_data(pipeline, dummy_img_path, base_seed=42, use_face_crop=False)
+        params = get_infer_params()
+        sr = params["sample_rate"]
+        cached_dur = params["cached_audio_duration"]
+        frame_num = params["frame_num"]
+        tgt_fps = params["tgt_fps"]
+        audio_end_idx = cached_dur * tgt_fps
+        audio_start_idx = audio_end_idx - frame_num
+        dummy_audio = np.zeros(cached_dur * sr, dtype=np.float32)
+        audio_emb = get_audio_embedding(pipeline, dummy_audio, audio_start_idx, audio_end_idx)
+        run_pipeline(pipeline, audio_emb)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+
+    async def _initialize_models(self):
+        import asyncio
+        import torch
+        import time
+
         device = "cuda" if torch.cuda.is_available() else "cpu"
         try:
-            print(f"[modal] Initializing models on {device} after server bind", flush=True)
-            await asyncio.to_thread(self._handler.model_pool.move_to_device, device)
-            print("[modal] Models moved to GPU", flush=True)
+            print(f"[modal] Initializing bootstrap pipeline on {device} after snapshot restore", flush=True)
+            move_started_at = time.monotonic()
 
-            dummy_img_path = "/tmp/warmup_avatar.png"
-            Image.new("RGB", (512, 512), color=(128, 128, 128)).save(dummy_img_path)
+            def _move_models():
+                self._handler.model_pool.move_to_device(device)
+                if device == "cuda":
+                    torch.cuda.synchronize()
+
+            await asyncio.to_thread(_move_models)
+            print(
+                f"[modal] Bootstrap pipeline moved to {device} in {(time.monotonic() - move_started_at) * 1000:.1f} ms",
+                flush=True,
+            )
+
             pipeline = await self._handler.model_pool.acquire()
             try:
-                def _warm_pipeline():
-                    get_base_data(pipeline, dummy_img_path, base_seed=42, use_face_crop=False)
-                    params = get_infer_params()
-                    sr = params["sample_rate"]
-                    cached_dur = params["cached_audio_duration"]
-                    frame_num = params["frame_num"]
-                    tgt_fps = params["tgt_fps"]
-                    audio_end_idx = cached_dur * tgt_fps
-                    audio_start_idx = audio_end_idx - frame_num
-                    dummy_audio = np.zeros(cached_dur * sr, dtype=np.float32)
-                    audio_emb = get_audio_embedding(pipeline, dummy_audio, audio_start_idx, audio_end_idx)
-                    run_pipeline(pipeline, audio_emb)
-
-                await asyncio.to_thread(_warm_pipeline)
+                warm_started_at = time.monotonic()
+                await asyncio.to_thread(self._warm_pipeline, pipeline)
+                warm_elapsed_ms = (time.monotonic() - warm_started_at) * 1000
+                print(f"[modal] CUDA warmup completed in {warm_elapsed_ms:.1f} ms", flush=True)
                 print("[modal] warmup generate() completed - CUDA kernels pre-warmed", flush=True)
             finally:
                 self._handler.model_pool.release(pipeline)
@@ -175,8 +203,31 @@ class Worker:
             self._handler.mark_model_ready(exc)
             logging.getLogger("modal_app").exception("Model initialization failed")
 
-    async def _prewarm_webrtc_routes(self):
-        """Create N pre-warm LiveKit rooms and add them to the prewarm pool."""
+    async def _load_remaining_pipelines(self):
+        """Fill configured capacity after the first warmed pipeline is serving."""
+        import time
+
+        pool = self._handler.model_pool
+        remaining = pool.max_size - pool.current_size
+        if remaining <= 0:
+            return
+
+        print(
+            f"[modal] Loading {remaining} remaining pipeline(s) in the background "
+            f"to reach configured capacity {pool.max_size}",
+            flush=True,
+        )
+        started_at = time.monotonic()
+        loaded_count = await pool.load_remaining()
+        print(
+            f"[modal] Background pipeline fill complete: loaded={loaded_count} "
+            f"available={pool.get_available_count()}/{pool.max_size} "
+            f"in {(time.monotonic() - started_at) * 1000:.1f} ms",
+            flush=True,
+        )
+
+    async def _connect_prewarm_room(self, slot, require_connection=False):
+        """Connect one room on the aiohttp loop that will later publish to it."""
         import asyncio
         import time
         import uuid
@@ -186,19 +237,17 @@ class Worker:
         api_secret = os.getenv("LIVEKIT_API_SECRET")
 
         if not livekit_url or not api_key or not api_secret:
-            print("[prewarm] Skipping — LIVEKIT_URL/API_KEY/API_SECRET not set", flush=True)
-            return
+            raise RuntimeError("LIVEKIT_URL/API_KEY/API_SECRET not set")
 
-        # Pre-warm one LiveKit room per available model pipeline so /readyz
-        # prewarmRoomsAvailable matches the worker's configured concurrency.
         pool_size = self._handler.WORKER_POOL_SIZE
-
         from livekit import rtc
         from livekit.api import AccessToken, VideoGrants
 
         prewarm_pool = self._handler.prewarm_pool
 
-        for i in range(pool_size):
+        attempt = 0
+        while require_connection or attempt < PREWARM_MAX_ATTEMPTS:
+            attempt += 1
             room_name = f"prewarm-{uuid.uuid4().hex[:8]}"
             token = (
                 AccessToken(api_key, api_secret)
@@ -213,35 +262,67 @@ class Worker:
                     )
                 )
             ).to_jwt()
-
             room = rtc.Room()
-            t0 = time.monotonic()
+            started_at = time.monotonic()
             try:
-                print(f"[prewarm] Connecting to {livekit_url} room={room_name} ({i+1}/{pool_size})...", flush=True)
+                attempt_limit = "required" if require_connection else str(PREWARM_MAX_ATTEMPTS)
+                print(
+                    f"[prewarm] Connecting to {livekit_url} room={room_name} "
+                    f"slot={slot + 1}/{pool_size} attempt={attempt}/{attempt_limit}...",
+                    flush=True,
+                )
+                # Let the native SDK own its connection timeout and retry
+                # lifecycle. Cancelling Room.connect() mid-flight races its FFI
+                # callback and caused the observed FFI panic.
                 await room.connect(
                     livekit_url,
                     token,
                     options=rtc.RoomOptions(
                         auto_subscribe=False,
                         single_peer_connection=True,
-                        connect_timeout=30.0,
+                        connect_timeout=PREWARM_CONNECT_TIMEOUT_SECONDS,
                     ),
                 )
-                elapsed = round((time.monotonic() - t0) * 1000, 1)
-                print(f"[prewarm] Connected in {elapsed} ms, adding to pool", flush=True)
+                elapsed_ms = (time.monotonic() - started_at) * 1000
+                print(
+                    f"[prewarm] Connected slot={slot + 1}/{pool_size} in {elapsed_ms:.1f} ms, adding to pool",
+                    flush=True,
+                )
                 await prewarm_pool.add(room_name, room, f"prewarm-{room_name}", token)
+                return True
+            except asyncio.CancelledError:
+                raise
             except Exception as exc:
-                print(f"[prewarm] Failed for room {room_name} (non-fatal): {exc}", flush=True)
+                elapsed_ms = (time.monotonic() - started_at) * 1000
+                print(
+                    f"[prewarm] Failed slot={slot + 1}/{pool_size} attempt={attempt}/{attempt_limit} "
+                    f"after {elapsed_ms:.1f} ms: {exc}",
+                    flush=True,
+                )
+                if not require_connection and attempt >= PREWARM_MAX_ATTEMPTS:
+                    return False
+                retry_delay = min(PREWARM_RETRY_DELAY_SECONDS * attempt, 10.0)
+                print(
+                    f"[prewarm] Retrying slot={slot + 1}/{pool_size} in {retry_delay:.1f}s",
+                    flush=True,
+                )
+                await asyncio.sleep(retry_delay)
+        return False
 
-        print(f"[prewarm] Pool ready: {prewarm_pool.available_count()}/{pool_size} rooms available", flush=True)
+    async def _prewarm_remaining_rooms(self):
+        """Fill remaining capacity after the required first room is claimable."""
+        import asyncio
 
-        if getattr(self, "_prewarm_cleanup_task", None) is None:
-            async def _cleanup_loop():
-                while True:
-                    await asyncio.sleep(10)
-                    await prewarm_pool.cleanup_expired()
-
-            self._prewarm_cleanup_task = asyncio.create_task(_cleanup_loop())
+        pool_size = self._handler.WORKER_POOL_SIZE
+        prewarm_pool = self._handler.prewarm_pool
+        connected = await asyncio.gather(
+            *(self._connect_prewarm_room(slot) for slot in range(1, pool_size))
+        )
+        print(
+            f"[prewarm] Background fill finished: {1 + sum(connected)}/{pool_size} rooms connected, "
+            f"{prewarm_pool.available_count()}/{pool_size} rooms available",
+            flush=True,
+        )
 
     @modal.web_server(8000, startup_timeout=600)
     def serve(self):
@@ -277,12 +358,34 @@ class Worker:
                 )
                 self._handler.configure_model_readiness(ready=False)
                 application = await build_app()
+                self._model_init_task = asyncio.create_task(self._initialize_models())
+
+                # Do not bind HTTP until a session can reuse a connected room.
+                # CPU-model warmup and the first room connect are independent,
+                # so run them concurrently on the session-owning aiohttp loop.
+                first_prewarm_task = asyncio.create_task(
+                    self._connect_prewarm_room(slot=0, require_connection=True)
+                )
+                await asyncio.gather(self._model_init_task, first_prewarm_task)
+                if self._handler._model_init_error is not None:
+                    raise RuntimeError("FlashHead model initialization failed") from self._handler._model_init_error
+
                 runner = web.AppRunner(application)
                 await runner.setup()
                 site = web.TCPSite(runner, "0.0.0.0", 8000)
                 await site.start()
-                self._model_init_task = asyncio.create_task(self._initialize_models())
-                self._prewarm_task = asyncio.create_task(self._prewarm_webrtc_routes())
+                self._pipeline_fill_task = asyncio.create_task(
+                    self._load_remaining_pipelines()
+                )
+                self._prewarm_task = asyncio.create_task(self._prewarm_remaining_rooms())
+
+                if getattr(self, "_prewarm_cleanup_task", None) is None:
+                    async def _cleanup_loop():
+                        while True:
+                            await asyncio.sleep(10)
+                            await self._handler.prewarm_pool.cleanup_expired()
+
+                    self._prewarm_cleanup_task = asyncio.create_task(_cleanup_loop())
                 import asyncio as _aio
                 logger.info("aiohttp site started thread=%s event_loop=%s", threading.get_ident(), id(_aio.get_event_loop()))
                 await asyncio.Event().wait()

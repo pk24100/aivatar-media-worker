@@ -6,7 +6,7 @@ short-lived callback token. It never receives long-lived R2 credentials.
 
 When used with Modal (modal_idle_video_generator.py), the pipeline is loaded
 once at container boot and set via set_pipeline() for CPU memory snapshot reuse.
-When _PIPELINE is None (standalone/Vast Docker mode), it falls back to calling
+When _PIPELINE is None (standalone mode), it falls back to calling
 get_pipeline() on each request.
 """
 import asyncio
@@ -32,41 +32,6 @@ MAX_SOURCE_IMAGE_BYTES = 10 * 1024 * 1024
 GENERATION_LOCK = asyncio.Lock()
 
 _PIPELINE = None
-
-_EYE_CASCADE = None
-
-
-def _get_eye_cascade():
-    global _EYE_CASCADE
-    if _EYE_CASCADE is None:
-        paths = [
-            cv2.data.haarcascades + "haarcascade_eye.xml",
-            cv2.data.haarcascades + "haarcascade_eye_tree_eyeglasses.xml",
-            "/usr/share/opencv4/haarcascades/haarcascade_eye.xml",
-            "/usr/local/share/opencv4/haarcascades/haarcascade_eye.xml",
-        ]
-        for p in paths:
-            try:
-                cascade = cv2.CascadeClassifier(p)
-                if not cascade.empty():
-                    _EYE_CASCADE = cascade
-                    break
-            except Exception:
-                continue
-    return _EYE_CASCADE
-
-
-def _detect_eyes(frame):
-    """Detect eye regions using cv2 Haar cascade. Returns list of (cx, cy, w, h) boxes."""
-    cascade = _get_eye_cascade()
-    if cascade is None or cascade.empty():
-        return []
-    gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-    eyes = cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(15, 15))
-    result = []
-    for (ex, ey, ew, eh) in eyes:
-        result.append((ex + ew // 2, ey + eh // 2, int(ew * 1.4), int(eh * 2.0)))
-    return result
 
 
 def _apply_2d_sway(frames, fps,
@@ -161,7 +126,7 @@ def _generate_idle_clip(source_path: str, output_path: str, duration_seconds: fl
     # The murmuring audio (glottal pulses + formants) produces wav2vec2
     # embeddings that drive FlashHead's natural eye blink generation at
     # the correct facial positions. A small latent perturbation prevents
-    # autoregressive convergence so motion continues across all 8 seconds.
+    # autoregressive convergence so motion continues across all 15 seconds.
     # 2D sway is applied as post-processing for consistent body movement.
     while len(frames) < target_frames:
         if slice_idx == 0:

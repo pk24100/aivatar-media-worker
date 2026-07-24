@@ -10,7 +10,7 @@ import requests
 
 logger = logging.getLogger("default_idle_video_cache")
 MANIFEST_PATH = pathlib.Path(__file__).resolve().parents[1] / "config" / "default_avatars.manifest.json"
-MAX_IDLE_VIDEO_BYTES = int(os.getenv("IDLE_VIDEO_MAX_BYTES", str(8 * 1024 * 1024)))
+MAX_IDLE_VIDEO_BYTES = int(os.getenv("IDLE_VIDEO_MAX_BYTES", str(20 * 1024 * 1024)))
 
 
 class DefaultIdleVideoCache:
