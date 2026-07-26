@@ -27,7 +27,12 @@ class IdleVideoLoop:
         self.frames: List[np.ndarray] = []
         self.current_idx = 0
         self.total_frames = 0
-        
+        self._loop_crossfade_frames = int(os.getenv("IDLE_LOOP_CROSSFADE_FRAMES", "8"))
+        self._loop_transition_buffer: List[np.ndarray] = []
+        self._in_loop_transition: bool = False
+        self._loop_transition_idx: int = 0
+        self._loop_crossfade_frames_effective: int = 0
+
         if video_bytes is not None:
             self._load_bytes(video_bytes)
         elif idle_video_url:
@@ -188,11 +193,52 @@ class IdleVideoLoop:
     def is_valid(self) -> bool:
         return self.total_frames > 0
         
+    def _get_effective_loop_crossfade_frames(self) -> int:
+        """Get the effective crossfade frame count, clamped to video length."""
+        fade = self._loop_crossfade_frames
+        if fade <= 0 or self.total_frames < 4:
+            return 0
+        if self.total_frames < 2 * fade:
+            fade = max(2, self.total_frames // 4)
+        return fade
+
+    def _generate_loop_crossfade(self, fade_frames: int) -> List[np.ndarray]:
+        """Generate crossfade from last N frames to first N frames for seamless loop."""
+        blended = []
+        for i in range(fade_frames):
+            alpha = i / fade_frames
+            tail_idx = self.total_frames - fade_frames + i
+            head_idx = i
+            tail_frame = self.frames[tail_idx]
+            head_frame = self.frames[head_idx]
+            blended.append(cv2.addWeighted(tail_frame, 1 - alpha, head_frame, alpha, 0))
+        return blended
+
     def get_next_frame(self) -> np.ndarray:
-        """Get next frame in loop, wrapping around."""
+        """Get next frame in loop, with crossfade at the wrap-around boundary."""
         if not self.is_valid():
             return None
-            
+
+        if self._in_loop_transition:
+            frame = self._loop_transition_buffer[self._loop_transition_idx]
+            self._loop_transition_idx += 1
+            if self._loop_transition_idx >= len(self._loop_transition_buffer):
+                self._in_loop_transition = False
+                self._loop_transition_buffer = []
+                self._loop_transition_idx = 0
+                self.current_idx = self._loop_crossfade_frames_effective % self.total_frames
+            return frame
+
+        fade = self._get_effective_loop_crossfade_frames()
+        if fade > 0 and self.current_idx >= self.total_frames - fade:
+            self._loop_crossfade_frames_effective = fade
+            self._loop_transition_buffer = self._generate_loop_crossfade(fade)
+            self._in_loop_transition = True
+            self._loop_transition_idx = 0
+            frame = self._loop_transition_buffer[self._loop_transition_idx]
+            self._loop_transition_idx += 1
+            return frame
+
         frame = self.frames[self.current_idx]
         self.current_idx = (self.current_idx + 1) % self.total_frames
         return frame
