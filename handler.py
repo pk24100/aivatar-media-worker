@@ -764,8 +764,8 @@ async def app_websocket_ingest(request):
     except pyjwt.ExpiredSignatureError:
         logger.warning("WS_AUTH_FAIL session=%s reason=expired_token ip=%s", session_id, client_ip)
         raise web.HTTPUnauthorized(text="Token expired")
-    except pyjwt.InvalidTokenError:
-        logger.warning("WS_AUTH_FAIL session=%s reason=invalid_token ip=%s", session_id, client_ip)
+    except pyjwt.InvalidTokenError as _jwt_err:
+        logger.warning("WS_AUTH_FAIL session=%s reason=invalid_token ip=%s detail=%s token_len=%d", session_id, client_ip, _jwt_err, len(auth_token))
         raise web.HTTPUnauthorized(text="Invalid token")
 
     # Verify session_id in JWT matches URL path

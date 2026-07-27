@@ -1,26 +1,27 @@
 """
-Modal serving wrapper for the AiVatar media worker.
-Uses the same aiohttp app (app_factory.build_app) as RunPod.
+Modal STRESS TEST wrapper for the AiVatar media worker.
 
-GPU memory snapshots (alpha feature):
-- Models loaded directly to GPU in @modal.enter(snap=True)
-- Warmup inference run before snapshot (CUDA kernels captured in snapshot)
-- On restore: verify CUDA state, start serving immediately (no model move/warmup)
-- Lazy xfuser patch applied via flash_head_model_snapshot_patch.py overlay
-- UCX/NCCL env vars set at image level to prevent SIGSEGV on L4 GPU
-- handler and livekit imports deferred to serve() (post-restore) to avoid
-  Rust FFI background threads corrupting GPU memory snapshot state
+This is a copy of modal_app.py with high concurrency settings to find the
+maximum concurrent sessions a single GPU can handle before FPS degrades.
 
-Manual prerequisites:
-1. modal secret create huggingface-secret HUGGING_FACE_HUB_TOKEN=hf_xxx
-2. modal secret create livekit-secret LIVEKIT_API_KEY=... LIVEKIT_API_SECRET=... LIVEKIT_URL=wss://...
-3. modal secret create aivatar-worker-secret LIVEKIT_URL=...
-4. modal secret create aivatar-idle-video-r2 IDLE_VIDEO_R2_ENDPOINT=... IDLE_VIDEO_R2_ACCESS_KEY_ID=... IDLE_VIDEO_R2_SECRET_ACCESS_KEY=...
-5. modal deploy modal_app.py
+Changes from production (modal_app.py):
+- App name: aivatar-worker-stress (separate from production)
+- WORKER_CONCURRENCY default: 10 (vs 3 in production)
+- GPU: L4 (hardcoded, change to "L40S" for L40S testing)
+- min_containers: 1 (warm container for test start)
+- Prewarm pool: 1 room only (test script mints rooms for sessions 2-N)
+- GPU memory snapshots: ENABLED (mimics production behavior)
 
-FlashHead model weights are baked into the image at build time via
-snapshot_download from pkam24100/aivatar-flashhead-model.
-No Modal Volume or pre-download script needed.
+Deploy:
+    modal deploy modal_app_stress.py
+
+Test:
+    python scripts/modal_concurrent_test.py \
+        --modal-url https://<stress-app-url>.modal.run \
+        --wav test_audio.wav --sessions 5 --stagger 1.0
+
+    Incrementally increase --sessions: 3, 5, 7, 10, etc.
+    Watch for FPS degradation in the verdict line.
 """
 
 import os
@@ -32,8 +33,8 @@ import time
 import modal
 
 
-WORKER_APP_NAME = os.getenv("AIVATAR_MODAL_APP_NAME", "aivatar-worker")
-WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "3"))
+WORKER_APP_NAME = "aivatar-worker-stress"
+WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "10"))
 if WORKER_CONCURRENCY < 1:
     raise ValueError("AIVATAR_WORKER_CONCURRENCY must be at least 1")
 PREWARM_CONNECT_TIMEOUT_SECONDS = float(
@@ -43,6 +44,9 @@ PREWARM_MAX_ATTEMPTS = max(1, int(os.getenv("AIVATAR_PREWARM_MAX_ATTEMPTS", "3")
 PREWARM_RETRY_DELAY_SECONDS = float(
     os.getenv("AIVATAR_PREWARM_RETRY_DELAY_SECONDS", "1")
 )
+
+# Stress test: only 1 prewarm room. Test script mints rooms for sessions 2-N.
+STRESS_PREWARM_SIZE = 1
 
 
 class _ShortenLiveKitWebSocketUrlFilter(logging.Filter):
@@ -73,7 +77,7 @@ def _crash_handler(signum, frame):
     print(f"[CRASH] signal={signum} pid={os.getpid()} thread={threading.current_thread().name}", flush=True)
     print(f"[CRASH] Frame: {frame}", flush=True)
     print(f"\n[CRASH] === Python traceback (all threads) ===", flush=True)
-    faulthandler.dump_traceback(limit=50)
+    faulthandler.dump_traceback()
     print(f"\n[CRASH] === Thread enumeration ===", flush=True)
     for t in threading.enumerate():
         print(f"  thread: {t.name} ident={t.ident} daemon={t.daemon} alive={t.is_alive()}", flush=True)
@@ -87,15 +91,6 @@ def _crash_handler(signum, frame):
         print(f"  maps read failed: {e}", flush=True)
     print(f"\n{'='*60}", flush=True)
     os._exit(1)
-
-
-def _install_signal_handlers():
-    faulthandler.enable()
-    for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGBUS, signal.SIGFPE):
-        try:
-            signal.signal(sig, _crash_handler)
-        except (OSError, ValueError):
-            pass
 
 
 def _reset_ucx_signal_handlers():
@@ -120,6 +115,15 @@ def _reset_ucx_signal_handlers():
             pass
 
 
+def _install_signal_handlers():
+    faulthandler.enable()
+    for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGBUS, signal.SIGFPE):
+        try:
+            signal.signal(sig, _crash_handler)
+        except (OSError, ValueError):
+            pass
+
+
 def _log_cuda_state(label):
     try:
         import torch
@@ -139,6 +143,82 @@ def _log_cuda_state(label):
         print(f"[{label}] error logging CUDA state: {e}", flush=True)
 
 
+METRICS_INTERVAL_SECONDS = float(os.getenv("STRESS_METRICS_INTERVAL", "5"))
+
+
+def _metrics_logger(handler_ref, interval=METRICS_INTERVAL_SECONDS):
+    """Background thread that logs GPU/CPU/RAM/session metrics to stdout.
+
+    Runs in a dedicated thread (not an asyncio task) so it is not affected
+    by event loop blocking from LiveKit native SDK calls.
+    Shows up in `modal app logs --follow` alongside other logs.
+    """
+    import torch
+    import resource
+    import time as _time
+
+    while True:
+        try:
+            # GPU metrics
+            gpu_util = "n/a"
+            gpu_mem_alloc = 0
+            gpu_mem_reserved = 0
+            gpu_mem_total = 0
+            gpu_temp = "n/a"
+
+            if torch.cuda.is_available():
+                gpu_mem_alloc = torch.cuda.memory_allocated()
+                gpu_mem_reserved = torch.cuda.memory_reserved()
+                gpu_mem_total = torch.cuda.get_device_properties(0).total_memory
+
+                # Try nvidia-smi for utilization + temperature (subprocess, ~50ms)
+                try:
+                    import subprocess
+                    result = subprocess.run(
+                        ["nvidia-smi",
+                         "--query-gpu=utilization.gpu,temperature.gpu",
+                         "--format=csv,noheader,nounits"],
+                        capture_output=True, text=True, timeout=5,
+                    )
+                    if result.returncode == 0:
+                        parts = result.stdout.strip().split(", ")
+                        gpu_util = f"{parts[0]}%"
+                        gpu_temp = f"{parts[1]}C"
+                except Exception:
+                    pass
+
+            # CPU + RAM (process-level)
+            ru = resource.getrusage(resource.RUSAGE_SELF)
+            cpu_user = ru.ru_utime
+            cpu_sys = ru.ru_stime
+            rss_mb = ru.ru_maxrss / 1024  # KB -> MB on Linux
+
+            # Active sessions from handler
+            active_sessions = len(handler_ref._active_sessions)
+            pool_avail = handler_ref.model_pool.get_available_count()
+            pool_size = handler_ref.model_pool.max_size
+
+            # Format GPU memory in GB
+            gpu_alloc_gb = gpu_mem_alloc / (1024 ** 3)
+            gpu_res_gb = gpu_mem_reserved / (1024 ** 3)
+            gpu_total_gb = gpu_mem_total / (1024 ** 3)
+
+            print(
+                f"[METRICS] GPU_util={gpu_util} GPU_temp={gpu_temp} "
+                f"GPU_mem={gpu_alloc_gb:.1f}GB/{gpu_total_gb:.1f}GB "
+                f"(reserved={gpu_res_gb:.1f}GB) "
+                f"RSS={rss_mb:.0f}MB "
+                f"CPU_user={cpu_user:.1f}s CPU_sys={cpu_sys:.1f}s "
+                f"sessions={active_sessions} "
+                f"pool={pool_avail}/{pool_size}",
+                flush=True,
+            )
+        except Exception as e:
+            print(f"[METRICS] error: {e}", flush=True)
+
+        _time.sleep(interval)
+
+
 image = (
     modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.02-py3")
     .env({
@@ -155,11 +235,6 @@ image = (
     .pip_install("ninja")
     .run_commands("pip install flash-attn --no-build-isolation || true")
     .pip_install_from_requirements("requirements.txt")
-    # Download FlashHead model weights from HuggingFace into the image layer.
-    # This bakes ~6GB of weights directly into the image, eliminating the
-    # ~38s snapshot_download from Modal Volume at every container boot.
-    # Modal caches this layer, so it's only downloaded once (on first deploy
-    # or when the model changes). The huggingface-secret provides the HF token.
     .run_commands(
         "huggingface-cli download pkam24100/aivatar-flashhead-model --local-dir /app/models/SoulX-FlashHead-1_3B",
         secrets=[modal.Secret.from_name("huggingface-secret")],
@@ -175,15 +250,13 @@ image = (
 )
 
 app = modal.App(WORKER_APP_NAME, image=image)
-#models_volume = modal.Volume.from_name("aivatar-models", create_if_missing=True)
 
 
 worker_cls_config = {
     "gpu": "L4",
-    "min_containers": 0,
+    "min_containers": 1,
     "scaledown_window": 15,
     "timeout": 1800,
-    #volumes={"/models": models_volume},
     "secrets": [
         modal.Secret.from_name("huggingface-secret"),
         modal.Secret.from_name("livekit-secret"),
@@ -209,12 +282,9 @@ class Worker:
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
         os.environ["TORCHINDUCTOR_COMPILE_THREADS"] = "1"
 
-        print("[SNAP_CREATE] Starting GPU snapshot load", flush=True)
+        print(f"[STRESS] Snapshot load with WORKER_CONCURRENCY={WORKER_CONCURRENCY}", flush=True)
         _log_cuda_state("SNAP_CREATE_START")
 
-        # Import ONLY flash_head (torch + model) - NOT handler/livekit.
-        # livekit's Rust FFI spawns background threads that corrupt GPU
-        # memory snapshot state. handler.py is deferred to serve() (post-restore).
         from flash_head.inference import get_pipeline
 
         ckpt_dir = os.getenv("FLASHHEAD_CKPT_DIR", "/app/models/SoulX-FlashHead-1_3B")
@@ -237,8 +307,6 @@ class Worker:
 
         _log_cuda_state("SNAP_CREATE_POST_WARMUP")
 
-        # Release warmup artifacts and reserved-but-unused CUDA memory.
-        # This reduces snapshot size by ~1.6GB (reserved vs allocated gap).
         import gc
         import torch
         p = self._snap_pipeline
@@ -323,17 +391,22 @@ class Worker:
         pool = self._handler.model_pool
         remaining = pool.max_size - pool.current_size
         if remaining <= 0:
+            print(
+                f"[STRESS] All {pool.max_size} pool slots filled from snapshot pipeline. "
+                f"No additional pipelines to load.",
+                flush=True,
+            )
             return
 
         print(
-            f"[modal] Loading {remaining} remaining pipeline(s) in the background "
+            f"[STRESS] Loading {remaining} remaining pipeline(s) in the background "
             f"to reach configured capacity {pool.max_size}",
             flush=True,
         )
         started_at = time.monotonic()
         loaded_count = await pool.load_remaining()
         print(
-            f"[modal] Background pipeline fill complete: loaded={loaded_count} "
+            f"[STRESS] Background pipeline fill complete: loaded={loaded_count} "
             f"available={pool.get_available_count()}/{pool.max_size} "
             f"in {(time.monotonic() - started_at) * 1000:.1f} ms",
             flush=True,
@@ -352,7 +425,6 @@ class Worker:
         if not livekit_url or not api_key or not api_secret:
             raise RuntimeError("LIVEKIT_URL/API_KEY/API_SECRET not set")
 
-        pool_size = self._handler.WORKER_POOL_SIZE
         from livekit import rtc
         from livekit.api import AccessToken, VideoGrants
 
@@ -365,7 +437,7 @@ class Worker:
             token = (
                 AccessToken(api_key, api_secret)
                 .with_identity(f"prewarm-{room_name}")
-                .with_name("Modal Pre-Warm")
+                .with_name("Modal Pre-Warm (Stress)")
                 .with_grants(
                     VideoGrants(
                         room_join=True,
@@ -381,12 +453,9 @@ class Worker:
                 attempt_limit = "required" if require_connection else str(PREWARM_MAX_ATTEMPTS)
                 print(
                     f"[prewarm] Connecting to {livekit_url} room={room_name} "
-                    f"slot={slot + 1}/{pool_size} attempt={attempt}/{attempt_limit}...",
+                    f"slot={slot + 1}/{STRESS_PREWARM_SIZE} attempt={attempt}/{attempt_limit}...",
                     flush=True,
                 )
-                # Let the native SDK own its connection timeout and retry
-                # lifecycle. Cancelling Room.connect() mid-flight races its FFI
-                # callback and caused the observed FFI panic.
                 await room.connect(
                     livekit_url,
                     token,
@@ -398,7 +467,7 @@ class Worker:
                 )
                 elapsed_ms = (time.monotonic() - started_at) * 1000
                 print(
-                    f"[prewarm] Connected slot={slot + 1}/{pool_size} in {elapsed_ms:.1f} ms, adding to pool",
+                    f"[prewarm] Connected slot={slot + 1}/{STRESS_PREWARM_SIZE} in {elapsed_ms:.1f} ms, adding to pool",
                     flush=True,
                 )
                 await prewarm_pool.add(room_name, room, f"prewarm-{room_name}", token)
@@ -408,7 +477,7 @@ class Worker:
             except Exception as exc:
                 elapsed_ms = (time.monotonic() - started_at) * 1000
                 print(
-                    f"[prewarm] Failed slot={slot + 1}/{pool_size} attempt={attempt}/{attempt_limit} "
+                    f"[prewarm] Failed slot={slot + 1}/{STRESS_PREWARM_SIZE} attempt={attempt}/{attempt_limit} "
                     f"after {elapsed_ms:.1f} ms: {exc}",
                     flush=True,
                 )
@@ -416,24 +485,17 @@ class Worker:
                     return False
                 retry_delay = min(PREWARM_RETRY_DELAY_SECONDS * attempt, 10.0)
                 print(
-                    f"[prewarm] Retrying slot={slot + 1}/{pool_size} in {retry_delay:.1f}s",
+                    f"[prewarm] Retrying slot={slot + 1}/{STRESS_PREWARM_SIZE} in {retry_delay:.1f}s",
                     flush=True,
                 )
                 await asyncio.sleep(retry_delay)
         return False
 
     async def _prewarm_remaining_rooms(self):
-        """Fill remaining capacity after the required first room is claimable."""
-        import asyncio
-
-        pool_size = self._handler.WORKER_POOL_SIZE
-        prewarm_pool = self._handler.prewarm_pool
-        connected = await asyncio.gather(
-            *(self._connect_prewarm_room(slot) for slot in range(1, pool_size))
-        )
+        """Stress test: only 1 prewarm room total. No background fill needed."""
         print(
-            f"[prewarm] Background fill finished: {1 + sum(connected)}/{pool_size} rooms connected, "
-            f"{prewarm_pool.available_count()}/{pool_size} rooms available",
+            f"[STRESS] Prewarm pool size={STRESS_PREWARM_SIZE}. "
+            f"Test script will mint rooms for sessions 2-N.",
             flush=True,
         )
 
@@ -446,13 +508,10 @@ class Worker:
         from aiohttp import web
         from app_factory import build_app
 
-        print("[SERVE] Starting serve() post-restore", flush=True)
+        print(f"[SERVE] Starting serve() post-restore (STRESS TEST, concurrency={WORKER_CONCURRENCY})", flush=True)
 
         _install_signal_handlers()
 
-        # Configure root logger so all Python loggers (stream_processor,
-        # VideoPublisher, AudioPublisher, etc.) output to stdout.
-        # Without this, _logger.info() calls are silently dropped.
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -461,26 +520,37 @@ class Worker:
         )
         for handler in logging.getLogger().handlers:
             handler.addFilter(_ShortenLiveKitWebSocketUrlFilter())
-        logger = logging.getLogger("modal_app")
+        logger = logging.getLogger("modal_app_stress")
 
-        # Monkey-patch get_pipeline to return our GPU snapshot pipeline
-        # so handler's model_pool loads it directly - zero wasted CPU load.
         import flash_head.inference as fhi
         _orig_get_pipeline = fhi.get_pipeline
         fhi.get_pipeline = lambda *a, **kw: self._snap_pipeline
 
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
-        # Enable Rust FFI debug logs (ICE, DTLS) before handler import so the
-        # native livekit.rtc library picks it up at initialization time.
         os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
+
+        # Suppress per-step denoise timing prints from flash_head_pipeline.py
+        # (fires many times per session, floods logs during stress testing)
+        # Kept active for the entire serve loop - restored only on shutdown.
+        import builtins
+        _orig_print = builtins.print
+
+        def _filtered_print(*args, **kwargs):
+            try:
+                msg = " ".join(str(a) for a in args)
+                if "model denoise per step" in msg:
+                    return
+            except Exception:
+                pass
+            _orig_print(*args, **kwargs)
+
+        builtins.print = _filtered_print
+
         import handler
         self._handler = handler
 
-        # Restore original get_pipeline so load_remaining() builds fresh pipelines
         fhi.get_pipeline = _orig_get_pipeline
 
-        # Preload default avatar and idle video caches (was in load() for CPU snapshots).
-        # These read from local disk only (manifest JSON + baked image/video files), <1s.
         from utils.default_avatar_cache import default_avatar_cache
         from utils.default_idle_video_cache import default_idle_video_cache
         cache_status = default_avatar_cache.preload()
@@ -490,7 +560,7 @@ class Worker:
                 f"[modal] Default avatar manifest loaded: cachedAvatarCount={cache_status['cachedAvatarCount']} "
                 f"failed={len(cache_status['failedAvatarIds'])}",
                 flush=True,
-            )
+        )
         else:
             print(
                 f"[modal] Default avatar manifest not found at {cache_status['manifestPath']} - "
@@ -515,10 +585,9 @@ class Worker:
             asyncio.set_event_loop(loop)
 
             async def _start():
-                # Recreate the pool on the aiohttp server loop so claimed rooms
-                # and session publishers share the same event-loop ownership.
+                # Stress test: prewarm pool size = 1 (not WORKER_POOL_SIZE)
                 self._handler.prewarm_pool = self._handler.PrewarmRoomPool(
-                    size=self._handler.WORKER_POOL_SIZE
+                    size=STRESS_PREWARM_SIZE
                 )
                 self._handler.configure_model_readiness(ready=False)
                 application = await build_app()
@@ -527,7 +596,6 @@ class Worker:
                 _log_cuda_state("SERVE_START")
                 self._handler.mark_model_ready()
 
-                # Do not bind HTTP until a session can reuse a connected room.
                 first_prewarm_task = asyncio.create_task(
                     self._connect_prewarm_room(slot=0, require_connection=True)
                 )
@@ -540,10 +608,11 @@ class Worker:
                 site = web.TCPSite(runner, "0.0.0.0", 8000)
                 await site.start()
 
-                # Load remaining pipelines (2-3) in background
+                # Load remaining pipelines in background (if any)
                 self._pipeline_fill_task = asyncio.create_task(
                     self._load_remaining_pipelines()
                 )
+                # Stress test: no background prewarm fill
                 self._prewarm_task = asyncio.create_task(self._prewarm_remaining_rooms())
 
                 if getattr(self, "_prewarm_cleanup_task", None) is None:
@@ -553,6 +622,16 @@ class Worker:
                             await self._handler.prewarm_pool.cleanup_expired()
 
                     self._prewarm_cleanup_task = asyncio.create_task(_cleanup_loop())
+
+                # Stress test: metrics logger every 5s (background thread, not asyncio task)
+                import threading as _threading
+                self._metrics_thread = _threading.Thread(
+                    target=_metrics_logger,
+                    args=(self._handler,),
+                    daemon=True,
+                    name="stress-metrics",
+                )
+                self._metrics_thread.start()
 
                 logger.info("aiohttp site started thread=%s event_loop=%s", threading.get_ident(), id(asyncio.get_event_loop()))
                 await asyncio.Event().wait()

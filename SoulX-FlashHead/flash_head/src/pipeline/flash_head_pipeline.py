@@ -330,8 +330,8 @@ class FlashHeadPipeline:
 
                 torch.cuda.synchronize()
                 end_time = time.time()
-                if self.rank == 0:
-                    print(f'[generate] model denoise per step: {end_time - start_time}s')
+                # if self.rank == 0:
+                #     print(f'[generate] model denoise per step: {end_time - start_time}s')
 
             noise[:, :self.latent_motion_frames.shape[1]] = self.latent_motion_frames
 
@@ -342,8 +342,8 @@ class FlashHeadPipeline:
 
             torch.cuda.synchronize()
             end_decode_time = time.time()
-            if self.rank == 0:
-                print(f'[generate] decode video frames: {end_decode_time - start_decode_time}s')
+            # if self.rank == 0:
+            #     print(f'[generate] decode video frames: {end_decode_time - start_decode_time}s')
         
         torch.cuda.synchronize()
         start_color_correction_time = time.time()
@@ -353,16 +353,16 @@ class FlashHeadPipeline:
         cond_frame = videos[:, :, -self.motion_frames_num:].to(self.device)
         torch.cuda.synchronize()
         end_color_correction_time = time.time()
-        if self.rank == 0:
-            print(f'[generate] color correction: {end_color_correction_time - start_color_correction_time}s')
+        # if self.rank == 0:
+        #     print(f'[generate] color correction: {end_color_correction_time - start_color_correction_time}s')
 
         torch.cuda.synchronize()
         start_encode_time = time.time()
         self.latent_motion_frames = self.vae.encode(cond_frame)
         torch.cuda.synchronize()
         end_encode_time = time.time()
-        if self.rank == 0:
-            print(f'[generate] encode motion frames: {end_encode_time - start_encode_time}s')
+        # if self.rank == 0:
+        #     print(f'[generate] encode motion frames: {end_encode_time - start_encode_time}s')
 
         gen_video_samples = videos #[:, :, self.motion_frames_num:]
 
