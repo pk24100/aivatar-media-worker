@@ -7,10 +7,15 @@ maximum concurrent sessions a single GPU can handle before FPS degrades.
 Changes from production (modal_app.py):
 - App name: aivatar-worker-stress (separate from production)
 - WORKER_CONCURRENCY default: 10 (vs 3 in production)
-- GPU: L4 (hardcoded, change to "L40S" for L40S testing)
+- GPU: L40S (for optimization testing with SageAttention)
+- Optimizations: SageAttention 2.2.0 (primary attention kernel)
+- torch.compile DISABLED (causes FX symbolic tracing crashes with FlashHeadPipeline)
+- STRESS_ENABLE_COMPILE env var controls torch.compile (default: "0" = disabled)
 - min_containers: 1 (warm container for test start)
 - Prewarm pool: 1 room only (test script mints rooms for sessions 2-N)
+- /readyz: prewarm check relaxed (stress test mints rooms, prewarm not required)
 - GPU memory snapshots: ENABLED (mimics production behavior)
+- Enhanced GPU snapshot failure logging (signal handlers, attention backend, compile state)
 
 Deploy:
     modal deploy modal_app_stress.py
@@ -34,7 +39,7 @@ import modal
 
 
 WORKER_APP_NAME = "aivatar-worker-stress"
-WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "10"))
+WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "3"))
 if WORKER_CONCURRENCY < 1:
     raise ValueError("AIVATAR_WORKER_CONCURRENCY must be at least 1")
 PREWARM_CONNECT_TIMEOUT_SECONDS = float(
@@ -143,6 +148,40 @@ def _log_cuda_state(label):
         print(f"[{label}] error logging CUDA state: {e}", flush=True)
 
 
+def _log_attention_backend(label):
+    """Log which attention backend is available for debugging."""
+    try:
+        import flash_attn
+        print(f"[{label}] flash_attn version: {flash_attn.__version__}", flush=True)
+    except ImportError:
+        print(f"[{label}] flash_attn NOT installed - will use SDPA fallback", flush=True)
+    try:
+        import flash_attn_interface
+        print(f"[{label}] flash_attn_interface (FA3) available", flush=True)
+    except ImportError:
+        print(f"[{label}] flash_attn_interface (FA3) NOT available", flush=True)
+    try:
+        from sageattention import sageattn
+        print(f"[{label}] sageattention available", flush=True)
+    except ImportError:
+        print(f"[{label}] sageattention NOT installed", flush=True)
+
+
+def _log_signal_handlers(label):
+    """Log current signal handler state for debugging GPU snapshot issues."""
+    for sig_name, sig_val in [
+        ("SIGSEGV", signal.SIGSEGV),
+        ("SIGABRT", signal.SIGABRT),
+        ("SIGBUS", signal.SIGBUS),
+        ("SIGFPE", signal.SIGFPE),
+    ]:
+        try:
+            handler = signal.getsignal(sig_val)
+            print(f"[{label}] {sig_name} handler: {handler}", flush=True)
+        except Exception as e:
+            print(f"[{label}] {sig_name} handler: error={e}", flush=True)
+
+
 METRICS_INTERVAL_SECONDS = float(os.getenv("STRESS_METRICS_INTERVAL", "5"))
 
 
@@ -233,7 +272,17 @@ image = (
     })
     .apt_install("git", "git-lfs", "ffmpeg", "libsndfile1", "wget", "ca-certificates")
     .pip_install("ninja")
-    .run_commands("pip install flash-attn --no-build-isolation || true")
+    # SageAttention 2.2.0 - primary attention kernel for stress test.
+    # Source build with TORCH_CUDA_ARCH_LIST=8.9 (L40S only) + NVCC_THREADS=4 to speed up.
+    # flash_attn NOT installed - SageAttention is faster (INT8 QK quantization)
+    # and the code falls back to SDPA if SageAttention is unavailable.
+    .run_commands(
+        "TORCH_CUDA_ARCH_LIST=8.9 MAX_JOBS=4 NVCC_THREADS=4 pip install git+https://github.com/thu-ml/SageAttention.git --no-build-isolation || echo 'SAGEATTN_INSTALL_FAILED'",
+    )
+    # Verification: log which attention backends are available in the image
+    .run_commands(
+        "python -c \"from sageattention import sageattn; print('sageattention OK')\" 2>/dev/null || echo 'sageattention NOT available'",
+    )
     .pip_install_from_requirements("requirements.txt")
     .run_commands(
         "huggingface-cli download pkam24100/aivatar-flashhead-model --local-dir /app/models/SoulX-FlashHead-1_3B",
@@ -253,7 +302,7 @@ app = modal.App(WORKER_APP_NAME, image=image)
 
 
 worker_cls_config = {
-    "gpu": "L4",
+    "gpu": "L40S",
     "min_containers": 1,
     "scaledown_window": 15,
     "timeout": 1800,
@@ -287,6 +336,24 @@ class Worker:
 
         from flash_head.inference import get_pipeline
 
+        # Log which attention backend is available
+        _log_attention_backend("SNAP_CREATE")
+
+        # torch.compile DISABLED by default - causes FX symbolic tracing crashes
+        # with FlashHeadPipeline (RuntimeError: FX trace + dynamo-optimized function).
+        # STRESS_ENABLE_COMPILE=1 to re-enable for experimentation.
+        ENABLE_COMPILE = os.getenv("STRESS_ENABLE_COMPILE", "0") == "1"
+        if ENABLE_COMPILE:
+            import flash_head.src.pipeline.flash_head_pipeline as fhp
+            print(
+                f"[STRESS] Enabling torch.compile "
+                f"(was COMPILE_MODEL={fhp.COMPILE_MODEL}, COMPILE_VAE={fhp.COMPILE_VAE})",
+                flush=True,
+            )
+            fhp.COMPILE_MODEL = True
+            fhp.COMPILE_VAE = True
+            print("[STRESS] torch.compile enabled for model and VAE", flush=True)
+
         ckpt_dir = os.getenv("FLASHHEAD_CKPT_DIR", "/app/models/SoulX-FlashHead-1_3B")
         wav2vec_dir = os.getenv("WAV2VEC_DIR", "/app/models/wav2vec2-base-960h")
         model_type = os.getenv("FLASHHEAD_MODEL_TYPE", "lite")
@@ -307,6 +374,14 @@ class Worker:
 
         _log_cuda_state("SNAP_CREATE_POST_WARMUP")
 
+        # Log torch.compile state after warmup (compilation happens during first inference)
+        try:
+            model = self._snap_pipeline.model
+            is_compiled = hasattr(model, '_orig_mod')
+            print(f"[SNAP_CREATE] torch.compile state after warmup: is_compiled={is_compiled}", flush=True)
+        except Exception as e:
+            print(f"[SNAP_CREATE] torch.compile state check failed: {e}", flush=True)
+
         import gc
         import torch
         p = self._snap_pipeline
@@ -323,7 +398,9 @@ class Worker:
 
         _log_cuda_state("SNAP_CREATE_AFTER_CLEANUP")
 
+        _log_signal_handlers("SNAP_PRE_RESET")
         _reset_ucx_signal_handlers()
+        _log_signal_handlers("SNAP_POST_RESET")
         print("[SNAP_CREATE] Ready for GPU snapshot (memory optimized)", flush=True)
 
     @modal.enter(snap=False)
@@ -357,6 +434,16 @@ class Worker:
             f"[RESTORE] snap_pipeline exists: device={getattr(self._snap_pipeline, 'device', 'unknown')}",
             flush=True,
         )
+
+        _log_signal_handlers("RESTORE_POST")
+
+        # Verify torch.compile state survived the snapshot
+        try:
+            model = self._snap_pipeline.model
+            is_compiled = hasattr(model, '_orig_mod')
+            print(f"[RESTORE] torch.compile state: is_compiled={is_compiled}", flush=True)
+        except Exception as e:
+            print(f"[RESTORE] torch.compile verification failed: {e}", flush=True)
 
         _log_cuda_state("RESTORE_FINAL")
         print("[RESTORE] GPU snapshot restore complete", flush=True)
@@ -550,7 +637,41 @@ class Worker:
         import handler
         self._handler = handler
 
+        # Stress test: relax /readyz to not require prewarm rooms.
+        # The test script mints rooms for sessions 2-N, so prewarm pool
+        # exhaustion (size=1) should not block readiness checks.
+        _orig_pod_ready = handler.pod_ready
+
+        async def _stress_pod_ready(request):
+            from aiohttp import web
+            server_ready = handler.ws_server.is_running
+            models_ready = (
+                handler._model_ready_event is None
+                or (handler._model_ready_event.is_set()
+                    and handler._model_init_error is None)
+            )
+            prewarm_rooms_available = handler.prewarm_pool.available_count()
+            ready = server_ready and models_ready  # prewarm not required
+            return web.json_response({
+                "ready": ready,
+                "status": "READY" if ready else "STARTING",
+                "serverReady": server_ready,
+                "modelsReady": models_ready,
+                "prewarmReady": prewarm_rooms_available > 0,
+                "runtimeMode": "load_balancer",
+                "poolSize": handler.WORKER_POOL_SIZE,
+                "availablePipelines": handler.model_pool.get_available_count(),
+                "activeSessions": len(handler._active_sessions),
+                "prewarmRoomsAvailable": prewarm_rooms_available,
+            }, status=200 if ready else 503)
+
+        handler.pod_ready = _stress_pod_ready
+        print("[STRESS] /readyz patched: prewarm check relaxed", flush=True)
+
         fhi.get_pipeline = _orig_get_pipeline
+
+        # Log attention backend availability post-restore
+        _log_attention_backend("SERVE_POST_RESTORE")
 
         from utils.default_avatar_cache import default_avatar_cache
         from utils.default_idle_video_cache import default_idle_video_cache

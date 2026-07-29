@@ -335,12 +335,23 @@ async def stream_audio_ws(
     session_id: str,
     stop_event: asyncio.Event,
     loop_count: int = -1,
+    send_interval: float = 0.02,
+    idle_gap_seconds: float = 5.0,
 ):
-    """Stream a WAV file over WebSocket to the worker."""
+    """Stream a WAV file over WebSocket to the worker.
+
+    send_interval controls how fast audio is delivered relative to real-time.
+    - 0.1 = real-time (100ms chunk every 100ms) -> engine starves, repeats frames
+    - 0.02 = 5x real-time (100ms chunk every 20ms) -> builds buffer like E2E sample site
+
+    After each WAV loop iteration, sends {type: 'end_utterance'} control message
+    and waits idle_gap_seconds before next iteration, mimicking the E2E sample
+    site's Gnani TTS -> end_utterance -> idle -> speak again flow.
+    """
     import websockets
     import wave
 
-    print(f"  [{session_id}] Streaming audio: {wav_path}")
+    print(f"  [{session_id}] Streaming audio: {wav_path} (send_interval={send_interval}s, idle_gap={idle_gap_seconds}s)")
     try:
         async with websockets.connect(ws_url, subprotocols=[f"aivatar.{ws_token}"]) as ws:
             with wave.open(wav_path, "rb") as wf:
@@ -352,6 +363,7 @@ async def stream_audio_ws(
 
                 while not stop_event.is_set():
                     iteration += 1
+                    utterance_id = f"utt-{session_id}-{iteration}"
                     wf.rewind()
                     while True:
                         data = wf.readframes(chunk_frames)
@@ -360,10 +372,20 @@ async def stream_audio_ws(
                         if stop_event.is_set():
                             break
                         await ws.send(data)
-                        await asyncio.sleep(0.1)
+                        await asyncio.sleep(send_interval)
+
+                    # Send end_utterance control message (matches E2E sample site behavior)
+                    if not stop_event.is_set():
+                        control = json.dumps({"type": "end_utterance", "utteranceId": utterance_id})
+                        await ws.send(control)
+                        print(f"  [{session_id}] Sent end_utterance (iteration {iteration})")
 
                     if loop_count >= 0 and iteration >= loop_count:
                         break
+
+                    # Idle gap between utterances (mimics user typing/thinking pause)
+                    if not stop_event.is_set():
+                        await asyncio.sleep(idle_gap_seconds)
 
         print(f"  [{session_id}] Audio streaming ended ({iteration} iterations)")
     except Exception as e:
@@ -384,6 +406,8 @@ async def run_single_session(
     session_idx: int,
     duration_seconds: int,
     stop_event: asyncio.Event,
+    audio_send_interval: float = 0.02,
+    idle_gap_seconds: float = 5.0,
 ) -> SessionResult:
     """Run a single session: claim room, start, stream audio, measure FPS."""
     result = SessionResult()
@@ -445,10 +469,28 @@ async def run_single_session(
                 result, stop_event, duration_seconds=duration_seconds,
             )
         )
+
+        # Step 4b: Wait for media readiness (first video frame) before streaming audio.
+        # The E2E sample site blocks speech until mediaReady=true. Without this gate,
+        # audio buffers during avatar preparation and creates an artificial burst.
+        print(f"  [{result.session_id}] Waiting for first video frame before audio streaming...")
+        media_ready_deadline = time.monotonic() + 75
+        while result.first_frame_time == 0.0 and time.monotonic() < media_ready_deadline:
+            if stop_event.is_set():
+                break
+            await asyncio.sleep(0.5)
+
+        if result.first_frame_time == 0.0:
+            print(f"  [{result.session_id}] WARNING: No first frame within 75s, starting audio anyway")
+        else:
+            latency = result.first_frame_time - result.start_time
+            print(f"  [{result.session_id}] Media ready (first frame latency={latency:.1f}s), starting audio")
+
         audio_task = asyncio.create_task(
             stream_audio_ws(
                 ws_url, wav_path, ws_token, result.session_id,
-                stop_event, loop_count=-1,
+                stop_event, loop_count=-1, send_interval=audio_send_interval,
+                idle_gap_seconds=idle_gap_seconds,
             )
         )
 
@@ -512,6 +554,14 @@ async def main():
                         help="Skip the readyz polling step")
     parser.add_argument("--monitor-readyz", action="store_true",
                         help="Poll /readyz during the active test run (disabled by default to avoid waking extra containers)")
+    parser.add_argument("--audio-send-interval", type=float, default=0.02,
+                        help="Seconds between audio chunk sends (default: 0.02 = 5x real-time). "
+                             "0.1 = real-time (causes engine starvation). "
+                             "0.02 = 5x real-time (matches E2E sample site buffer buildup).")
+    parser.add_argument("--idle-gap", type=float, default=5.0,
+                        help="Seconds of idle silence between WAV loop iterations (default: 5.0). "
+                             "Mimics the user typing/thinking pause between utterances in the E2E sample site. "
+                             "Set to 0 to disable (continuous audio, less realistic but more stress).")
     args = parser.parse_args()
 
     # Validate required args
@@ -542,6 +592,8 @@ async def main():
     print(f"  Sessions:       {args.sessions}")
     print(f"  Duration:       {args.duration}s per session")
     print(f"  Stagger:        {args.stagger}s between launches")
+    print(f"  Audio interval: {args.audio_send_interval}s ({0.1 / args.audio_send_interval:.1f}x real-time)")
+    print(f"  Idle gap:       {args.idle_gap}s between utterances")
     print(f"  Source Image:   {args.source_image[:50]}...")
     print(f"  WAV file:       {args.wav}")
     print()
@@ -582,6 +634,8 @@ async def main():
                 session_idx=i + 1,
                 duration_seconds=args.duration,
                 stop_event=stop_event,
+                audio_send_interval=args.audio_send_interval,
+                idle_gap_seconds=args.idle_gap,
             )
         )
         tasks.append(task)

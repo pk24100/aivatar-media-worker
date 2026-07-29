@@ -179,7 +179,7 @@ app = modal.App(WORKER_APP_NAME, image=image)
 
 
 worker_cls_config = {
-    "gpu": "L4",
+    "gpu": "L40S",
     "min_containers": 0,
     "scaledown_window": 15,
     "timeout": 1800,

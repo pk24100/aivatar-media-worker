@@ -294,9 +294,9 @@ class FlashHeadPipeline:
                 generator=self.generator)
 
             _denoise_total = 0.0
+            _denoise_step_ms = []
             for i in range(len(self.timesteps)-1):
-                if _profile:
-                    torch.cuda.synchronize()
+                torch.cuda.synchronize()
                 start_time = time.time()
 
                 noise[:, :self.latent_motion_frames.shape[1]] = self.latent_motion_frames
@@ -321,7 +321,7 @@ class FlashHeadPipeline:
                     dt = self.timesteps[i] - self.timesteps[i + 1]
                     dt = (dt / self.num_timesteps).to(self.param_dtype)
                     noise = noise - flow_pred * dt[:, None, None, None]
-                
+
                 else:
                     # update latent
                     t_i = (self.timesteps[i][:, None, None, None] / self.num_timesteps).to(self.param_dtype)
@@ -330,10 +330,11 @@ class FlashHeadPipeline:
 
                     noise = (1 - t_i_1) * x_0 + t_i_1 * torch.randn(x_0.size(), dtype=x_0.dtype, device=self.device, generator=self.generator)
 
-                if _profile:
-                    torch.cuda.synchronize()
+                torch.cuda.synchronize()
                 end_time = time.time()
-                _denoise_total += (end_time - start_time) * 1000
+                _step_ms = (end_time - start_time) * 1000
+                _denoise_total += _step_ms
+                _denoise_step_ms.append(_step_ms)
 
             noise[:, :self.latent_motion_frames.shape[1]] = self.latent_motion_frames
 
@@ -375,6 +376,12 @@ class FlashHeadPipeline:
                 f"decode={_decode_ms:.1f}ms color={_color_ms:.1f}ms "
                 f"encode={_encode_ms:.1f}ms total={_total_ms:.1f}ms"
             )
+
+        _step_str = " ".join(f"s{i}={ms:.1f}" for i, ms in enumerate(_denoise_step_ms))
+        logger.info(
+            f"[generate] DENOISE_STEPS total={_denoise_total:.1f}ms steps=[{_step_str}] "
+            f"n_steps={len(_denoise_step_ms)}"
+        )
 
         gen_video_samples = videos #[:, :, self.motion_frames_num:]
 
