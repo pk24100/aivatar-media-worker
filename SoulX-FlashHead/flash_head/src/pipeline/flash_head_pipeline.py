@@ -259,11 +259,9 @@ class FlashHeadPipeline:
     def preprocess_audio(self, speech_array, sr=16000, fps=25):
         video_length = len(speech_array) * fps / sr
 
-        # wav2vec_feature_extractor
-        audio_feature = np.squeeze(
-            self.wav2vec_feature_extractor(speech_array, sampling_rate=sr).input_values
-        )
-        audio_feature = torch.from_numpy(audio_feature).float().to(device=self.device)
+        # GPU-native normalization (replaces HuggingFace Wav2Vec2FeatureExtractor)
+        audio_tensor = torch.from_numpy(np.asarray(speech_array, dtype=np.float32)).to(self.device)
+        audio_feature = (audio_tensor - audio_tensor.mean()) / torch.sqrt(audio_tensor.var(unbiased=False) + 1e-7)
         audio_feature = audio_feature.unsqueeze(0)
 
         # audio encoder
@@ -280,6 +278,8 @@ class FlashHeadPipeline:
 
     @torch.no_grad()
     def generate(self, audio_embedding):
+        _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
+        _gen_t0 = time.time()
         # evaluation mode
         with torch.no_grad():
 
@@ -293,8 +293,10 @@ class FlashHeadPipeline:
                 device=self.device,
                 generator=self.generator)
 
+            _denoise_total = 0.0
             for i in range(len(self.timesteps)-1):
-                torch.cuda.synchronize()
+                if _profile:
+                    torch.cuda.synchronize()
                 start_time = time.time()
 
                 noise[:, :self.latent_motion_frames.shape[1]] = self.latent_motion_frames
@@ -328,41 +330,51 @@ class FlashHeadPipeline:
 
                     noise = (1 - t_i_1) * x_0 + t_i_1 * torch.randn(x_0.size(), dtype=x_0.dtype, device=self.device, generator=self.generator)
 
-                torch.cuda.synchronize()
+                if _profile:
+                    torch.cuda.synchronize()
                 end_time = time.time()
-                # if self.rank == 0:
-                #     print(f'[generate] model denoise per step: {end_time - start_time}s')
+                _denoise_total += (end_time - start_time) * 1000
 
             noise[:, :self.latent_motion_frames.shape[1]] = self.latent_motion_frames
 
-            torch.cuda.synchronize()
+            if _profile:
+                torch.cuda.synchronize()
             start_decode_time = time.time()
 
             videos = self.vae.decode(noise)
 
-            torch.cuda.synchronize()
+            if _profile:
+                torch.cuda.synchronize()
             end_decode_time = time.time()
-            # if self.rank == 0:
-            #     print(f'[generate] decode video frames: {end_decode_time - start_decode_time}s')
+            _decode_ms = (end_decode_time - start_decode_time) * 1000
         
-        torch.cuda.synchronize()
+        if _profile:
+            torch.cuda.synchronize()
         start_color_correction_time = time.time()
         if self.color_correction_strength > 0.0:
             videos = match_and_blend_colors_torch(videos, self.original_color_reference, self.color_correction_strength)
 
         cond_frame = videos[:, :, -self.motion_frames_num:].to(self.device)
-        torch.cuda.synchronize()
+        if _profile:
+            torch.cuda.synchronize()
         end_color_correction_time = time.time()
-        # if self.rank == 0:
-        #     print(f'[generate] color correction: {end_color_correction_time - start_color_correction_time}s')
+        _color_ms = (end_color_correction_time - start_color_correction_time) * 1000
 
         torch.cuda.synchronize()
         start_encode_time = time.time()
         self.latent_motion_frames = self.vae.encode(cond_frame)
-        torch.cuda.synchronize()
+        if _profile:
+            torch.cuda.synchronize()
         end_encode_time = time.time()
-        # if self.rank == 0:
-        #     print(f'[generate] encode motion frames: {end_encode_time - start_encode_time}s')
+        _encode_ms = (end_encode_time - start_encode_time) * 1000
+
+        if _profile:
+            _total_ms = (time.time() - _gen_t0) * 1000
+            logger.info(
+                f"[generate] GPU_BREAKDOWN denoise={_denoise_total:.1f}ms "
+                f"decode={_decode_ms:.1f}ms color={_color_ms:.1f}ms "
+                f"encode={_encode_ms:.1f}ms total={_total_ms:.1f}ms"
+            )
 
         gen_video_samples = videos #[:, :, self.motion_frames_num:]
 

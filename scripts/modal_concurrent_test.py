@@ -413,6 +413,9 @@ async def run_single_session(
 
         result.room_name = room_name
         print(f"  [{result.session_id}] Room: {room_name}")
+        print(f"  [{result.session_id}] LiveKit URL: {livekit_url}")
+        print(f"  [{result.session_id}] Viewer token: {viewer_token}")
+        print(f"  [{result.session_id}] >> Paste token at https://meet.livekit.io to watch <<")
 
         # Step 2: Start session on worker
         ingestion_token = f"test-{uuid.uuid4().hex[:8]}"

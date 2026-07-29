@@ -211,6 +211,7 @@ class FlashHeadStreamingEngine:
         # cycle of max(slice_realtime, inference_time) instead of
         # slice_realtime + inference_time, keeping production matched to
         # consumption at 25 fps.
+        _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
         slice_realtime = self.slice_len / float(self.tgt_fps)  # e.g. 24/25 = 0.96s
         while len(self.pending_audio) >= self.slice_samples:
             now = time.monotonic()
@@ -221,25 +222,48 @@ class FlashHeadStreamingEngine:
             # Stamp the start time BEFORE inference so the wait period
             # overlaps with inference time.
             self._last_slice_time = now
+
+            _t_deque = time.monotonic()
             human_speech_array = np.array(
                 [self.pending_audio.popleft() for _ in range(self.slice_samples)],
                 dtype=np.float32,
             )
+            _deque_ms = (time.monotonic() - _t_deque) * 1000
+
+            _t_ctx = time.monotonic()
             self.audio_context.extend(human_speech_array.tolist())
+            _ctx_ms = (time.monotonic() - _t_ctx) * 1000
+
+            _t_embed = time.monotonic()
             audio_embedding = get_audio_embedding(
                 self.pipeline,
                 np.array(self.audio_context, dtype=np.float32),
                 self.audio_start_idx,
                 self.audio_end_idx,
             )
+            _embed_ms = (time.monotonic() - _t_embed) * 1000
+
             _t0 = time.monotonic()
             video = run_pipeline(self.pipeline, audio_embedding)
             _infer_ms = round((time.monotonic() - _t0) * 1000, 1)
+
+            _t_xfer = time.monotonic()
             video = video[self.motion_frames_num:]
             _n_frames = video.shape[0]
-            for i in range(video.shape[0]):
-                self.frame_queue.put_nowait(video[i].cpu().numpy().astype(np.uint8))
+            frames_np = video.cpu().numpy().astype(np.uint8)
+            for i in range(frames_np.shape[0]):
+                self.frame_queue.put_nowait(frames_np[i])
             self.audio_queue.put_nowait(human_speech_array)
+            _xfer_ms = (time.monotonic() - _t_xfer) * 1000
+
+            if _profile:
+                _total_ms = _deque_ms + _ctx_ms + _embed_ms + _infer_ms + _xfer_ms
+                logger.info(
+                    "ENGINE_BREAKDOWN deque=%.1fms ctx=%.1fms embed=%.1fms "
+                    "infer=%.1fms xfer=%.1fms total=%.1fms",
+                    _deque_ms, _ctx_ms, _embed_ms, _infer_ms, _xfer_ms, _total_ms,
+                )
+
             self._metrics_slices += 1
             self._metrics_inference_total_ms += _infer_ms
             self._metrics_inference_max_ms = max(self._metrics_inference_max_ms, _infer_ms)

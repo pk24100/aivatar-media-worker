@@ -31,6 +31,7 @@ class VideoPublisher:
         self._metrics_started_at = time.monotonic()
         self._metrics_frames = 0
         self._metrics_repeated_live_frames = 0
+        self._metrics_idle_frames = 0
         self._metrics_max_gap_ms = 0.0
         self._metrics_max_capture_ms = 0.0
 
@@ -177,22 +178,29 @@ class VideoPublisher:
         self._metrics_max_capture_ms = max(self._metrics_max_capture_ms, capture_ms)
         if frame_source == "repeated_live":
             self._metrics_repeated_live_frames += 1
+        elif frame_source in ("idle", "transition_to_idle", "transition_to_live"):
+            self._metrics_idle_frames += 1
 
         elapsed = time.monotonic() - self._metrics_started_at
         if elapsed >= 5.0:
+            live_frames = self._metrics_frames - self._metrics_repeated_live_frames - self._metrics_idle_frames
             _logger.info(
                 "VIDEO_PUBLISH_METRICS windowMs=%.0f frames=%d effectiveFps=%.1f "
-                "repeatedLiveFrames=%d maxGapMs=%.1f maxCaptureMs=%.1f",
+                "liveFrames=%d repeatedLiveFrames=%d idleFrames=%d "
+                "maxGapMs=%.1f maxCaptureMs=%.1f",
                 elapsed * 1000,
                 self._metrics_frames,
                 self._metrics_frames / elapsed,
+                live_frames,
                 self._metrics_repeated_live_frames,
+                self._metrics_idle_frames,
                 self._metrics_max_gap_ms,
                 self._metrics_max_capture_ms,
             )
             self._metrics_started_at = time.monotonic()
             self._metrics_frames = 0
             self._metrics_repeated_live_frames = 0
+            self._metrics_idle_frames = 0
             self._metrics_max_gap_ms = 0.0
             self._metrics_max_capture_ms = 0.0
 

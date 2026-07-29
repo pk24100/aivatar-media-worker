@@ -528,6 +528,7 @@ class Worker:
 
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
         os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
+        os.environ["ENGINE_PROFILE"] = "1"
 
         # Suppress per-step denoise timing prints from flash_head_pipeline.py
         # (fires many times per session, floods logs during stress testing)

@@ -55,6 +55,7 @@ class StreamStateManager:
     def _start_transition_to_idle(self):
         if not self.idle_video or not self.idle_video.is_valid() or self.last_live_frame is None:
             self.state = StreamState.IDLE
+            logger.info("[SM] LIVE -> IDLE (no idle video, direct switch)")
             return
             
         self.transition_frames = self.idle_video.crossfade_to_idle(
@@ -63,12 +64,13 @@ class StreamStateManager:
         )
         self.transition_idx = 0
         self.state = StreamState.TRANSITION_TO_IDLE
-        logger.debug("Starting transition to IDLE")
+        logger.info("[SM] LIVE -> TRANSITION_TO_IDLE (crossfade %d frames)", self.crossfade_frames)
         
     # Begin crossfade transition from idle to live playback.
     def _start_transition_to_live(self):
         if not self.idle_video or not self.idle_video.is_valid():
             self.state = StreamState.LIVE
+            logger.info("[SM] IDLE -> LIVE (no idle video, direct switch)")
             return
             
         self._transition_start_idle_idx = self.idle_video.current_idx
@@ -77,7 +79,8 @@ class StreamStateManager:
         self.state = StreamState.TRANSITION_TO_LIVE
         self._first_live_frame = None
         self._transition_live_frames = []
-        logger.debug("Starting transition to LIVE")
+        logger.info("[SM] IDLE -> TRANSITION_TO_LIVE (crossfade %d frames, queue=%d)",
+                     self.crossfade_frames, self.live_frame_queue.qsize())
 
     # Return the next frame based on current stream state.
     def get_next_frame(self) -> Optional[np.ndarray]:
@@ -140,6 +143,7 @@ class StreamStateManager:
                 return frame
             else:
                 self.state = StreamState.IDLE
+                logger.info("[SM] TRANSITION_TO_IDLE -> IDLE")
                 return self.get_next_frame()
                 
         # === STATE: TRANSITION_TO_LIVE ===
@@ -171,6 +175,7 @@ class StreamStateManager:
             else:
                 self.state = StreamState.LIVE
                 self.last_frame_source = "live"
+                logger.info("[SM] TRANSITION_TO_LIVE -> LIVE")
                 return self._transition_live_frames[-1]
 
         self.last_frame_source = "repeated_live"
