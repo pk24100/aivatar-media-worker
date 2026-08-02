@@ -78,8 +78,33 @@ def get_audio_embedding(pipeline, audio_array, audio_start_idx=-1, audio_end_idx
 
 # Run the generation pipeline with the provided audio embedding and return video frames.
 def run_pipeline(pipeline, audio_embedding):
+    _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
     audio_embedding = audio_embedding.to(pipeline.device)
+    if _profile:
+        import time as _time
+        _t_gen = _time.time()
     sample = pipeline.generate(audio_embedding)
+    if _profile:
+        _gen_ms = (_time.time() - _t_gen) * 1000
+        _t_post = _time.time()
     sample_frames = (((sample+1)/2).permute(1,2,3,0).clip(0,1) * 255).contiguous()
+    if _profile:
+        _post_ms = (_time.time() - _t_post) * 1000
+        logger.info(f"[run_pipeline] gen={_gen_ms:.1f}ms post={_post_ms:.1f}ms")
     return sample_frames
+
+# Run batched generation for multiple sessions and return per-session frame tensors.
+def run_pipeline_batch(pipeline, audio_embeddings, latent_motion_frames_list,
+                       ref_img_latent_list, generators, original_color_refs,
+                       color_correction_strengths):
+    audio_embeddings = [ae.to(pipeline.device) for ae in audio_embeddings]
+    videos_list, updated_mf_list = pipeline.generate_batch(
+        audio_embeddings, latent_motion_frames_list,
+        ref_img_latent_list, generators, original_color_refs,
+        color_correction_strengths)
+    frames_list = []
+    for sample in videos_list:
+        sample_frames = (((sample+1)/2).permute(1,2,3,0).clip(0,1) * 255).contiguous()
+        frames_list.append(sample_frames)
+    return frames_list, updated_mf_list
 

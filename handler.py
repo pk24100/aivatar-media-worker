@@ -15,6 +15,13 @@ from streaming.stream_processor import run_streaming_session
 from streaming.websocket_server import ws_server
 from utils.model_pool import FlashHeadModelPool
 
+_BATCHED_INFERENCE = os.environ.get("AIVATAR_BATCHED_INFERENCE", "0") == "1"
+if _BATCHED_INFERENCE:
+    from streaming.batched_stream_processor import run_batched_streaming_session
+
+# Shared BatchedStreamingEngine instance (set by modal_app_stress.py serve())
+batched_engine = None
+
 
 PREWARM_ROOM_TIMEOUT = 60.0
 
@@ -156,7 +163,7 @@ async def _watch_session_idle(session_id: str, session_state: dict) -> None:
         if websocket is not None:
             with contextlib.suppress(Exception):
                 await websocket.send_json({"type": "session_ending", "reason": "no_audio_timeout"})
-                await websocket.close(code=1000, reason="Session inactivity timeout")
+                await websocket.close(code=1000)
         return
 
 
@@ -468,23 +475,40 @@ async def _execute_streaming_event(event):
 
     _session_t0 = _htime.monotonic()
     try:
-        await run_streaming_session(
-            room_name=room_name,
-            livekit_token=livekit_token,
-            livekit_url=_get_livekit_url(event),
-            pipeline=None,
-            model_pool=model_pool,
-            model_ready_waiter=wait_for_model_ready,
-            source_image=source_image,
-            ingestion_method=ingestion_method,
-            session_id=session_id,
-            ingestion_token=ingestion_token,
-            idle_video_url=idle_video_url,
-            idle_video_key=idle_video_key,
-            preconnected_room=preconnected_room,
-        )
-        _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
-        logger.info("[handler] run_streaming_session() completed in %.1fms for %s", _session_ms, session_id)
+        if _BATCHED_INFERENCE and batched_engine is not None:
+            await run_batched_streaming_session(
+                room_name=room_name,
+                livekit_token=livekit_token,
+                livekit_url=_get_livekit_url(event),
+                engine=batched_engine,
+                source_image=source_image,
+                ingestion_method=ingestion_method,
+                session_id=session_id,
+                ingestion_token=ingestion_token,
+                idle_video_url=idle_video_url,
+                idle_video_key=idle_video_key,
+                preconnected_room=preconnected_room,
+            )
+            _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
+            logger.info("[handler] run_batched_streaming_session() completed in %.1fms for %s", _session_ms, session_id)
+        else:
+            await run_streaming_session(
+                room_name=room_name,
+                livekit_token=livekit_token,
+                livekit_url=_get_livekit_url(event),
+                pipeline=None,
+                model_pool=model_pool,
+                model_ready_waiter=wait_for_model_ready,
+                source_image=source_image,
+                ingestion_method=ingestion_method,
+                session_id=session_id,
+                ingestion_token=ingestion_token,
+                idle_video_url=idle_video_url,
+                idle_video_key=idle_video_key,
+                preconnected_room=preconnected_room,
+            )
+            _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
+            logger.info("[handler] run_streaming_session() completed in %.1fms for %s", _session_ms, session_id)
         return {"status": "ok", "mode": "streaming", "sessionId": session_id}
     except Exception as exc:
         _session_ms = round((_htime.monotonic() - _session_t0) * 1000, 1)
@@ -867,7 +891,7 @@ async def app_websocket_ingest(request):
                 raise
             except asyncio.TimeoutError:
                 logger.info("WS_INACTIVITY_TIMEOUT session=%s ip=%s", session_id, client_ip)
-                await websocket.close(code=1000, reason="Inactivity timeout")
+                await websocket.close(code=1000)
                 break
 
             if message.type == web.WSMsgType.BINARY:
@@ -875,14 +899,14 @@ async def app_websocket_ingest(request):
                 if len(message.data) > MAX_AUDIO_CHUNK_BYTES:
                     logger.warning("WS_OVERSIZED session=%s size=%d max=%d ip=%s",
                                    session_id, len(message.data), MAX_AUDIO_CHUNK_BYTES, client_ip)
-                    await websocket.close(code=1009, reason="Message too big")
+                    await websocket.close(code=1009)
                     break
 
                 # --- Fix 8: Audio rate limiting (message count + byte rate) ---
                 allowed, reason = rate_limiter.allow(len(message.data))
                 if not allowed:
                     logger.warning("WS_RATE_LIMIT session=%s reason=%s ip=%s", session_id, reason, client_ip)
-                    await websocket.close(code=1013, reason=f"Rate limit: {reason}")
+                    await websocket.close(code=1013)
                     break
 
                 session_state["last_activity_time"] = time.monotonic()
@@ -891,7 +915,7 @@ async def app_websocket_ingest(request):
                 try:
                     control = json.loads(message.data)
                 except json.JSONDecodeError:
-                    await websocket.close(code=1003, reason="Invalid control message")
+                    await websocket.close(code=1003)
                     break
 
                 control_type = control.get("type") if isinstance(control, dict) else None
@@ -912,7 +936,7 @@ async def app_websocket_ingest(request):
                     logger.info("SESSION_END_RECEIVED session=%s", session_id)
                     break
 
-                await websocket.close(code=1003, reason="Unsupported control message")
+                await websocket.close(code=1003)
                 break
             elif message.type == web.WSMsgType.ERROR:
                 logger.warning("WS_ERROR session=%s ip=%s", session_id, client_ip)

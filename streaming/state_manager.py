@@ -1,4 +1,5 @@
 # Manages live/idle state transitions and crossfading for the avatar stream.
+import math
 import time
 import logging
 from enum import Enum
@@ -10,8 +11,19 @@ from streaming.idle_video import IdleVideoLoop
 
 logger = logging.getLogger(__name__)
 
-MAX_LIVE_FRAME_QUEUE = 36
-TARGET_LIVE_FRAME_QUEUE = 30
+# Slice and FPS constants for adaptive cap computation.
+_SLICE_LEN = 24
+_TGT_FPS = 25
+# Fallback per-session inference time estimate (ms) when engine metrics
+# are not yet available (e.g. engine just started, non-batched path).
+_FALLBACK_INFER_MS_PER_SESSION = 350
+# How often to recompute adaptive queue caps (seconds).
+_CAP_UPDATE_INTERVAL_S = 30.0
+
+# Default caps used before the first _update_queue_caps() call.  These are
+# overwritten in __init__ and every _CAP_UPDATE_INTERVAL_S thereafter.
+MAX_LIVE_FRAME_QUEUE = 60
+TARGET_LIVE_FRAME_QUEUE = 48
 
 # Possible states of the avatar stream.
 class StreamState(Enum):
@@ -33,18 +45,26 @@ class StreamStateManager:
         idle_video: Optional[IdleVideoLoop],
         idle_timeout_ms: int = 500,
         crossfade_frames: int = 8,
+        engine=None,
     ):
         self.live_frame_queue = live_frame_queue
         self.idle_video = idle_video
         self.idle_timeout = idle_timeout_ms / 1000.0
         self.crossfade_frames = crossfade_frames
-        
+        self._engine = engine
+        self._last_cap_update = 0.0
+        self.max_live_frame_queue = MAX_LIVE_FRAME_QUEUE
+        self.target_live_frame_queue = TARGET_LIVE_FRAME_QUEUE
+
+        # Compute initial caps immediately
+        self._update_queue_caps()
+
         # We start in IDLE mode to catch cold starts if idle_video is available
         self.state = StreamState.IDLE if (idle_video and idle_video.is_valid()) else StreamState.LIVE
         self.last_frame_time = time.time()
         self.last_live_frame: Optional[np.ndarray] = None
         self.last_frame_source = "none"
-        
+
         self.transition_frames: List[np.ndarray] = []
         self.transition_idx = 0
         self._first_live_frame = None
@@ -82,10 +102,61 @@ class StreamStateManager:
         logger.info("[SM] IDLE -> TRANSITION_TO_LIVE (crossfade %d frames, queue=%d)",
                      self.crossfade_frames, self.live_frame_queue.qsize())
 
+    # Recompute adaptive queue caps from engine metrics or session count.
+    def _update_queue_caps(self):
+        """Hybrid adaptive cap computation.
+
+        Primary: use p95 inference latency from engine.get_metrics() when
+        enough cycles have been recorded (>5 samples).
+        Fallback: estimate from current active session count with a linear
+        per-session inference time approximation.
+
+        Formula:
+          buffer_frames = ceil(p95_ms / 1000 * tgt_fps)
+          natural_peak = buffer_frames + slice_len
+          max_cap = natural_peak * 1.3  (safety margin)
+          target_cap = max_cap * 0.8   (drain excess but keep buffer)
+        """
+        p95_ms = None
+
+        if self._engine is not None and hasattr(self._engine, 'get_metrics'):
+            try:
+                metrics = self._engine.get_metrics()
+                if metrics.get('cycles', 0) > 5:
+                    p95_ms = metrics.get('p95_latency')
+            except Exception:
+                pass
+
+        if p95_ms is None:
+            # Fallback: estimate from active session count
+            n = 1
+            if self._engine is not None and hasattr(self._engine, 'sessions'):
+                try:
+                    n = max(len(self._engine.sessions), 1)
+                except Exception:
+                    pass
+            p95_ms = _FALLBACK_INFER_MS_PER_SESSION * n
+
+        buffer_frames = math.ceil(p95_ms / 1000.0 * _TGT_FPS)
+        natural_peak = buffer_frames + _SLICE_LEN
+        self.max_live_frame_queue = int(natural_peak * 1.3)
+        self.target_live_frame_queue = int(self.max_live_frame_queue * 0.8)
+
+        logger.info(
+            "[SM] Adaptive caps: p95_ms=%.0f buffer=%d peak=%d MAX=%d TARGET=%d",
+            p95_ms, buffer_frames, natural_peak,
+            self.max_live_frame_queue, self.target_live_frame_queue,
+        )
+
     # Return the next frame based on current stream state.
     def get_next_frame(self) -> Optional[np.ndarray]:
         current_time = time.time()
-        
+
+        # Periodically recompute adaptive queue caps
+        if current_time - self._last_cap_update > _CAP_UPDATE_INTERVAL_S:
+            self._update_queue_caps()
+            self._last_cap_update = current_time
+
         # === STATE: LIVE ===
         if self.state == StreamState.LIVE:
             try:
@@ -93,8 +164,8 @@ class StreamStateManager:
                 # Keep the normal slice buffer, but recover before delayed
                 # video can visibly lag realtime audio after a publisher stall.
                 _drained = 0
-                if self.live_frame_queue.qsize() > MAX_LIVE_FRAME_QUEUE:
-                    while self.live_frame_queue.qsize() > TARGET_LIVE_FRAME_QUEUE:
+                if self.live_frame_queue.qsize() > self.max_live_frame_queue:
+                    while self.live_frame_queue.qsize() > self.target_live_frame_queue:
                         frame = self.live_frame_queue.get_nowait()
                         _drained += 1
                 if _drained > 0:

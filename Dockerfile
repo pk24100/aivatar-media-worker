@@ -1,9 +1,10 @@
-FROM nvcr.io/nvidia/pytorch:26.02-py3
+FROM nvcr.io/nvidia/pytorch:26.05-py3
 
-# NGC PyTorch 26.02 ships CUDA 13.1.1 with a matched torch + triton + transformer-engine.
+# NGC PyTorch 26.05 ships PyTorch 2.12.0a0 with CUDA 13.2.1 and a matched torch + triton +
+# transformer-engine. PyTorch 2.12 is required for GreenContext.Stream() API (green contexts).
 # Do NOT override torch with the public wheel index (e.g. cu128) -- doing so installs a
-# Triton that has no PTX table for CUDA 13.1 and breaks torch.compile() at runtime with
-# "Triton only support CUDA 10.0 or higher, but got CUDA version: 13.1".
+# Triton that has no PTX table for CUDA 13.2 and breaks torch.compile() at runtime with
+# "Triton only support CUDA 10.0 or higher, but got CUDA version: 13.2".
 
 RUN apt-get update && apt-get install -y \
     git git-lfs ffmpeg libsndfile1 wget ca-certificates \
@@ -17,7 +18,7 @@ COPY requirements.txt /app/requirements.txt
 # effort: SoulX-FlashHead falls back to PyTorch SDPA if flash-attn isn't importable.
 RUN pip3 install --upgrade pip && \
     pip3 install ninja && \
-    (pip3 install flash-attn --no-build-isolation || \
+    (pip3 install 'flash-attn>=2.8.4' --no-build-isolation || \
      echo "flash-attn install failed; falling back to PyTorch SDPA at runtime") && \
     pip3 install --no-cache-dir -r /app/requirements.txt
 

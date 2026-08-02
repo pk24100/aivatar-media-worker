@@ -39,7 +39,7 @@ import modal
 
 
 WORKER_APP_NAME = "aivatar-worker-stress"
-WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "3"))
+WORKER_CONCURRENCY = int(os.getenv("AIVATAR_WORKER_CONCURRENCY", "4"))
 if WORKER_CONCURRENCY < 1:
     raise ValueError("AIVATAR_WORKER_CONCURRENCY must be at least 1")
 PREWARM_CONNECT_TIMEOUT_SECONDS = float(
@@ -259,7 +259,7 @@ def _metrics_logger(handler_ref, interval=METRICS_INTERVAL_SECONDS):
 
 
 image = (
-    modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.02-py3")
+    modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.05-py3")
     .env({
         "UCX_TLS": "self",
         "UCX_NET_DEVICES": "none",
@@ -292,7 +292,7 @@ image = (
     .add_local_dir("utils", "/app/utils", copy=True)
     .add_local_dir("config", "/app/config", copy=True)
     .add_local_dir("SoulX-FlashHead", "/app/SoulX-FlashHead", copy=True)
-    .add_local_file("flash_head_model_snapshot_patch.py", "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", copy=True)
+    .add_local_file("SoulX-FlashHead/flash_head/src/modules/flash_head_model_snapshot_patch.py", "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", copy=True)
     .add_local_dir("models/wav2vec2-base-960h", "/app/models/wav2vec2-base-960h", copy=True)
     .add_local_file("handler.py", "/app/handler.py", copy=True)
     .add_local_file("app_factory.py", "/app/app_factory.py", copy=True)
@@ -339,9 +339,9 @@ class Worker:
         # Log which attention backend is available
         _log_attention_backend("SNAP_CREATE")
 
-        # torch.compile DISABLED by default - causes FX symbolic tracing crashes
-        # with FlashHeadPipeline (RuntimeError: FX trace + dynamo-optimized function).
-        # STRESS_ENABLE_COMPILE=1 to re-enable for experimentation.
+        # torch.compile disabled by default for concurrent safety.
+        # Dynamo's shared compiled state crashes with FX tracing errors under
+        # multi-session concurrent load. STRESS_ENABLE_COMPILE=1 to re-enable.
         ENABLE_COMPILE = os.getenv("STRESS_ENABLE_COMPILE", "0") == "1"
         if ENABLE_COMPILE:
             import flash_head.src.pipeline.flash_head_pipeline as fhp
@@ -593,7 +593,15 @@ class Worker:
         import asyncio
         import threading
         from aiohttp import web
-        from app_factory import build_app
+
+        # Set env vars BEFORE any import that transitively imports handler,
+        # because handler.py creates GreenContextPool at module import time,
+        # and green_context_pool.py reads AIVATAR_GREEN_CONTEXT at module level.
+        os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
+        os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
+        os.environ["ENGINE_PROFILE"] = "1"
+        os.environ["AIVATAR_GREEN_CONTEXT"] = "0"
+        os.environ["AIVATAR_BATCHED_INFERENCE"] = "1"
 
         print(f"[SERVE] Starting serve() post-restore (STRESS TEST, concurrency={WORKER_CONCURRENCY})", flush=True)
 
@@ -609,13 +617,14 @@ class Worker:
             handler.addFilter(_ShortenLiveKitWebSocketUrlFilter())
         logger = logging.getLogger("modal_app_stress")
 
+        # Now import modules that trigger handler import chain.
+        # app_factory imports handler, which imports green_context_pool,
+        # which reads AIVATAR_GREEN_CONTEXT - env var must be set above.
+        from app_factory import build_app
+
         import flash_head.inference as fhi
         _orig_get_pipeline = fhi.get_pipeline
         fhi.get_pipeline = lambda *a, **kw: self._snap_pipeline
-
-        os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
-        os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
-        os.environ["ENGINE_PROFILE"] = "1"
 
         # Suppress per-step denoise timing prints from flash_head_pipeline.py
         # (fires many times per session, floods logs during stress testing)
@@ -636,6 +645,13 @@ class Worker:
 
         import handler
         self._handler = handler
+
+        # Initialize BatchedStreamingEngine with the snapshot pipeline.
+        # All concurrent sessions share this single engine for batched inference.
+        from streaming.batched_engine import BatchedStreamingEngine
+        handler.batched_engine = BatchedStreamingEngine(self._snap_pipeline)
+        handler.batched_engine.start()
+        print(f"[STRESS] BatchedStreamingEngine started (wait_window={handler.batched_engine.wait_window_ms}ms)", flush=True)
 
         # Stress test: relax /readyz to not require prewarm rooms.
         # The test script mints rooms for sessions 2-N, so prewarm pool

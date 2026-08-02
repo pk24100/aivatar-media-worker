@@ -184,16 +184,20 @@ class VideoPublisher:
         elapsed = time.monotonic() - self._metrics_started_at
         if elapsed >= 5.0:
             live_frames = self._metrics_frames - self._metrics_repeated_live_frames - self._metrics_idle_frames
+            desync_pct = 0.0
+            if self._metrics_frames > 0:
+                desync_pct = (self._metrics_repeated_live_frames + self._metrics_idle_frames) / self._metrics_frames * 100.0
             _logger.info(
                 "VIDEO_PUBLISH_METRICS windowMs=%.0f frames=%d effectiveFps=%.1f "
                 "liveFrames=%d repeatedLiveFrames=%d idleFrames=%d "
-                "maxGapMs=%.1f maxCaptureMs=%.1f",
+                "desyncPct=%.1f maxGapMs=%.1f maxCaptureMs=%.1f",
                 elapsed * 1000,
                 self._metrics_frames,
                 self._metrics_frames / elapsed,
                 live_frames,
                 self._metrics_repeated_live_frames,
                 self._metrics_idle_frames,
+                desync_pct,
                 self._metrics_max_gap_ms,
                 self._metrics_max_capture_ms,
             )

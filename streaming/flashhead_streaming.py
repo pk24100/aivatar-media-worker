@@ -247,14 +247,18 @@ class FlashHeadStreamingEngine:
             video = run_pipeline(self.pipeline, audio_embedding)
             _infer_ms = round((time.monotonic() - _t0) * 1000, 1)
 
+            if _profile:
+                import torch as _torch
+                _torch.cuda.synchronize()
             _t_xfer = time.monotonic()
             video = video[self.motion_frames_num:]
             _n_frames = video.shape[0]
             frames_np = video.cpu().numpy().astype(np.uint8)
+            _xfer_ms = (time.monotonic() - _t_xfer) * 1000
+
             for i in range(frames_np.shape[0]):
                 self.frame_queue.put_nowait(frames_np[i])
             self.audio_queue.put_nowait(human_speech_array)
-            _xfer_ms = (time.monotonic() - _t_xfer) * 1000
 
             if _profile:
                 _total_ms = _deque_ms + _ctx_ms + _embed_ms + _infer_ms + _xfer_ms

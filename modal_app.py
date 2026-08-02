@@ -6,7 +6,7 @@ GPU memory snapshots (alpha feature):
 - Models loaded directly to GPU in @modal.enter(snap=True)
 - Warmup inference run before snapshot (CUDA kernels captured in snapshot)
 - On restore: verify CUDA state, start serving immediately (no model move/warmup)
-- Lazy xfuser patch applied via flash_head_model_snapshot_patch.py overlay
+- Lazy xfuser patch applied via SoulX-FlashHead/flash_head/src/modules/flash_head_model_snapshot_patch.py overlay
 - UCX/NCCL env vars set at image level to prevent SIGSEGV on L4 GPU
 - handler and livekit imports deferred to serve() (post-restore) to avoid
   Rust FFI background threads corrupting GPU memory snapshot state
@@ -168,7 +168,7 @@ image = (
     .add_local_dir("utils", "/app/utils", copy=True)
     .add_local_dir("config", "/app/config", copy=True)
     .add_local_dir("SoulX-FlashHead", "/app/SoulX-FlashHead", copy=True)
-    .add_local_file("flash_head_model_snapshot_patch.py", "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", copy=True)
+    .add_local_file("SoulX-FlashHead/flash_head/src/modules/flash_head_model_snapshot_patch.py", "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", copy=True)
     .add_local_dir("models/wav2vec2-base-960h", "/app/models/wav2vec2-base-960h", copy=True)
     .add_local_file("handler.py", "/app/handler.py", copy=True)
     .add_local_file("app_factory.py", "/app/app_factory.py", copy=True)

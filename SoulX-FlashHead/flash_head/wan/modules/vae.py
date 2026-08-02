@@ -1619,3 +1619,19 @@ class WanVAE:
 
     def decode_video(self, vid_enc):
         return self.model.decode_video(vid_enc)
+
+    def decode_batch(self, zs):
+        """Decode latents for batch > 1. zs: (B, C, T, H, W) - already has batch dim."""
+        decode_func = (
+            self.model.tiled_decode if self.use_tiling else self.model.decode
+        )
+        images = decode_func(zs, self.scale).clamp_(-1, 1)
+        return images
+
+    def encode_batch(self, video):
+        """Encode video frames for batch > 1. video: (B, C, T, H, W) - already has batch dim."""
+        if self.use_tiling:
+            out = self.model.tiled_encode(video, self.scale)
+        else:
+            out = self.model.encode(video, self.scale)
+        return out

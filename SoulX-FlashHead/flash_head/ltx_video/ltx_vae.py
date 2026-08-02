@@ -37,6 +37,22 @@ class LtxVAE:
         )
 
 
+    # torch.Size([B, 128, 5, 16, 16]) -> torch.Size([B, 3, 33, 512, 512])
+    def decode_batch(self, zs):
+        latents = zs
+        image = self.model.decode(
+            self.un_normalize_latents(latents),
+            return_dict=False,
+            target_shape=latents.shape,
+        )[0]
+        return image
+
+    # torch.Size([B, 3, 33, 512, 512]) -> torch.Size([B, 128, 5, 16, 16])
+    def encode_batch(self, video):
+        latents = self.model.encode(video, return_dict=False)[0].sample()
+        out = self.normalize_latents(latents)
+        return out
+
     # Un-normalize latent tensors using the VAE's channel statistics.
     def un_normalize_latents(self,latents):
         return (

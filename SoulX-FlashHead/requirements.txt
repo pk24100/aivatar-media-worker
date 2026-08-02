@@ -15,8 +15,8 @@ gradio==5.50.0
 xfuser>=0.4.3
 pyloudnorm
 decord
-xformers==0.0.31
+# xformers==0.0.31  # Incompatible with PyTorch 2.12+ / CUDA 13.2. Removed from install - SDPA/SageAttention used instead.
 librosa
 mediapipe==0.10.9
 flask
-nvidia-nccl-cu12==2.27.3
+# nvidia-nccl-cu12==2.27.3  # Incompatible with CUDA 13.2. NGC container ships matched NCCL.

@@ -55,7 +55,12 @@ def timestep_transform(
     return new_t
 
 
-# Cache and reuse lightweight model components to avoid repeated loading.
+# Component caching re-enabled (Jul 30, 2026): Model weights are read-only
+# during inference (eval mode, no_grad). Safe to share across pipelines.
+# Each FlashHeadPipeline still has its own mutable state (latent_motion_frames,
+# generator, ref_img_latent). Saves ~8.6GB VRAM for 3 concurrent sessions.
+# torch.compile must remain disabled - shared compiled graph state is not
+# thread-safe under concurrent access.
 def get_cached_lite_components(checkpoint_dir, wav2vec_dir, device, param_dtype):
     cache_key = (checkpoint_dir, wav2vec_dir, str(device), str(param_dtype))
     cached_components = _LITE_COMPONENT_CACHE.get(cache_key)
@@ -78,24 +83,24 @@ def get_cached_lite_components(checkpoint_dir, wav2vec_dir, device, param_dtype)
     model.to(device=device, dtype=param_dtype)
 
     if COMPILE_MODEL:
-        model = torch.compile(model)
+        model = torch.compile(model, fullgraph=False)
     if COMPILE_VAE:
-        vae.model.encode = torch.compile(vae.model.encode)
-        vae.model.decode = torch.compile(vae.model.decode)
+        vae.model.encode = torch.compile(vae.model.encode, fullgraph=False)
+        vae.model.decode = torch.compile(vae.model.decode, fullgraph=False)
 
     audio_encoder = Wav2Vec2Model.from_pretrained(wav2vec_dir, local_files_only=True).to(device)
     audio_encoder.feature_extractor._freeze_parameters()
     wav2vec_feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(wav2vec_dir, local_files_only=True)
 
-    cached_components = {
+    components = {
         "model": model,
         "vae": vae,
         "audio_encoder": audio_encoder,
         "wav2vec_feature_extractor": wav2vec_feature_extractor,
     }
-    _LITE_COMPONENT_CACHE[cache_key] = cached_components
+    _LITE_COMPONENT_CACHE[cache_key] = components
     logger.info("Cached Lite model components for reuse")
-    return cached_components
+    return components
 
 
 # End-to-end pipeline for audio-driven face video generation.
@@ -176,10 +181,10 @@ class FlashHeadPipeline:
 
         if not self.use_ltx:
             if COMPILE_MODEL:
-                self.model = torch.compile(self.model)
+                self.model = torch.compile(self.model, fullgraph=False)
             if COMPILE_VAE:
-                self.vae.encode = torch.compile(self.vae.encode)
-                self.vae.decode = torch.compile(self.vae.decode)
+                self.vae.encode = torch.compile(self.vae.encode, fullgraph=False)
+                self.vae.decode = torch.compile(self.vae.decode, fullgraph=False)
             self.audio_encoder = Wav2Vec2Model.from_pretrained(wav2vec_dir, local_files_only=True).to(self.device)
             self.audio_encoder.feature_extractor._freeze_parameters()
             self.wav2vec_feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(wav2vec_dir, local_files_only=True)
@@ -283,15 +288,21 @@ class FlashHeadPipeline:
         # evaluation mode
         with torch.no_grad():
 
+            if _profile:
+                torch.cuda.synchronize()
+            _t_noise = time.time()
             # sample videos
             noise = torch.randn(
-                self.config.out_dim, 
+                self.config.out_dim,
                 (self.frame_num - 1) // self.config.vae_stride[0] + 1,
                 self.lat_h,
                 self.lat_w,
                 dtype=self.param_dtype,
                 device=self.device,
                 generator=self.generator)
+            if _profile:
+                torch.cuda.synchronize()
+                _noise_ms = (time.time() - _t_noise) * 1000
 
             _denoise_total = 0.0
             _denoise_step_ms = []
@@ -372,7 +383,7 @@ class FlashHeadPipeline:
         if _profile:
             _total_ms = (time.time() - _gen_t0) * 1000
             logger.info(
-                f"[generate] GPU_BREAKDOWN denoise={_denoise_total:.1f}ms "
+                f"[generate] GPU_BREAKDOWN noise={_noise_ms:.1f}ms denoise={_denoise_total:.1f}ms "
                 f"decode={_decode_ms:.1f}ms color={_color_ms:.1f}ms "
                 f"encode={_encode_ms:.1f}ms total={_total_ms:.1f}ms"
             )
@@ -386,3 +397,155 @@ class FlashHeadPipeline:
         gen_video_samples = videos #[:, :, self.motion_frames_num:]
 
         return gen_video_samples[0].to(torch.float32)
+
+    @torch.no_grad()
+    def generate_batch(self, audio_embeddings, latent_motion_frames_list,
+                       ref_img_latent_list, generators, original_color_refs,
+                       color_correction_strengths):
+        """
+        Run batched inference for N sessions in a single forward pass.
+
+        Args:
+            audio_embeddings: list of (1, F, 5, 12, 768) tensors
+            latent_motion_frames_list: list of (C, motion_latent, H, W) tensors
+            ref_img_latent_list: list of (C, T_latent, H, W) tensors
+            generators: list of torch.Generator objects
+            original_color_refs: list of (1, C, 1, H, W) tensors
+            color_correction_strengths: list of floats
+
+        Returns:
+            (videos_list, updated_motion_frames_list)
+            videos_list: list of (C, T, H, W) float32 tensors
+            updated_motion_frames_list: list of (C, motion_latent, H, W) tensors
+        """
+        _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
+        _gen_t0 = time.time()
+        batch_size = len(audio_embeddings)
+
+        with torch.no_grad():
+            t_latent = (self.frame_num - 1) // self.config.vae_stride[0] + 1
+
+            # Stack per-session noise into batch: (B, C, T_latent, H, W)
+            noise_batch = torch.stack([
+                torch.randn(
+                    self.config.out_dim, t_latent, self.lat_h, self.lat_w,
+                    dtype=self.param_dtype, device=self.device,
+                    generator=generators[b])
+                for b in range(batch_size)
+            ])
+
+            # Stack ref latents: (B, C, T_latent, H, W)
+            ref_latent_batch = torch.stack(ref_img_latent_list)
+
+            # Stack audio embeddings: (B, F, 5, 12, 768)
+            context_batch = torch.cat(audio_embeddings, dim=0)
+
+            # Note: motion frames are applied per-session at lines below
+            # (noise_batch[b, :, :mf.shape[1]] = mf) since sessions may have
+            # different motion frame counts in realistic streaming scenarios.
+
+            _denoise_total = 0.0
+            _denoise_step_ms = []
+            for i in range(len(self.timesteps) - 1):
+                torch.cuda.synchronize()
+                start_time = time.time()
+
+                # Apply per-session motion frames to noise
+                for b in range(batch_size):
+                    mf = latent_motion_frames_list[b]
+                    noise_batch[b, :, :mf.shape[1]] = mf
+
+                flow_pred = self.model(
+                    x=noise_batch,
+                    timestep=self.timesteps[i],
+                    context=context_batch,
+                    y=ref_latent_batch,
+                )
+
+                if self.model_type == "pretrained":
+                    flow_pred_drop_audio = self.model(
+                        x=noise_batch,
+                        timestep=self.timesteps[i],
+                        context=torch.zeros_like(context_batch),
+                        y=ref_latent_batch,
+                    )
+                    flow_pred = flow_pred_drop_audio + self.audio_guide_scale * (flow_pred - flow_pred_drop_audio)
+
+                    dt = self.timesteps[i] - self.timesteps[i + 1]
+                    dt = (dt / self.num_timesteps).to(self.param_dtype)
+                    noise_batch = noise_batch - flow_pred * dt[:, None, None, None]
+
+                else:
+                    t_i = (self.timesteps[i][:, None, None, None] / self.num_timesteps).to(self.param_dtype)
+                    t_i_1 = (self.timesteps[i + 1][:, None, None, None] / self.num_timesteps).to(self.param_dtype)
+                    x_0 = noise_batch - flow_pred * t_i
+
+                    rand_noise = torch.stack([
+                        torch.randn(x_0[b].size(), dtype=x_0.dtype, device=self.device,
+                                    generator=generators[b])
+                        for b in range(batch_size)
+                    ])
+                    noise_batch = (1 - t_i_1) * x_0 + t_i_1 * rand_noise
+
+                torch.cuda.synchronize()
+                end_time = time.time()
+                _step_ms = (end_time - start_time) * 1000
+                _denoise_total += _step_ms
+                _denoise_step_ms.append(_step_ms)
+
+            # Apply motion frames one final time before decode
+            for b in range(batch_size):
+                mf = latent_motion_frames_list[b]
+                noise_batch[b, :, :mf.shape[1]] = mf
+
+            if _profile:
+                torch.cuda.synchronize()
+            start_decode_time = time.time()
+
+            videos = self.vae.decode_batch(noise_batch)
+
+            if _profile:
+                torch.cuda.synchronize()
+            end_decode_time = time.time()
+            _decode_ms = (end_decode_time - start_decode_time) * 1000
+
+        # Per-session color correction and motion frame update
+        if _profile:
+            torch.cuda.synchronize()
+        start_color_time = time.time()
+
+        updated_motion_frames_list = []
+        videos_list = []
+        for b in range(batch_size):
+            video_b = videos[b:b+1]
+
+            if color_correction_strengths[b] > 0.0:
+                video_b = match_and_blend_colors_torch(
+                    video_b, original_color_refs[b], color_correction_strengths[b])
+
+            cond_frame = video_b[:, :, -self.motion_frames_num:].to(self.device)
+            updated_motion_frames_list.append(self.vae.encode(cond_frame))
+            videos_list.append(video_b[0].to(torch.float32))
+
+        if _profile:
+            torch.cuda.synchronize()
+        end_color_time = time.time()
+        _color_ms = (end_color_time - start_color_time) * 1000
+
+        if _profile:
+            torch.cuda.synchronize()
+        _total_ms = (time.time() - _gen_t0) * 1000
+        logger.info(
+            f"[generate_batch] GPU_BREAKDOWN denoise={_denoise_total:.1f}ms "
+            f"decode={_decode_ms:.1f}ms color+encode={_color_ms:.1f}ms "
+            f"total={_total_ms:.1f}ms batch_size={batch_size}"
+        )
+
+        _step_str = " ".join(f"s{i}={ms:.1f}" for i, ms in enumerate(_denoise_step_ms))
+        logger.info(
+            f"[generate_batch] DENOISE_STEPS total={_denoise_total:.1f}ms "
+            f"steps=[{_step_str}] n_steps={len(_denoise_step_ms)} "
+            f"batch_size={batch_size}"
+        )
+
+        return videos_list, updated_motion_frames_list

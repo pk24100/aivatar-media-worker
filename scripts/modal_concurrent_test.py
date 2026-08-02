@@ -414,8 +414,12 @@ async def run_single_session(
     result.session_id = f"conc-test-{session_idx}-{uuid.uuid4().hex[:6]}"
 
     try:
-        # Step 1: Claim a room
-        claimed = await claim_room(modal_url)
+        # Step 1: Claim a room (network-safe: falls back to local mint on error)
+        try:
+            claimed = await claim_room(modal_url)
+        except Exception as claim_err:
+            print(f"  [{result.session_id}] Room claim failed ({type(claim_err).__name__}: {claim_err}), falling back to local mint")
+            claimed = None
         room_name = claimed.get("roomName") if claimed else None
         worker_token = claimed.get("workerToken") if claimed else None
         viewer_token = claimed.get("clientToken") if claimed else None
@@ -431,9 +435,18 @@ async def run_single_session(
         if not viewer_token:
             viewer_token = mint_livekit_token(
                 livekit_key, livekit_secret,
-                room_name, identity=f"viewer-{result.session_id}",
+                room_name, identity=f"viewer-manual-{result.session_id}",
                 can_publish=False, ttl_seconds=1800,
             )
+
+        # Mint a separate token for the script's FPS-measurement viewer so that
+        # joining via meet.livekit.io with viewer_token does not kick the script
+        # viewer (LiveKit rejects duplicate identities by kicking the first).
+        script_viewer_token = mint_livekit_token(
+            livekit_key, livekit_secret,
+            room_name, identity=f"viewer-script-{result.session_id}",
+            can_publish=False, ttl_seconds=1800,
+        )
 
         result.room_name = room_name
         print(f"  [{result.session_id}] Room: {room_name}")
@@ -465,7 +478,7 @@ async def run_single_session(
         # Step 4: Launch viewer FPS measurement + audio streaming concurrently
         viewer_task = asyncio.create_task(
             viewer_measure_fps(
-                livekit_url, viewer_token, result.session_id,
+                livekit_url, script_viewer_token, result.session_id,
                 result, stop_event, duration_seconds=duration_seconds,
             )
         )
@@ -508,9 +521,11 @@ async def run_single_session(
         await end_session(modal_url, result.session_id)
 
     except Exception as e:
-        print(f"  [{result.session_id}] ERROR: {e}")
+        print(f"  [{result.session_id}] ERROR: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
         result.status = "FAILED"
-        result.error = str(e)
+        result.error = f"{type(e).__name__}: {e}"
 
     return result
 

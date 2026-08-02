@@ -129,7 +129,7 @@ def rope_apply(x, freqs, grid_sizes, use_usp=False, sp_size=1, sp_rank=0):
     grid_sizes: [B, 3].
     freqs:      [M, C // 2].
     """
-    s, n, c = x.size(1), x.size(2), x.size(3) // 2
+    b, s, n, c = x.size(0), x.size(1), x.size(2), x.size(3) // 2
     # split freqs
     freqs = freqs.split([c - 2 * (c // 3), c // 3, c // 3], dim=1) # [[N, head_dim/2], [N, head_dim/2], [N, head_dim/2]] # T H W 极坐标
 
@@ -139,8 +139,6 @@ def rope_apply(x, freqs, grid_sizes, use_usp=False, sp_size=1, sp_rank=0):
     seq_len = f * h * w
 
     # precompute multipliers
-    x_i = torch.view_as_complex(x[0, :s].to(torch.float64).reshape(
-        s, n, -1, 2)) # [L, N, C/2] # 极坐标
     freqs_i = torch.cat([
         freqs[0][:f].view(f, 1, 1, -1).expand(f, h, w, -1),
         freqs[1][:h].view(1, h, 1, -1).expand(f, h, w, -1),
@@ -148,18 +146,25 @@ def rope_apply(x, freqs, grid_sizes, use_usp=False, sp_size=1, sp_rank=0):
     ],
                         dim=-1).reshape(seq_len, 1, -1) # seq_lens, 1,  3 * dim / 2 (T H W)
 
-    if use_usp:
-        # apply rotary embedding
-        freqs_i = pad_freqs(freqs_i, s * sp_size)
-        s_per_rank = s
-        freqs_i_rank = freqs_i[(sp_rank * s_per_rank):((sp_rank + 1) *
-                                                        s_per_rank), :, :]
-        x_i = torch.view_as_real(x_i * freqs_i_rank).flatten(2)
-        x_i = torch.cat([x_i, x[0, s:]])
-    else:
-        x_i = torch.view_as_real(x_i * freqs_i).flatten(2)
-        x_i = torch.cat([x_i, x[0, seq_len:]])
-    return x_i.unsqueeze(0).to(x.dtype)
+    results = []
+    for bi in range(b):
+        x_i = torch.view_as_complex(x[bi, :s].to(torch.float64).reshape(
+            s, n, -1, 2)) # [L, N, C/2] # 极坐标
+
+        if use_usp:
+            # apply rotary embedding
+            freqs_i_padded = pad_freqs(freqs_i, s * sp_size)
+            s_per_rank = s
+            freqs_i_rank = freqs_i_padded[(sp_rank * s_per_rank):((sp_rank + 1) *
+                                                            s_per_rank), :, :]
+            x_i = torch.view_as_real(x_i * freqs_i_rank).flatten(2)
+            x_i = torch.cat([x_i, x[bi, s:]])
+        else:
+            x_i = torch.view_as_real(x_i * freqs_i).flatten(2)
+            x_i = torch.cat([x_i, x[bi, seq_len:]])
+        results.append(x_i.unsqueeze(0))
+
+    return torch.cat(results, dim=0).to(x.dtype)
 
 
 # Root-mean-square normalization with learnable scaling.
@@ -312,14 +317,16 @@ class DiTAudioBlock(nn.Module):
 
         x = x + y * e[2]
 
-        x_1 = rearrange(self.norm3(x), 'b (f l) c -> (b f) l c', f=context.shape[1])
-        context_1 = context.squeeze(0)
+        B = x.shape[0]
+        F_ctx = context.shape[1]
+        x_1 = rearrange(self.norm3(x), 'b (f l) c -> (b f) l c', f=F_ctx)
+        context_1 = context.reshape(B * F_ctx, context.shape[2], context.shape[3])
 
         if self.use_usp:
             context_1 = context_1.unsqueeze(1).repeat(1, self.sp_size, 1, 1).flatten(0,1)
             context_1 = torch.chunk(context_1, self.sp_size, dim=0)[self.sp_rank]
 
-        x = x + self.cross_attn(x_1, context_1).flatten(0, 1).unsqueeze(0)
+        x = x + self.cross_attn(x_1, context_1).reshape(B, -1, x.shape[-1])
 
         y = self.ffn(self.norm2(x) * (1 + e[4]) + e[3])
         x = x + y * e[5]
@@ -533,7 +540,8 @@ class WanModelAudioProject(ModelMixin, ConfigMixin):
 
         for block in self.blocks:
             x = block(x, context, t_mod, self.freqs, grid_sizes)
-        x = self.head(x, t)   # (bsz, 9*32*32, 64)
+        t_head = t.repeat(x.shape[0], 1) if x.shape[0] > 1 else t
+        x = self.head(x, t_head)   # (bsz, 9*32*32, 64)
         if self.use_usp:
             x = _get_sp_group().all_gather(x, dim=1)
         x = self.unpatchify(x, grid_sizes)  # (bsz, 16, 21, 64, 64)
