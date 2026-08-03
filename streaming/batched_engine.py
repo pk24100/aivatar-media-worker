@@ -38,6 +38,7 @@ logger = logging.getLogger("BatchedStreamingEngine")
 # --- Config ---
 WAIT_WINDOW_MS = 20
 IDLE_TIMEOUT_S = 10
+REACTIVATION_TIMEOUT_S = int(os.environ.get("AIVATAR_REACTIVATION_TIMEOUT_S", "120"))
 
 # --- SSRF prevention (reused from flashhead_streaming.py) ---
 MAX_DOWNLOAD_BYTES = 10 * 1024 * 1024
@@ -222,6 +223,8 @@ class BatchedSession:
         # Idle tracking
         self._last_audio_time = time.monotonic()
         self._audio_silence_log = False
+        self._has_received_audio = False
+        self._reactivated_at = None
 
         # Metrics
         self.latencies = []
@@ -268,6 +271,8 @@ class BatchedSession:
         self._metrics_input_samples += len(audio_array)
         self._last_audio_time = time.monotonic()
         self._audio_silence_log = False
+        self._has_received_audio = True
+        self._reactivated_at = None
 
     def is_slice_ready(self):
         """Check if this session has enough audio for a full slice.
@@ -283,8 +288,22 @@ class BatchedSession:
         return True
 
     def is_idle(self, timeout_s=IDLE_TIMEOUT_S):
-        """Check if session has been idle (no audio) for too long."""
-        return self.state == ACTIVE and (time.monotonic() - self._last_audio_time) > timeout_s
+        """Check if session has been idle (no audio) for too long.
+
+        Three cases:
+        1. Session received audio then went silent -> idle timeout after IDLE_TIMEOUT_S.
+        2. Session was reactivated (keep_alive) and is waiting for next
+           utterance -> reactivation timeout after REACTIVATION_TIMEOUT_S.
+        3. Brand-new session waiting for first audio -> no timeout (handled
+           by handler-level _watch_session_idle safety net)."""
+        if self.state != ACTIVE:
+            return False
+        now = time.monotonic()
+        if self._has_received_audio:
+            return (now - self._last_audio_time) > timeout_s
+        if self._reactivated_at is not None:
+            return (now - self._reactivated_at) > REACTIVATION_TIMEOUT_S
+        return False
 
     def get_audio_embedding(self):
         """Extract audio embedding from current audio context."""
@@ -343,12 +362,16 @@ class BatchedSession:
 
         Called by the engine after drain completes when keep_alive is True.
         Resets state to ACTIVE so new audio can be fed and processed.
-        Clears keep_alive so idle timeout removal works normally."""
+        Clears keep_alive so idle timeout removal works normally.
+        Resets _has_received_audio so the session won't be timed out
+        while waiting for the next utterance's audio."""
         self.state = ACTIVE
         self.keep_alive = False
         self._last_audio_time = time.monotonic()
         self._last_slice_time = None
         self._audio_silence_log = False
+        self._has_received_audio = False
+        self._reactivated_at = time.monotonic()
 
     def flush_one(self):
         """Pad and process one final slice during drain. Returns True if audio remains."""
@@ -549,7 +572,10 @@ class BatchedStreamingEngine:
         # Handle idle timeouts
         for sid, session in list(active_sessions.items()):
             if session.is_idle():
-                logger.info("Session %s idle timeout (%ds), removing", sid, IDLE_TIMEOUT_S)
+                if session._has_received_audio:
+                    logger.info("Session %s idle timeout (%ds), removing", sid, IDLE_TIMEOUT_S)
+                else:
+                    logger.info("Session %s reactivation timeout (%ds), removing", sid, REACTIVATION_TIMEOUT_S)
                 session.start_drain()
                 del active_sessions[sid]
 

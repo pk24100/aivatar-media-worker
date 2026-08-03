@@ -42,20 +42,32 @@ def _apply_2d_sway(frames, fps,
     Avatar-agnostic: produces identical visible motion regardless
     of face type (real human, animated, custom).
     Eye blinking is handled by FlashHead model via murmuring audio.
+
+    Uses integer cycle counts so the first and last frames have
+    identical body position (all sin terms = 0), ensuring seamless
+    loop boundary transitions.
     """
     n = len(frames)
-    if n == 0:
+    if n < 2:
         return frames
+
+    duration = (n - 1) / fps
+
+    # Round to nearest integer cycle count so sin(2*pi*k) = 0 at last frame
+    n_cycles_x = max(1, round(sway_rate_hz * duration))
+    n_cycles_y = max(1, round(sway_rate_hz * 0.7 * duration))
+    n_cycles_angle = max(1, round(sway_rate_hz * 0.5 * duration))
 
     h, w = frames[0].shape[:2]
     processed = []
     for i, frame in enumerate(frames):
-        t = i / fps
+        phase = 2.0 * np.pi * i / (n - 1)
 
         # Head sway: smooth sinusoidal translation + slight rotation
-        dx = sway_pixels * np.sin(2.0 * np.pi * sway_rate_hz * t)
-        dy = sway_pixels * 0.4 * np.sin(2.0 * np.pi * sway_rate_hz * 0.7 * t + 0.5)
-        angle = 0.3 * np.sin(2.0 * np.pi * sway_rate_hz * 0.5 * t)
+        # All terms are 0 at i=0 and i=n-1 (integer cycles)
+        dx = sway_pixels * np.sin(n_cycles_x * phase)
+        dy = sway_pixels * 0.4 * np.sin(n_cycles_y * phase)
+        angle = 0.3 * np.sin(n_cycles_angle * phase)
 
         M = cv2.getRotationMatrix2D((w / 2, h / 2), angle, 1.0)
         M[0, 2] += dx

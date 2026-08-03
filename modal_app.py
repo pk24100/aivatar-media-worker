@@ -24,12 +24,24 @@ No Modal Volume or pre-download script needed.
 """
 
 import os
+import sys
 import logging
-import re
-import signal
-import faulthandler
 import time
 import modal
+
+sys.path.insert(0, "/app")
+
+from utils.modal_diagnostics import (
+    ShortenLiveKitWebSocketUrlFilter,
+    install_signal_handlers,
+    reset_ucx_signal_handlers,
+    log_cuda_state,
+    log_attention_backend,
+    log_signal_handlers,
+    metrics_logger,
+    install_denoise_filter,
+    _ENABLE_METRICS_LOG,
+)
 
 
 WORKER_APP_NAME = os.getenv("AIVATAR_MODAL_APP_NAME", "aivatar-worker")
@@ -45,102 +57,8 @@ PREWARM_RETRY_DELAY_SECONDS = float(
 )
 
 
-class _ShortenLiveKitWebSocketUrlFilter(logging.Filter):
-    """Keep LiveKit signaling logs useful without exposing long query payloads."""
-
-    _url_pattern = re.compile(r"\bwss?://[^\s?]+(?:\?[^\s]*)?")
-
-    def filter(self, record):
-        if not record.name.startswith("livekit"):
-            return True
-
-        message = record.getMessage()
-
-        def _shorten(match):
-            return match.group(0).split("?", 1)[0]
-
-        shortened = self._url_pattern.sub(_shorten, message)
-        if shortened != message:
-            record.msg = shortened
-            record.args = ()
-        return True
-
-
-def _crash_handler(signum, frame):
-    """Enhanced crash handler: dumps Python + C backtraces, thread state, UCX info."""
-    import threading
-    print(f"\n{'='*60}", flush=True)
-    print(f"[CRASH] signal={signum} pid={os.getpid()} thread={threading.current_thread().name}", flush=True)
-    print(f"[CRASH] Frame: {frame}", flush=True)
-    print(f"\n[CRASH] === Python traceback (all threads) ===", flush=True)
-    faulthandler.dump_traceback(limit=50)
-    print(f"\n[CRASH] === Thread enumeration ===", flush=True)
-    for t in threading.enumerate():
-        print(f"  thread: {t.name} ident={t.ident} daemon={t.daemon} alive={t.is_alive()}", flush=True)
-    print(f"\n[CRASH] === Loaded shared libraries (UCX/NCCL/CUDA) ===", flush=True)
-    try:
-        with open("/proc/self/maps", "r") as f:
-            for line in f:
-                if any(k in line.lower() for k in ["libucs", "libucp", "libnccl", "libcuda", "libuct", "libtorch_cuda"]):
-                    print(f"  {line.rstrip()}", flush=True)
-    except Exception as e:
-        print(f"  maps read failed: {e}", flush=True)
-    print(f"\n{'='*60}", flush=True)
-    os._exit(1)
-
-
-def _install_signal_handlers():
-    faulthandler.enable()
-    for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGBUS, signal.SIGFPE):
-        try:
-            signal.signal(sig, _crash_handler)
-        except (OSError, ValueError):
-            pass
-
-
-def _reset_ucx_signal_handlers():
-    """Reset signal handlers to SIG_DFL after UCX/NCCL libraries are loaded.
-
-    import torch loads libtorch_cuda.so -> libnccl.so -> libucs.so -> libucp.so
-    via shared library DT_NEEDED dependencies. UCX installs custom signal handlers
-    at library load time (ELF constructors). These handlers corrupt GPU snapshot
-    state during CRIU restore when @modal.concurrent(max_inputs > 1) creates
-    additional threads, causing SIGSEGV in libucs.so.0.
-
-    By resetting to SIG_DFL after all imports, we ensure no UCX signal handlers
-    are active during CRIU restore.
-    """
-    for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGBUS, signal.SIGFPE):
-        try:
-            current = signal.getsignal(sig)
-            if current != signal.SIG_DFL:
-                print(f"[SNAP] Resetting signal {sig} from {current} to SIG_DFL", flush=True)
-                signal.signal(sig, signal.SIG_DFL)
-        except (OSError, ValueError):
-            pass
-
-
-def _log_cuda_state(label):
-    try:
-        import torch
-        if torch.cuda.is_available():
-            allocated = torch.cuda.memory_allocated()
-            reserved = torch.cuda.memory_reserved()
-            snapshot = torch.cuda.memory_stats().get("snapshot.all.current", 0)
-            print(
-                f"[{label}] pid={os.getpid()} cuda_available=True "
-                f"allocated={allocated} reserved={reserved} "
-                f"memory_snapshot_segments={snapshot}",
-                flush=True,
-            )
-        else:
-            print(f"[{label}] pid={os.getpid()} cuda_available=False", flush=True)
-    except Exception as e:
-        print(f"[{label}] error logging CUDA state: {e}", flush=True)
-
-
 image = (
-    modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.02-py3")
+    modal.Image.from_registry("nvcr.io/nvidia/pytorch:26.05-py3")
     .env({
         "UCX_TLS": "self",
         "UCX_NET_DEVICES": "none",
@@ -153,7 +71,15 @@ image = (
     })
     .apt_install("git", "git-lfs", "ffmpeg", "libsndfile1", "wget", "ca-certificates")
     .pip_install("ninja")
-    .run_commands("pip install flash-attn --no-build-isolation || true")
+    # SageAttention 2.2.0 - primary attention kernel (INT8 QK quantization, faster than flash-attn).
+    # Source build with TORCH_CUDA_ARCH_LIST=8.9 (L40S) + NVCC_THREADS=4 to speed up.
+    # Code falls back to SDPA if SageAttention is unavailable.
+    .run_commands(
+        "TORCH_CUDA_ARCH_LIST=8.9 MAX_JOBS=4 NVCC_THREADS=4 pip install git+https://github.com/thu-ml/SageAttention.git --no-build-isolation || echo 'SAGEATTN_INSTALL_FAILED'",
+    )
+    .run_commands(
+        "python -c \"from sageattention import sageattn; print('sageattention OK')\" 2>/dev/null || echo 'sageattention NOT available'",
+    )
     .pip_install_from_requirements("requirements.txt")
     # Download FlashHead model weights from HuggingFace into the image layer.
     # This bakes ~6GB of weights directly into the image, eliminating the
@@ -179,7 +105,7 @@ app = modal.App(WORKER_APP_NAME, image=image)
 
 
 worker_cls_config = {
-    "gpu": "L40S",
+    "gpu": "L4",
     "min_containers": 0,
     "scaledown_window": 15,
     "timeout": 1800,
@@ -204,18 +130,21 @@ class Worker:
         sys.path.insert(0, "/app")
         sys.path.insert(0, "/app/SoulX-FlashHead")
 
-        _install_signal_handlers()
+        install_signal_handlers()
 
         os.environ["AIVATAR_WORKER_CONCURRENCY"] = str(WORKER_CONCURRENCY)
         os.environ["TORCHINDUCTOR_COMPILE_THREADS"] = "1"
 
         print("[SNAP_CREATE] Starting GPU snapshot load", flush=True)
-        _log_cuda_state("SNAP_CREATE_START")
+        log_cuda_state("SNAP_CREATE_START")
 
         # Import ONLY flash_head (torch + model) - NOT handler/livekit.
         # livekit's Rust FFI spawns background threads that corrupt GPU
         # memory snapshot state. handler.py is deferred to serve() (post-restore).
         from flash_head.inference import get_pipeline
+
+        # Log which attention backend is available
+        log_attention_backend("SNAP_CREATE")
 
         ckpt_dir = os.getenv("FLASHHEAD_CKPT_DIR", "/app/models/SoulX-FlashHead-1_3B")
         wav2vec_dir = os.getenv("WAV2VEC_DIR", "/app/models/wav2vec2-base-960h")
@@ -227,7 +156,7 @@ class Worker:
         load_ms = (time.monotonic() - load_t0) * 1000
         print(f"[SNAP_CREATE] Pipeline loaded in {load_ms:.1f}ms", flush=True)
 
-        _log_cuda_state("SNAP_CREATE_POST_PIPELINE_LOAD")
+        log_cuda_state("SNAP_CREATE_POST_PIPELINE_LOAD")
 
         print("[SNAP_CREATE] Running warmup inference on GPU...", flush=True)
         warm_t0 = time.monotonic()
@@ -235,7 +164,7 @@ class Worker:
         warm_ms = (time.monotonic() - warm_t0) * 1000
         print(f"[SNAP_CREATE] Warmup completed in {warm_ms:.1f}ms", flush=True)
 
-        _log_cuda_state("SNAP_CREATE_POST_WARMUP")
+        log_cuda_state("SNAP_CREATE_POST_WARMUP")
 
         # Release warmup artifacts and reserved-but-unused CUDA memory.
         # This reduces snapshot size by ~1.6GB (reserved vs allocated gap).
@@ -253,9 +182,11 @@ class Worker:
             torch.cuda.empty_cache()
             torch.cuda.ipc_collect()
 
-        _log_cuda_state("SNAP_CREATE_AFTER_CLEANUP")
+        log_cuda_state("SNAP_CREATE_AFTER_CLEANUP")
 
-        _reset_ucx_signal_handlers()
+        log_signal_handlers("SNAP_PRE_RESET")
+        reset_ucx_signal_handlers()
+        log_signal_handlers("SNAP_POST_RESET")
         print("[SNAP_CREATE] Ready for GPU snapshot (memory optimized)", flush=True)
 
     @modal.enter(snap=False)
@@ -264,7 +195,7 @@ class Worker:
         sys.path.insert(0, "/app")
 
         print("[RESTORE] Starting GPU snapshot restore", flush=True)
-        _log_cuda_state("RESTORE_START")
+        log_cuda_state("RESTORE_START")
 
         import torch
         import torch.distributed as dist
@@ -290,7 +221,9 @@ class Worker:
             flush=True,
         )
 
-        _log_cuda_state("RESTORE_FINAL")
+        log_signal_handlers("RESTORE_POST")
+
+        log_cuda_state("RESTORE_FINAL")
         print("[RESTORE] GPU snapshot restore complete", flush=True)
 
     @staticmethod
@@ -448,7 +381,7 @@ class Worker:
 
         print("[SERVE] Starting serve() post-restore", flush=True)
 
-        _install_signal_handlers()
+        install_signal_handlers()
 
         # Configure root logger so all Python loggers (stream_processor,
         # VideoPublisher, AudioPublisher, etc.) output to stdout.
@@ -460,7 +393,7 @@ class Worker:
             force=True,
         )
         for handler in logging.getLogger().handlers:
-            handler.addFilter(_ShortenLiveKitWebSocketUrlFilter())
+            handler.addFilter(ShortenLiveKitWebSocketUrlFilter())
         logger = logging.getLogger("modal_app")
 
         # Monkey-patch get_pipeline to return our GPU snapshot pipeline
@@ -473,11 +406,27 @@ class Worker:
         # Enable Rust FFI debug logs (ICE, DTLS) before handler import so the
         # native livekit.rtc library picks it up at initialization time.
         os.environ.setdefault("LIVEKIT_RTC_DEBUG", "false")
+
+        # Suppress per-step denoise timing prints from flash_head_pipeline.py
+        # (fires many times per session, floods logs during concurrent sessions)
+        # Set AIVATAR_LOG_DENOISE_STEP=1 to re-enable denoise step timing.
+        install_denoise_filter()
+
         import handler
         self._handler = handler
 
+        # Initialize BatchedStreamingEngine with the snapshot pipeline.
+        # All concurrent sessions share this single engine for batched inference.
+        from streaming.batched_engine import BatchedStreamingEngine
+        handler.batched_engine = BatchedStreamingEngine(self._snap_pipeline)
+        handler.batched_engine.start()
+        print(f"[SERVE] BatchedStreamingEngine started (wait_window={handler.batched_engine.wait_window_ms}ms)", flush=True)
+
         # Restore original get_pipeline so load_remaining() builds fresh pipelines
         fhi.get_pipeline = _orig_get_pipeline
+
+        # Log attention backend availability post-restore
+        log_attention_backend("SERVE_POST_RESTORE")
 
         # Preload default avatar and idle video caches (was in load() for CPU snapshots).
         # These read from local disk only (manifest JSON + baked image/video files), <1s.
@@ -524,7 +473,7 @@ class Worker:
                 application = await build_app()
 
                 print("[SERVE] Models already on GPU from snapshot - marking ready immediately", flush=True)
-                _log_cuda_state("SERVE_START")
+                log_cuda_state("SERVE_START")
                 self._handler.mark_model_ready()
 
                 # Do not bind HTTP until a session can reuse a connected room.
@@ -553,6 +502,18 @@ class Worker:
                             await self._handler.prewarm_pool.cleanup_expired()
 
                     self._prewarm_cleanup_task = asyncio.create_task(_cleanup_loop())
+
+                # Metrics logger every 5s (background thread, not asyncio task)
+                # Set AIVATAR_LOG_METRICS=0 to disable.
+                if _ENABLE_METRICS_LOG:
+                    import threading as _threading
+                    self._metrics_thread = _threading.Thread(
+                        target=metrics_logger,
+                        args=(self._handler,),
+                        daemon=True,
+                        name="metrics-logger",
+                    )
+                    self._metrics_thread.start()
 
                 logger.info("aiohttp site started thread=%s event_loop=%s", threading.get_ident(), id(asyncio.get_event_loop()))
                 await asyncio.Event().wait()

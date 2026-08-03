@@ -15,11 +15,11 @@ from streaming.stream_processor import run_streaming_session
 from streaming.websocket_server import ws_server
 from utils.model_pool import FlashHeadModelPool
 
-_BATCHED_INFERENCE = os.environ.get("AIVATAR_BATCHED_INFERENCE", "0") == "1"
+_BATCHED_INFERENCE = os.environ.get("AIVATAR_BATCHED_INFERENCE", "1") == "1"
 if _BATCHED_INFERENCE:
     from streaming.batched_stream_processor import run_batched_streaming_session
 
-# Shared BatchedStreamingEngine instance (set by modal_app_stress.py serve())
+# Shared BatchedStreamingEngine instance (set by modal_app.py serve())
 batched_engine = None
 
 

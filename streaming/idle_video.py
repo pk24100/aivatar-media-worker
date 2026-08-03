@@ -5,7 +5,7 @@ import numpy as np
 import tempfile
 import os
 import logging
-from typing import List
+from typing import List, Optional
 from urllib.parse import urlparse
 
 import requests
@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 MAX_IDLE_VIDEO_BYTES = int(os.getenv("IDLE_VIDEO_MAX_BYTES", str(20 * 1024 * 1024)))
 MAX_IDLE_VIDEO_FRAMES = int(os.getenv("IDLE_VIDEO_MAX_FRAMES", "750"))
 MAX_IDLE_VIDEO_DIMENSION = int(os.getenv("IDLE_VIDEO_MAX_DIMENSION", "1024"))
+
+_USE_BEST_MATCH = os.getenv("IDLE_BEST_MATCH", "1") == "1"
 
 class IdleVideoLoop:
     """
@@ -32,6 +34,8 @@ class IdleVideoLoop:
         self._in_loop_transition: bool = False
         self._loop_transition_idx: int = 0
         self._loop_crossfade_frames_effective: int = 0
+        self._loop_crossfade_cache: Optional[List[np.ndarray]] = None
+        self._loop_crossfade_cache_n: int = 0
 
         if video_bytes is not None:
             self._load_bytes(video_bytes)
@@ -193,6 +197,26 @@ class IdleVideoLoop:
     def is_valid(self) -> bool:
         return self.total_frames > 0
         
+    def _find_best_match_frame(self, target: np.ndarray) -> int:
+        """Find idle frame index with lowest MSE to target (downscaled for speed)."""
+        if self.total_frames <= 1:
+            return 0
+        target_rgb = target[:, :, :3] if target.shape[2] == 4 else target
+        target_small = cv2.resize(target_rgb, (64, 64))
+        target_f = target_small.astype(np.float32)
+        best_idx = 0
+        best_mse = float('inf')
+        for i in range(self.total_frames):
+            f = self.frames[i]
+            f_rgb = f[:, :, :3] if f.shape[2] == 4 else f
+            f_small = cv2.resize(f_rgb, (64, 64))
+            diff = f_small.astype(np.float32) - target_f
+            mse = float(np.mean(diff * diff))
+            if mse < best_mse:
+                best_mse = mse
+                best_idx = i
+        return best_idx
+
     def _get_effective_loop_crossfade_frames(self) -> int:
         """Get the effective crossfade frame count, clamped to video length."""
         fade = self._loop_crossfade_frames
@@ -203,14 +227,19 @@ class IdleVideoLoop:
         return fade
 
     def _generate_loop_crossfade(self, fade_frames: int) -> List[np.ndarray]:
-        """Generate crossfade from last N frames to first N frames for seamless loop."""
+        """Generate crossfade from last frame to first frame for seamless loop.
+
+        Uses plain linear alpha blend between the last and first idle frames.
+        """
+        if fade_frames <= 0:
+            return []
+
+        tail_frame = self.frames[self.total_frames - 1]
+        head_frame = self.frames[0]
+
         blended = []
         for i in range(fade_frames):
             alpha = i / fade_frames
-            tail_idx = self.total_frames - fade_frames + i
-            head_idx = i
-            tail_frame = self.frames[tail_idx]
-            head_frame = self.frames[head_idx]
             blended.append(cv2.addWeighted(tail_frame, 1 - alpha, head_frame, alpha, 0))
         return blended
 
@@ -226,13 +255,18 @@ class IdleVideoLoop:
                 self._in_loop_transition = False
                 self._loop_transition_buffer = []
                 self._loop_transition_idx = 0
-                self.current_idx = self._loop_crossfade_frames_effective % self.total_frames
+                self.current_idx = 1
             return frame
 
         fade = self._get_effective_loop_crossfade_frames()
         if fade > 0 and self.current_idx >= self.total_frames - fade:
             self._loop_crossfade_frames_effective = fade
-            self._loop_transition_buffer = self._generate_loop_crossfade(fade)
+            if self._loop_crossfade_cache is not None and self._loop_crossfade_cache_n == fade:
+                self._loop_transition_buffer = self._loop_crossfade_cache
+            else:
+                self._loop_transition_buffer = self._generate_loop_crossfade(fade)
+                self._loop_crossfade_cache = self._loop_transition_buffer
+                self._loop_crossfade_cache_n = fade
             self._in_loop_transition = True
             self._loop_transition_idx = 0
             frame = self._loop_transition_buffer[self._loop_transition_idx]
@@ -244,43 +278,50 @@ class IdleVideoLoop:
         return frame
     
     def crossfade_to_idle(self, last_live_frame: np.ndarray, fade_frames: int = 8) -> List[np.ndarray]:
-        """
-        Generate crossfade frames from last live frame to idle loop start.
+        """Generate crossfade frames from last live frame to idle loop start.
+
+        Uses best-match frame selection to find the idle frame closest to the
+        live frame, then plain linear alpha blend.
         """
         if not self.is_valid():
             return []
-            
-        # Ensure sizes match
+
         h, w = last_live_frame.shape[:2]
         idle_h, idle_w = self.frames[0].shape[:2]
-        
+        need_resize = (h, w) != (idle_h, idle_w)
+
+        # Best-match: find idle frame closest to last live frame
+        start_idx = 0
+        if _USE_BEST_MATCH and self.total_frames > 1:
+            try:
+                start_idx = self._find_best_match_frame(last_live_frame)
+                logger.info("[idle] best-match frame %d/%d", start_idx, self.total_frames)
+            except Exception:
+                start_idx = 0
+
+        target_idle = self.frames[start_idx]
+        if need_resize:
+            target_idle = cv2.resize(target_idle, (w, h))
+
         blended_frames = []
         for i in range(fade_frames):
-            alpha = i / fade_frames  # 0.0 → 1.0
-            idle_frame = self.frames[i % self.total_frames]
-            
-            # Resize idle frame if it doesn't match the live frame size
-            if (h, w) != (idle_h, idle_w):
-                idle_frame = cv2.resize(idle_frame, (w, h))
-                
-            # If live frame is RGBA, ignore alpha for blending, or handle it
-            if last_live_frame.shape[2] == 4 and idle_frame.shape[2] == 3:
+            alpha = i / fade_frames
+            if last_live_frame.shape[2] == 4 and target_idle.shape[2] == 3:
                 last_live_rgb = last_live_frame[:, :, :3]
-                blended_rgb = cv2.addWeighted(last_live_rgb, 1 - alpha, idle_frame, alpha, 0)
-                # Keep original alpha
+                blended_rgb = cv2.addWeighted(last_live_rgb, 1 - alpha, target_idle, alpha, 0)
                 blended = np.concatenate([blended_rgb, last_live_frame[:, :, 3:]], axis=2)
             else:
-                blended = cv2.addWeighted(last_live_frame, 1 - alpha, idle_frame, alpha, 0)
-                
+                blended = cv2.addWeighted(last_live_frame, 1 - alpha, target_idle, alpha, 0)
             blended_frames.append(blended)
-            
-        # Set next index to where crossfade ends
-        self.current_idx = fade_frames % self.total_frames
+
+        self.current_idx = (start_idx + 1) % self.total_frames
         return blended_frames
     
     def crossfade_from_idle(self, live_frames, current_idle_idx: int, fade_frames: int = 8) -> List[np.ndarray]:
-        """
-        Generate crossfade frames from idle loop to buffered live frames.
+        """Generate crossfade frames from idle loop to buffered live frames.
+
+        Uses plain linear alpha blend between the current idle frame and the
+        first live frame.
         """
         if not self.is_valid():
             return []
@@ -291,23 +332,23 @@ class IdleVideoLoop:
             return []
 
         h, w = live_frames[0].shape[:2]
+        idle_h, idle_w = self.frames[0].shape[:2]
+        need_resize = (h, w) != (idle_h, idle_w)
+
+        first_live = live_frames[0]
+        first_idle = self.frames[current_idle_idx % self.total_frames]
+        if need_resize:
+            first_idle = cv2.resize(first_idle, (w, h))
+
         blended_frames = []
-        
         for i in range(fade_frames):
-            alpha = i / fade_frames  # 0.0 → 1.0
-            live_frame = live_frames[min(i, len(live_frames) - 1)]
-            idle_frame = self.frames[(current_idle_idx + i) % self.total_frames]
-            
-            if (h, w) != (idle_frame.shape[0], idle_frame.shape[1]):
-                idle_frame = cv2.resize(idle_frame, (w, h))
-                
-            if live_frame.shape[2] == 4 and idle_frame.shape[2] == 3:
-                live_rgb = live_frame[:, :, :3]
-                blended_rgb = cv2.addWeighted(idle_frame, 1 - alpha, live_rgb, alpha, 0)
-                blended = np.concatenate([blended_rgb, live_frame[:, :, 3:]], axis=2)
+            alpha = i / fade_frames
+            if first_live.shape[2] == 4 and first_idle.shape[2] == 3:
+                live_rgb = first_live[:, :, :3]
+                blended_rgb = cv2.addWeighted(first_idle, 1 - alpha, live_rgb, alpha, 0)
+                blended = np.concatenate([blended_rgb, first_live[:, :, 3:]], axis=2)
             else:
-                blended = cv2.addWeighted(idle_frame, 1 - alpha, live_frame, alpha, 0)
-                
+                blended = cv2.addWeighted(first_idle, 1 - alpha, first_live, alpha, 0)
             blended_frames.append(blended)
-            
+
         return blended_frames
