@@ -1,0 +1,616 @@
+﻿2026-08-04 14:43:15+05:30 [STRESS] Snapshot load with WORKER_CONCURRENCY=4
+2026-08-04 14:43:16+05:30 [SNAP_CREATE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-04 14:43:19+05:30 Traceback (most recent call last):
+2026-08-04 14:43:19+05:30   File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+2026-08-04 14:43:19+05:30     yield
+2026-08-04 14:43:19+05:30   File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+2026-08-04 14:43:19+05:30     res = func(*args)
+2026-08-04 14:43:19+05:30           ^^^^^^^^^^^
+2026-08-04 14:43:19+05:30   File "/root/modal_app_stress.py", line 344, in load
+2026-08-04 14:43:19+05:30     from flash_head.inference import get_pipeline
+2026-08-04 14:43:19+05:30   File "/app/SoulX-FlashHead/flash_head/inference.py", line 8, in <module>
+2026-08-04 14:43:19+05:30     from flash_head.src.pipeline.flash_head_pipeline import FlashHeadPipeline
+2026-08-04 14:43:19+05:30   File "/app/SoulX-FlashHead/flash_head/src/pipeline/flash_head_pipeline.py", line 13, in <module>
+2026-08-04 14:43:19+05:30     from flash_head.src.modules.flash_head_model import WanModelAudioProject
+2026-08-04 14:43:19+05:30   File "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", line 72
+2026-08-04 14:43:19+05:30     global _SAGE_ATTN_RUNTIME_OK
+2026-08-04 14:43:19+05:30     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-04 14:43:19+05:30 SyntaxError: name '_SAGE_ATTN_RUNTIME_OK' is used prior to global declaration
+2026-08-04 14:43:19+05:30 Runner failed with exception: SyntaxError("name '_SAGE_ATTN_RUNTIME_OK' is used prior to global declaration")
+2026-08-04 14:43:35+05:30 
+2026-08-04 14:43:35+05:30 =============
+2026-08-04 14:43:35+05:30 == PyTorch ==
+2026-08-04 14:43:35+05:30 =============
+2026-08-04 14:43:35+05:30 
+2026-08-04 14:43:35+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-04 14:43:35+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-04 14:43:35+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-04 14:43:35+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-04 14:43:35+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-04 14:43:35+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-04 14:43:35+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-04 14:43:35+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-04 14:43:35+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-04 14:43:35+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-04 14:43:35+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-04 14:43:35+05:30 Copyright (c) 2015      Google Inc.
+2026-08-04 14:43:35+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-04 14:43:35+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-04 14:43:35+05:30 All rights reserved.
+2026-08-04 14:43:35+05:30 
+2026-08-04 14:43:35+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-04 14:43:35+05:30 
+2026-08-04 14:43:35+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-04 14:43:35+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-04 14:43:35+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-04 14:43:35+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-04 14:43:35+05:30 
+2026-08-04 14:43:35+05:30 WARNING: CUDA Minor Version Compatibility mode ENABLED.
+2026-08-04 14:43:35+05:30   Using driver version 580.95.05 which has support for CUDA 13.0.  This container
+2026-08-04 14:43:35+05:30   was built with CUDA 13.2 and will be run in Minor Version Compatibility mode.
+2026-08-04 14:43:35+05:30   CUDA Forward Compatibility is preferred over Minor Version Compatibility for use
+2026-08-04 14:43:35+05:30   with this container but was unavailable:
+2026-08-04 14:43:35+05:30   [[]]
+2026-08-04 14:43:35+05:30   See https://docs.nvidia.com/deploy/cuda-compatibility/ for details.
+2026-08-04 14:43:35+05:30 
+2026-08-04 14:43:36+05:30 [STRESS] Snapshot load with WORKER_CONCURRENCY=4
+2026-08-04 14:43:39+05:30 [SNAP_CREATE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-04 14:43:41+05:30 Traceback (most recent call last):
+2026-08-04 14:43:41+05:30   File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+2026-08-04 14:43:41+05:30     yield
+2026-08-04 14:43:41+05:30   File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+2026-08-04 14:43:41+05:30     res = func(*args)
+2026-08-04 14:43:41+05:30           ^^^^^^^^^^^
+2026-08-04 14:43:41+05:30   File "/root/modal_app_stress.py", line 344, in load
+2026-08-04 14:43:41+05:30     from flash_head.inference import get_pipeline
+2026-08-04 14:43:41+05:30   File "/app/SoulX-FlashHead/flash_head/inference.py", line 8, in <module>
+2026-08-04 14:43:41+05:30     from flash_head.src.pipeline.flash_head_pipeline import FlashHeadPipeline
+2026-08-04 14:43:41+05:30   File "/app/SoulX-FlashHead/flash_head/src/pipeline/flash_head_pipeline.py", line 13, in <module>
+2026-08-04 14:43:41+05:30     from flash_head.src.modules.flash_head_model import WanModelAudioProject
+2026-08-04 14:43:41+05:30   File "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", line 72
+2026-08-04 14:43:41+05:30     global _SAGE_ATTN_RUNTIME_OK
+2026-08-04 14:43:41+05:30     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-04 14:43:41+05:30 SyntaxError: name '_SAGE_ATTN_RUNTIME_OK' is used prior to global declaration
+2026-08-04 14:43:41+05:30 Runner failed with exception: SyntaxError("name '_SAGE_ATTN_RUNTIME_OK' is used prior to global declaration")
+2026-08-04 14:43:45+05:30 
+2026-08-04 14:43:45+05:30 =============
+2026-08-04 14:43:45+05:30 == PyTorch ==
+2026-08-04 14:43:45+05:30 =============
+2026-08-04 14:43:45+05:30 
+2026-08-04 14:43:45+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-04 14:43:45+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-04 14:43:45+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-04 14:43:45+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-04 14:43:45+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-04 14:43:45+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-04 14:43:45+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-04 14:43:45+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-04 14:43:45+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-04 14:43:45+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-04 14:43:45+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-04 14:43:45+05:30 Copyright (c) 2015      Google Inc.
+2026-08-04 14:43:45+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-04 14:43:45+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-04 14:43:45+05:30 All rights reserved.
+2026-08-04 14:43:45+05:30 
+2026-08-04 14:43:45+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-04 14:43:45+05:30 
+2026-08-04 14:43:45+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-04 14:43:45+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-04 14:43:45+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-04 14:43:45+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-04 14:43:45+05:30 
+2026-08-04 14:43:45+05:30 WARNING: CUDA Minor Version Compatibility mode ENABLED.
+2026-08-04 14:43:45+05:30   Using driver version 580.95.05 which has support for CUDA 13.0.  This container
+2026-08-04 14:43:45+05:30   was built with CUDA 13.2 and will be run in Minor Version Compatibility mode.
+2026-08-04 14:43:45+05:30   CUDA Forward Compatibility is preferred over Minor Version Compatibility for use
+2026-08-04 14:43:45+05:30   with this container but was unavailable:
+2026-08-04 14:43:45+05:30   [[]]
+2026-08-04 14:43:45+05:30   See https://docs.nvidia.com/deploy/cuda-compatibility/ for details.
+2026-08-04 14:43:45+05:30 
+2026-08-04 14:43:46+05:30 [STRESS] Snapshot load with WORKER_CONCURRENCY=4
+2026-08-04 14:43:48+05:30 [SNAP_CREATE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-04 14:43:49+05:30 Traceback (most recent call last):
+2026-08-04 14:43:49+05:30   File "/pkg/modal/_runtime/task_lifecycle_manager.py", line 84, in handle_task_lifecycle_exception
+2026-08-04 14:43:49+05:30     yield
+2026-08-04 14:43:49+05:30   File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+2026-08-04 14:43:49+05:30     res = func(*args)
+2026-08-04 14:43:49+05:30           ^^^^^^^^^^^
+2026-08-04 14:43:49+05:30   File "/root/modal_app_stress.py", line 344, in load
+2026-08-04 14:43:49+05:30     from flash_head.inference import get_pipeline
+2026-08-04 14:43:49+05:30   File "/app/SoulX-FlashHead/flash_head/inference.py", line 8, in <module>
+2026-08-04 14:43:49+05:30     from flash_head.src.pipeline.flash_head_pipeline import FlashHeadPipeline
+2026-08-04 14:43:49+05:30   File "/app/SoulX-FlashHead/flash_head/src/pipeline/flash_head_pipeline.py", line 13, in <module>
+2026-08-04 14:43:49+05:30     from flash_head.src.modules.flash_head_model import WanModelAudioProject
+2026-08-04 14:43:49+05:30   File "/app/SoulX-FlashHead/flash_head/src/modules/flash_head_model.py", line 72
+2026-08-04 14:43:49+05:30     global _SAGE_ATTN_RUNTIME_OK
+2026-08-04 14:43:49+05:30     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-04 14:43:49+05:30 SyntaxError: name '_SAGE_ATTN_RUNTIME_OK' is used prior to global declaration
+2026-08-04 14:43:50+05:30 Runner failed with exception: SyntaxError("name '_SAGE_ATTN_RUNTIME_OK' is used prior to global declaration")
+2026-08-04 15:48:56+05:30 Building image im-DmqcTEBWNacXIi7PZk1u29
+2026-08-04 15:48:57+05:30 
+2026-08-04 15:48:57+05:30 => Step 0: FROM base
+2026-08-04 15:48:57+05:30 
+2026-08-04 15:48:57+05:30 => Step 1: COPY . /
+2026-08-04 15:49:00+05:30 Saving image...
+2026-08-04 15:49:04+05:30 Image saved, took 4.46s
+2026-08-04 15:49:04+05:30 
+2026-08-04 15:49:04+05:30 Built image im-DmqcTEBWNacXIi7PZk1u29 in 7.97s
+2026-08-04 15:49:04+05:30 
+2026-08-04 15:49:04+05:30 
+2026-08-04 15:49:07+05:30 Building image im-tsN3XiqQSgpAT0vBZ4SGUq
+2026-08-04 15:49:08+05:30 
+2026-08-04 15:49:08+05:30 => Step 0: FROM base
+2026-08-04 15:49:08+05:30 
+2026-08-04 15:49:08+05:30 => Step 1: COPY . /
+2026-08-04 15:49:10+05:30 Saving image...
+2026-08-04 15:49:13+05:30 Image saved, took 3.09s
+2026-08-04 15:49:13+05:30 
+2026-08-04 15:49:13+05:30 Built image im-tsN3XiqQSgpAT0vBZ4SGUq in 6.44s
+2026-08-04 15:49:13+05:30 
+2026-08-04 15:49:13+05:30 
+2026-08-04 15:49:22+05:30 Building image im-ycZVvvoLwDONRQggdSe0N0
+2026-08-04 15:49:27+05:30 
+2026-08-04 15:49:27+05:30 => Step 0: FROM base
+2026-08-04 15:49:27+05:30 
+2026-08-04 15:49:27+05:30 => Step 1: COPY . /
+2026-08-04 15:49:29+05:30 Saving image...
+2026-08-04 15:49:34+05:30 Image saved, took 4.62s
+2026-08-04 15:49:34+05:30 
+2026-08-04 15:49:34+05:30 Built image im-ycZVvvoLwDONRQggdSe0N0 in 12.33s
+2026-08-04 15:49:34+05:30 
+2026-08-04 15:49:34+05:30 
+2026-08-04 15:49:37+05:30 Building image im-GxOzjTqOdUVOilDHgyKdSB
+2026-08-04 15:49:38+05:30 
+2026-08-04 15:49:38+05:30 => Step 0: FROM base
+2026-08-04 15:49:38+05:30 
+2026-08-04 15:49:38+05:30 => Step 1: COPY . /
+2026-08-04 15:49:40+05:30 Saving image...
+2026-08-04 15:49:43+05:30 Image saved, took 3.38s
+2026-08-04 15:49:43+05:30 
+2026-08-04 15:49:43+05:30 Built image im-GxOzjTqOdUVOilDHgyKdSB in 6.77s
+2026-08-04 15:49:43+05:30 
+2026-08-04 15:49:43+05:30 
+2026-08-04 15:49:47+05:30 Building image im-TaHvDcKiNpZYDdux9Y3Fuq
+2026-08-04 15:49:49+05:30 
+2026-08-04 15:49:49+05:30 => Step 0: FROM base
+2026-08-04 15:49:49+05:30 
+2026-08-04 15:49:49+05:30 => Step 1: COPY . /
+2026-08-04 15:49:50+05:30 Saving image...
+2026-08-04 15:49:54+05:30 Image saved, took 3.81s
+2026-08-04 15:49:54+05:30 
+2026-08-04 15:49:54+05:30 Built image im-TaHvDcKiNpZYDdux9Y3Fuq in 7.42s
+2026-08-04 15:49:54+05:30 
+2026-08-04 15:49:54+05:30 
+2026-08-04 15:50:13+05:30 Creating GPU memory snapshot for Function.
+2026-08-04 15:50:20+05:30 
+2026-08-04 15:50:20+05:30 =============
+2026-08-04 15:50:20+05:30 == PyTorch ==
+2026-08-04 15:50:20+05:30 =============
+2026-08-04 15:50:21+05:30 
+2026-08-04 15:50:21+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-04 15:50:21+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-04 15:50:21+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-04 15:50:21+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-04 15:50:21+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-04 15:50:21+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-04 15:50:21+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-04 15:50:21+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-04 15:50:21+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-04 15:50:21+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-04 15:50:21+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-04 15:50:21+05:30 Copyright (c) 2015      Google Inc.
+2026-08-04 15:50:21+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-04 15:50:21+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-04 15:50:21+05:30 All rights reserved.
+2026-08-04 15:50:21+05:30 
+2026-08-04 15:50:21+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-04 15:50:21+05:30 
+2026-08-04 15:50:21+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-04 15:50:21+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-04 15:50:21+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-04 15:50:21+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-04 15:50:21+05:30 
+2026-08-04 15:50:21+05:30 WARNING: CUDA Minor Version Compatibility mode ENABLED.
+2026-08-04 15:50:21+05:30   Using driver version 580.95.05 which has support for CUDA 13.0.  This container
+2026-08-04 15:50:21+05:30   was built with CUDA 13.2 and will be run in Minor Version Compatibility mode.
+2026-08-04 15:50:21+05:30   CUDA Forward Compatibility is preferred over Minor Version Compatibility for use
+2026-08-04 15:50:21+05:30   with this container but was unavailable:
+2026-08-04 15:50:21+05:30   [[]]
+2026-08-04 15:50:21+05:30   See https://docs.nvidia.com/deploy/cuda-compatibility/ for details.
+2026-08-04 15:50:21+05:30 
+2026-08-04 15:50:23+05:30 [STRESS] Snapshot load with WORKER_CONCURRENCY=4
+2026-08-04 15:50:25+05:30 [SNAP_CREATE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-04 15:50:32+05:30 W0804 10:20:32.254000 2 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-04 15:50:32+05:30 W0804 10:20:32.307000 2 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-04 15:50:32+05:30 Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+2026-08-04 15:50:36+05:30 [SNAP_CREATE] flash_attn version: 2.7.4.post1
+2026-08-04 15:50:36+05:30 [SNAP_CREATE] flash_attn_interface (FA3) NOT available
+2026-08-04 15:50:36+05:30 [SNAP_CREATE] sageattention available
+2026-08-04 15:50:36+05:30 [SNAP_CREATE] Loading FlashHead pipeline on GPU...
+2026-08-04 15:50:36+05:30 2026-08-04 10:20:36.305 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:50:39+05:30 There are modules in CausalVideoAutoencoder that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-04 15:50:40+05:30 There are modules in WanModelAudioProject that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-04 15:50:42+05:30 Some weights of Wav2Vec2Model were not initialized from the model checkpoint at /app/models/wav2vec2-base-960h and are newly initialized: ['masked_spec_embed']
+2026-08-04 15:50:42+05:30 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-04 15:50:42+05:30 2026-08-04 10:20:42.761 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:102 - Cached Lite model components for reuse
+2026-08-04 15:50:42+05:30 [SNAP_CREATE] Pipeline loaded in 6455.5ms
+2026-08-04 15:50:42+05:30 [SNAP_CREATE_POST_PIPELINE_LOAD] pid=2 cuda_available=True allocated=4294345216 reserved=4578082816 memory_snapshot_segments=0
+2026-08-04 15:50:42+05:30 [SNAP_CREATE] Running warmup inference on GPU...
+2026-08-04 15:50:43+05:30 [flash_attention] sageattn failed (SM89 kernel is not available. Make sure you GPUs with compute capability 8.9.), falling back to SDPA
+2026-08-04 15:50:44+05:30 2026-08-04 10:20:44.023 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:392 - [generate] DENOISE_STEPS total=275.1ms steps=[s0=172.7 s1=35.1 s2=33.8 s3=33.5] n_steps=4
+2026-08-04 15:50:44+05:30 [SNAP_CREATE] Warmup completed in 1262.7ms
+2026-08-04 15:50:44+05:30 [SNAP_CREATE_POST_WARMUP] pid=2 cuda_available=True allocated=4331244544 reserved=5941231616 memory_snapshot_segments=0
+2026-08-04 15:50:44+05:30 [SNAP_CREATE] torch.compile state after warmup: is_compiled=False
+2026-08-04 15:50:44+05:30 [SNAP_CREATE_AFTER_CLEANUP] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:50:44+05:30 [SNAP_PRE_RESET] SIGSEGV handler: <function _crash_handler at 0x2b483c302ac0>
+2026-08-04 15:50:44+05:30 [SNAP_PRE_RESET] SIGABRT handler: <function _crash_handler at 0x2b483c302ac0>
+2026-08-04 15:50:44+05:30 [SNAP_PRE_RESET] SIGBUS handler: <function _crash_handler at 0x2b483c302ac0>
+2026-08-04 15:50:44+05:30 [SNAP_PRE_RESET] SIGFPE handler: <function _crash_handler at 0x2b483c302ac0>
+2026-08-04 15:50:44+05:30 [SNAP] Resetting signal 11 from <function _crash_handler at 0x2b483c302ac0> to SIG_DFL
+2026-08-04 15:50:44+05:30 [SNAP] Resetting signal 6 from <function _crash_handler at 0x2b483c302ac0> to SIG_DFL
+2026-08-04 15:50:44+05:30 [SNAP] Resetting signal 7 from <function _crash_handler at 0x2b483c302ac0> to SIG_DFL
+2026-08-04 15:50:44+05:30 [SNAP] Resetting signal 8 from <function _crash_handler at 0x2b483c302ac0> to SIG_DFL
+2026-08-04 15:50:44+05:30 [SNAP_POST_RESET] SIGSEGV handler: 0
+2026-08-04 15:50:44+05:30 [SNAP_POST_RESET] SIGABRT handler: 0
+2026-08-04 15:50:44+05:30 [SNAP_POST_RESET] SIGBUS handler: 0
+2026-08-04 15:50:44+05:30 [SNAP_POST_RESET] SIGFPE handler: 0
+2026-08-04 15:50:44+05:30 [SNAP_CREATE] Ready for GPU snapshot (memory optimized)
+2026-08-04 15:50:59+05:30 Snapshot created. Restoring Function from memory snapshot.
+2026-08-04 15:51:00+05:30 Restoring Function from memory snapshot.
+2026-08-04 15:51:03+05:30 [RESTORE] Starting GPU snapshot restore
+2026-08-04 15:51:03+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:03+05:30 [RESTORE] cuda.is_available=True dist.is_initialized=False
+2026-08-04 15:51:03+05:30 [RESTORE] allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:03+05:30 [RESTORE] snap_pipeline exists: device=cuda
+2026-08-04 15:51:03+05:30 [RESTORE_POST] SIGSEGV handler: 0
+2026-08-04 15:51:03+05:30 [RESTORE_POST] SIGABRT handler: 0
+2026-08-04 15:51:03+05:30 [RESTORE_POST] SIGBUS handler: 0
+2026-08-04 15:51:03+05:30 [RESTORE_POST] SIGFPE handler: 0
+2026-08-04 15:51:03+05:30 [RESTORE] torch.compile state: is_compiled=False
+2026-08-04 15:51:03+05:30 [RESTORE_FINAL] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:03+05:30 [RESTORE] GPU snapshot restore complete
+2026-08-04 15:51:04+05:30 [SERVE] Starting serve() post-restore (STRESS TEST, concurrency=4)
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,713 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=4 max_size=4
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Loading pipeline 1/4...
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Pipeline 1/4 loaded successfully.
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Loading pipeline 2/4...
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Pipeline 2/4 loaded successfully.
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Loading pipeline 3/4...
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Pipeline 3/4 loaded successfully.
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Loading pipeline 4/4...
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04.714 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,714 [INFO] utils.model_pool: Pipeline 4/4 loaded successfully.
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,715 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-04 15:51:04+05:30 [STRESS] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-04 15:51:04+05:30 [STRESS] /readyz patched: prewarm check relaxed
+2026-08-04 15:51:04+05:30 [SERVE_POST_RESTORE] flash_attn version: 2.7.4.post1
+2026-08-04 15:51:04+05:30 [SERVE_POST_RESTORE] flash_attn_interface (FA3) NOT available
+2026-08-04 15:51:04+05:30 [SERVE_POST_RESTORE] sageattention available
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,718 [INFO] default_avatar_cache: [default-avatar-cache] Manifest not found at /app/config/default_avatars.manifest.json. Falling back to per-session URL fetch.
+2026-08-04 15:51:04+05:30 [modal] Default avatar manifest not found at /app/config/default_avatars.manifest.json - falling back to per-session URL fetch
+2026-08-04 15:51:04+05:30 [modal] Default idle cache: cachedIdleVideoCount=0 failed=0
+2026-08-04 15:51:04+05:30 [SERVE] Snapshot pipeline in model_pool: current_size=4 available=4
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,718 [INFO] modal_app_stress: aiohttp background thread started ident=47604001162944
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,720 [INFO] streaming.websocket_server: Starting WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-04 15:51:04+05:30 2026-08-04 10:21:04,725 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-04 15:51:04+05:30 [SERVE] Models already on GPU from snapshot - marking ready immediately
+2026-08-04 15:51:04+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:05+05:30 [prewarm] Connecting to wss://ai-14ksodzi.livekit.cloud room=prewarm-d95089f1 slot=1/1 attempt=1/required...
+2026-08-04 15:51:06+05:30 Nvidia Decoder is supported.
+2026-08-04 15:51:06+05:30 2026-08-04 10:21:06,298 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-04 15:51:06+05:30 [prewarm] Connected slot=1/1 in 1299.4 ms, adding to pool
+2026-08-04 15:51:06+05:30 2026-08-04 10:21:06,577 [INFO] modal_app_stress: aiohttp site started thread=47604001162944 event_loop=47605348071616
+2026-08-04 15:51:06+05:30 [STRESS] All 4 pool slots filled from snapshot pipeline. No additional pipelines to load.
+2026-08-04 15:51:06+05:30 [STRESS] Prewarm pool size=1. Test script will mint rooms for sessions 2-N.
+2026-08-04 15:51:06+05:30 [METRICS] GPU_util=0% GPU_temp=30C GPU_mem=4.0GB/95.0GB (reserved=4.3GB) RSS=12744MB CPU_user=20.7s CPU_sys=5.1s sessions=0 pool=4/4
+2026-08-04 15:51:06+05:30 2026-08-04 10:21:06,698 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:06 +0000] "GET /readyz HTTP/1.1" 200 398 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:06+05:30 2026-08-04 10:21:06,703 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:06 +0000] "GET /readyz HTTP/1.1" 200 398 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:06+05:30     GET /readyz -> 200 OK  (duration: 20.9 s, execution: 108.8 ms)
+2026-08-04 15:51:07+05:30 2026-08-04 10:21:07,857 [INFO] handler: [claim_room] Claimed room prewarm-d95089f1 for new session
+2026-08-04 15:51:07+05:30 2026-08-04 10:21:07,857 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:07 +0000] "POST /room/claim HTTP/1.1" 200 965 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:08+05:30    POST /room/claim -> 200 OK  (duration: 331.2 ms, execution: 197.8 ms)
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,336 [INFO] handler: [pod_session_start] Received session=conc-test-1-458898 room=prewarm-d95089f1 ingestion=websocket hasIdleAsset=False
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,337 [INFO] streaming.websocket_server: Registered WebSocket session: conc-test-1-458898
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,337 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:09 +0000] "POST /sessions/start HTTP/1.1" 202 271 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,337 [INFO] handler: [handler] Reusing pre-warmed LiveKit room prewarm-d95089f1 connection_state=1 identity=prewarm-prewarm-d95089f1
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,338 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47604001162944 thread_name=modal-aiohttp-server event_loop_id=47605348071616
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,338 [INFO] batched_stream_processor: Connecting to LiveKit room=prewarm-d95089f1 url=wss://ai-14ksodzi.livekit.cloud session=conc-test-1-458898
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,338 [INFO] batched_stream_processor: Reusing pre-connected LiveKit room=prewarm-d95089f1 session=conc-test-1-458898 connection_state=1
+2026-08-04 15:51:09+05:30    POST /sessions/start -> 202 Accepted  (duration: 429.2 ms, execution: 298.7 ms)
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,770 [INFO] batched_stream_processor: IDLE_FALLBACK_PUBLISHED session=conc-test-1-458898
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,770 [INFO] batched_stream_processor: Registering session conc-test-1-458898 with BatchedStreamingEngine
+2026-08-04 15:51:09+05:30 2026-08-04 10:21:09,771 [INFO] BatchedStreamingEngine: Session conc-test-1-458898 added (total=1)
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,053 [INFO] batched_stream_processor: Session conc-test-1-458898 registered with engine in 282.0 ms (avatar prepared)
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,053 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,053 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,054 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,054 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,056 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,064 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 8.2 ms
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,069 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCk9ui3Bc6u8iA from prewarm-prewarm-d95089f1
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,070 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'local_track_published', 't': 0.732, 'sid': 'TR_VCk9ui3Bc6u8iA', 'kind': 2}
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,070 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=conc-test-1-458898 room=prewarm-d95089f1
+2026-08-04 15:51:10+05:30 2026-08-04 10:21:10,089 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-04 15:51:10+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:10+05:30 
+2026-08-04 15:51:11+05:30 2026-08-04 10:21:11,448 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'quality_changed', 't': 2.111, 'participant': 'prewarm-prewarm-d95089f1', 'quality': '2'}
+2026-08-04 15:51:11+05:30 [METRICS] GPU_util=0% GPU_temp=30C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=24.0s CPU_sys=5.4s sessions=1 pool=4/4
+2026-08-04 15:51:13+05:30 2026-08-04 10:21:13,388 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:13 +0000] "POST /room/claim HTTP/1.1" 200 238 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:13+05:30    POST /room/claim -> 200 OK  (duration: 321.9 ms, execution: 198.4 ms)
+2026-08-04 15:51:13+05:30 2026-08-04 10:21:13,613 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'participant_connected', 't': 4.275, 'identity': 'viewer-script-conc-test-1-458898'}
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,477 [INFO] handler: [pod_session_start] Received session=conc-test-2-604df8 room=conc-test-aceb7afc ingestion=websocket hasIdleAsset=False
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,477 [INFO] streaming.websocket_server: Registered WebSocket session: conc-test-2-604df8
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,477 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:14 +0000] "POST /sessions/start HTTP/1.1" 202 271 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,477 [INFO] handler: [handler] prewarm_pool.release() took 0.0ms for room conc-test-aceb7afc
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,478 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47604001162944 thread_name=modal-aiohttp-server event_loop_id=47605348071616
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,478 [INFO] batched_stream_processor: Connecting to LiveKit room=conc-test-aceb7afc url=wss://ai-14ksodzi.livekit.cloud session=conc-test-2-604df8
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,478 [INFO] batched_stream_processor: [BATCHED-DIAG] room.connect() attempt 1/3 | url=wss://ai-14ksodzi.livekit.cloud
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,506 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-04 15:51:14+05:30    POST /sessions/start -> 202 Accepted  (duration: 331.3 ms, execution: 198.9 ms)
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,740 [INFO] batched_stream_processor: Connected to LiveKit room=conc-test-aceb7afc (attempt 1, 261.6 ms). events=0
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,743 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'connection_state_changed', 't': 0.265, 'state': '1'}
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,869 [INFO] batched_stream_processor: IDLE_FALLBACK_PUBLISHED session=conc-test-2-604df8
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,869 [INFO] batched_stream_processor: Registering session conc-test-2-604df8 with BatchedStreamingEngine
+2026-08-04 15:51:14+05:30 2026-08-04 10:21:14,884 [INFO] BatchedStreamingEngine: Session conc-test-2-604df8 added (total=2)
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,057 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5004 frames=126 effectiveFps=25.2 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=44.2 maxCaptureMs=2.4
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,061 [INFO] batched_stream_processor: Session conc-test-2-604df8 registered with engine in 191.9 ms (avatar prepared)
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,061 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=700 buffer=18 peak=42 MAX=54 TARGET=43
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,061 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=700 buffer=18 peak=42 MAX=54 TARGET=43
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,062 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,062 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,063 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,071 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 7.2 ms
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,073 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'local_track_published', 't': 0.595, 'sid': 'TR_VCha8caeBjebxU', 'kind': 2}
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,073 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCha8caeBjebxU from aivatar-worker-conc-test-2-604df8
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,074 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=conc-test-2-604df8 room=conc-test-aceb7afc
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,085 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'participant_connected', 't': 0.607, 'identity': 'viewer-script-conc-test-2-604df8'}
+2026-08-04 15:51:15+05:30 2026-08-04 10:21:15,091 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-04 15:51:15+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:15+05:30 
+2026-08-04 15:51:16+05:30 2026-08-04 10:21:16,410 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:16 +0000] "POST /room/claim HTTP/1.1" 200 238 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:16+05:30    POST /room/claim -> 200 OK  (duration: 427.5 ms, execution: 297.0 ms)
+2026-08-04 15:51:16+05:30 [METRICS] GPU_util=0% GPU_temp=30C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=27.5s CPU_sys=5.7s sessions=2 pool=4/4
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,635 [INFO] handler: [pod_session_start] Received session=conc-test-3-710f21 room=conc-test-34975035 ingestion=websocket hasIdleAsset=False
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,635 [INFO] streaming.websocket_server: Registered WebSocket session: conc-test-3-710f21
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,636 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:17 +0000] "POST /sessions/start HTTP/1.1" 202 271 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,636 [INFO] handler: [handler] prewarm_pool.release() took 0.0ms for room conc-test-34975035
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,637 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47604001162944 thread_name=modal-aiohttp-server event_loop_id=47605348071616
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,637 [INFO] batched_stream_processor: Connecting to LiveKit room=conc-test-34975035 url=wss://ai-14ksodzi.livekit.cloud session=conc-test-3-710f21
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,637 [INFO] batched_stream_processor: [BATCHED-DIAG] room.connect() attempt 1/3 | url=wss://ai-14ksodzi.livekit.cloud
+2026-08-04 15:51:17+05:30 2026-08-04 10:21:17,675 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-04 15:51:17+05:30    POST /sessions/start -> 202 Accepted  (duration: 426.2 ms, execution: 301.2 ms)
+2026-08-04 15:51:19+05:30 2026-08-04 10:21:19,600 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'quality_changed', 't': 5.122, 'participant': 'aivatar-worker-conc-test-2-604df8', 'quality': '2'}
+2026-08-04 15:51:20+05:30 2026-08-04 10:21:20,065 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5004 frames=126 effectiveFps=25.2 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.8 maxCaptureMs=1.9
+2026-08-04 15:51:20+05:30 2026-08-04 10:21:20,096 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=43.4 maxCaptureMs=1.6
+2026-08-04 15:51:20+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:20+05:30 
+2026-08-04 15:51:21+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=31.2s CPU_sys=6.0s sessions=3 pool=4/4
+2026-08-04 15:51:25+05:30 2026-08-04 10:21:25,105 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=43.1 maxCaptureMs=1.7
+2026-08-04 15:51:25+05:30 2026-08-04 10:21:25,136 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.2 maxCaptureMs=2.3
+2026-08-04 15:51:25+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:25+05:30 
+2026-08-04 15:51:26+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=34.5s CPU_sys=6.1s sessions=3 pool=4/4
+2026-08-04 15:51:29+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:29+05:30 
+2026-08-04 15:51:30+05:30 2026-08-04 10:21:30,137 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5001 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=42.8 maxCaptureMs=2.7
+2026-08-04 15:51:30+05:30 2026-08-04 10:21:30,145 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.4 maxCaptureMs=1.8
+2026-08-04 15:51:31+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=38.0s CPU_sys=6.2s sessions=3 pool=4/4
+2026-08-04 15:51:32+05:30 2026-08-04 10:21:32,747 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-04 15:51:32+05:30 2026-08-04 10:21:32,775 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,083 [INFO] batched_stream_processor: Connected to LiveKit room=conc-test-34975035 (attempt 1, 15446.2 ms). events=0
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,088 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'connection_state_changed', 't': 15.451, 'state': '1'}
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,173 [INFO] batched_stream_processor: IDLE_FALLBACK_PUBLISHED session=conc-test-3-710f21
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,173 [INFO] batched_stream_processor: Registering session conc-test-3-710f21 with BatchedStreamingEngine
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,186 [INFO] BatchedStreamingEngine: Session conc-test-3-710f21 added (total=3)
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,362 [INFO] batched_stream_processor: Session conc-test-3-710f21 registered with engine in 188.6 ms (avatar prepared)
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,362 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=1050 buffer=27 peak=51 MAX=66 TARGET=52
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,362 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=1050 buffer=27 peak=51 MAX=66 TARGET=52
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,363 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,363 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,363 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,370 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 7.1 ms
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,373 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'local_track_published', 't': 15.736, 'sid': 'TR_VCKCFDxKvXqZBo', 'kind': 2}
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,373 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=conc-test-3-710f21 room=conc-test-34975035
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,374 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCKCFDxKvXqZBo from aivatar-worker-conc-test-3-710f21
+2026-08-04 15:51:33+05:30 2026-08-04 10:21:33,390 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-04 15:51:33+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:33+05:30 
+2026-08-04 15:51:34+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:34+05:30 
+2026-08-04 15:51:35+05:30 2026-08-04 10:21:35,176 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5038 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=53.7 maxCaptureMs=1.6
+2026-08-04 15:51:35+05:30 2026-08-04 10:21:35,185 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5040 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=46.9 maxCaptureMs=2.0
+2026-08-04 15:51:36+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=42.3s CPU_sys=6.5s sessions=3 pool=4/4
+2026-08-04 15:51:37+05:30 2026-08-04 10:21:37,741 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'quality_changed', 't': 20.105, 'participant': 'aivatar-worker-conc-test-3-710f21', 'quality': '2'}
+2026-08-04 15:51:38+05:30 2026-08-04 10:21:38,366 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5004 frames=126 effectiveFps=25.2 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.2 maxCaptureMs=3.2
+2026-08-04 15:51:40+05:30 2026-08-04 10:21:40,054 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=1050 buffer=27 peak=51 MAX=66 TARGET=52
+2026-08-04 15:51:40+05:30 2026-08-04 10:21:40,176 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5000 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=41.9 maxCaptureMs=2.0
+2026-08-04 15:51:40+05:30 2026-08-04 10:21:40,224 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5038 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.7 maxCaptureMs=2.4
+2026-08-04 15:51:41+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=46.1s CPU_sys=6.7s sessions=3 pool=4/4
+2026-08-04 15:51:43+05:30 2026-08-04 10:21:43,405 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=43.6 maxCaptureMs=2.1
+2026-08-04 15:51:43+05:30 nvEncInitializeEncoder API failed20 - CreateEncoder : m_nvenc.nvEncInitializeEncoder(m_hEncoder, &m_initializeParams) returned error 20 at src/nvidia/NvCodec/NvCodec/NvEncoder/NvEncoder.cpp:383
+2026-08-04 15:51:43+05:30 
+2026-08-04 15:51:45+05:30 2026-08-04 10:21:45,063 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=1050 buffer=27 peak=51 MAX=66 TARGET=52
+2026-08-04 15:51:45+05:30 2026-08-04 10:21:45,216 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.5 maxCaptureMs=2.2
+2026-08-04 15:51:45+05:30 2026-08-04 10:21:45,225 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS windowMs=5000 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=42.0 maxCaptureMs=2.5
+2026-08-04 15:51:46+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=50.3s CPU_sys=6.8s sessions=3 pool=4/4
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,600 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'participant_disconnected', 't': 33.122, 'identity': 'viewer-script-conc-test-2-604df8'}
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,660 [INFO] BatchedStreamingEngine: Session conc-test-1-458898 marked for drain (keep_alive=False)
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,660 [INFO] streaming.websocket_server: Unregistered WebSocket session: conc-test-1-458898
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,661 [INFO] BatchedStreamingEngine: Session conc-test-1-458898 removed (total=2)
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,670 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'connection_state_changed', 't': 38.332, 'state': '0'}
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,673 [INFO] aiohttp.access: 172.20.0.67 [04/Aug/2026:10:21:47 +0000] "POST /sessions/conc-test-1-458898/end HTTP/1.1" 200 232 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,688 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "prewarm-d95089f1" with reason: ClientInitiated
+2026-08-04 15:51:47+05:30 2026-08-04 10:21:47,744 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'participant_disconnected', 't': 30.107, 'identity': 'viewer-script-conc-test-3-710f21'}
+2026-08-04 15:51:47+05:30    POST /sessions/conc-test-1-458898/end -> 200 OK  (duration: 435.7 ms, execution: 312.5 ms)
+2026-08-04 15:51:50+05:30 Restoring Function from memory snapshot.
+2026-08-04 15:51:51+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=53.5s CPU_sys=6.9s sessions=2 pool=4/4
+2026-08-04 15:51:55+05:30 [RESTORE] Starting GPU snapshot restore
+2026-08-04 15:51:55+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:55+05:30 [RESTORE] cuda.is_available=True dist.is_initialized=False
+2026-08-04 15:51:55+05:30 [RESTORE] allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:55+05:30 [RESTORE] snap_pipeline exists: device=cuda
+2026-08-04 15:51:55+05:30 [RESTORE_POST] SIGSEGV handler: 0
+2026-08-04 15:51:55+05:30 [RESTORE_POST] SIGABRT handler: 0
+2026-08-04 15:51:55+05:30 [RESTORE_POST] SIGBUS handler: 0
+2026-08-04 15:51:55+05:30 [RESTORE_POST] SIGFPE handler: 0
+2026-08-04 15:51:55+05:30 [RESTORE] torch.compile state: is_compiled=False
+2026-08-04 15:51:55+05:30 [RESTORE_FINAL] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:55+05:30 [RESTORE] GPU snapshot restore complete
+2026-08-04 15:51:56+05:30 [SERVE] Starting serve() post-restore (STRESS TEST, concurrency=4)
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,603 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,604 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=4 max_size=4
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,604 [INFO] utils.model_pool: Loading pipeline 1/4...
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.604 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Pipeline 1/4 loaded successfully.
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Loading pipeline 2/4...
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Pipeline 2/4 loaded successfully.
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Loading pipeline 3/4...
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cuda
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56.605 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:68 - Reusing cached Lite model components
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Pipeline 3/4 loaded successfully.
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Loading pipeline 4/4...
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,605 [INFO] utils.model_pool: Pipeline 4/4 loaded successfully.
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,606 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-04 15:51:56+05:30 [STRESS] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-04 15:51:56+05:30 [STRESS] /readyz patched: prewarm check relaxed
+2026-08-04 15:51:56+05:30 [SERVE_POST_RESTORE] flash_attn version: 2.7.4.post1
+2026-08-04 15:51:56+05:30 [SERVE_POST_RESTORE] flash_attn_interface (FA3) NOT available
+2026-08-04 15:51:56+05:30 [SERVE_POST_RESTORE] sageattention available
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,608 [INFO] default_avatar_cache: [default-avatar-cache] Manifest not found at /app/config/default_avatars.manifest.json. Falling back to per-session URL fetch.
+2026-08-04 15:51:56+05:30 [modal] Default avatar manifest not found at /app/config/default_avatars.manifest.json - falling back to per-session URL fetch
+2026-08-04 15:51:56+05:30 [modal] Default idle cache: cachedIdleVideoCount=0 failed=0
+2026-08-04 15:51:56+05:30 [SERVE] Snapshot pipeline in model_pool: current_size=4 available=4
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,609 [INFO] modal_app_stress: aiohttp background thread started ident=47604001162944
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,610 [INFO] streaming.websocket_server: Starting WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-04 15:51:56+05:30 2026-08-04 10:21:56,615 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-04 15:51:56+05:30 [SERVE] Models already on GPU from snapshot - marking ready immediately
+2026-08-04 15:51:56+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4328950784 reserved=4632608768 memory_snapshot_segments=0
+2026-08-04 15:51:56+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=56.1s CPU_sys=7.0s sessions=2 pool=4/4
+2026-08-04 15:51:57+05:30 [prewarm] Connecting to wss://ai-14ksodzi.livekit.cloud room=prewarm-efcf2958 slot=1/1 attempt=1/required...
+2026-08-04 15:51:57+05:30 Nvidia Decoder is supported.
+2026-08-04 15:51:57+05:30 2026-08-04 10:21:57,824 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-04 15:51:58+05:30 [prewarm] Connected slot=1/1 in 1057.4 ms, adding to pool
+2026-08-04 15:51:58+05:30 2026-08-04 10:21:58,321 [INFO] modal_app_stress: aiohttp site started thread=47604001162944 event_loop=47607475074064
+2026-08-04 15:51:58+05:30 [STRESS] All 4 pool slots filled from snapshot pipeline. No additional pipelines to load.
+2026-08-04 15:51:58+05:30 [STRESS] Prewarm pool size=1. Test script will mint rooms for sessions 2-N.
+2026-08-04 15:51:58+05:30 [METRICS] GPU_util=0% GPU_temp=25C GPU_mem=4.0GB/95.0GB (reserved=4.3GB) RSS=12744MB CPU_user=20.7s CPU_sys=6.4s sessions=0 pool=4/4
+2026-08-04 15:51:58+05:30 2026-08-04 10:21:58,384 [INFO] aiohttp.access: 172.20.0.137 [04/Aug/2026:10:21:58 +0000] "POST /sessions/conc-test-2-604df8/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:51:58+05:30 2026-08-04 10:21:58,387 [INFO] aiohttp.access: 172.20.0.137 [04/Aug/2026:10:21:58 +0000] "POST /sessions/conc-test-3-710f21/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-04 15:52:01+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=58.7s CPU_sys=7.0s sessions=2 pool=4/4
+2026-08-04 15:52:03+05:30 [METRICS] GPU_util=0% GPU_temp=26C GPU_mem=4.0GB/95.0GB (reserved=4.3GB) RSS=12744MB CPU_user=23.1s CPU_sys=6.4s sessions=0 pool=4/4
+2026-08-04 15:52:06+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=61.4s CPU_sys=7.0s sessions=2 pool=4/4
+2026-08-04 15:52:08+05:30 [METRICS] GPU_util=0% GPU_temp=26C GPU_mem=4.0GB/95.0GB (reserved=4.3GB) RSS=12744MB CPU_user=25.7s CPU_sys=6.5s sessions=0 pool=4/4
+2026-08-04 15:52:12+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=64.3s CPU_sys=7.1s sessions=2 pool=4/4
+2026-08-04 15:52:13+05:30 [METRICS] GPU_util=0% GPU_temp=26C GPU_mem=4.0GB/95.0GB (reserved=4.3GB) RSS=12744MB CPU_user=28.4s CPU_sys=6.5s sessions=0 pool=4/4
+2026-08-04 15:52:17+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/95.0GB (reserved=5.6GB) RSS=12744MB CPU_user=66.9s CPU_sys=7.1s sessions=2 pool=4/4
+2026-08-04 15:52:17+05:30 Exception ignored in: <module 'threading' from '/usr/lib/python3.12/threading.py'>
+2026-08-04 15:52:17+05:30 Traceback (most recent call last):
+2026-08-04 15:52:17+05:30   File "/usr/lib/python3.12/threading.py", line 1592, in _shutdown
+2026-08-04 15:52:17+05:30     atexit_call()
+2026-08-04 15:52:17+05:30   File "/usr/lib/python3.12/concurrent/futures/thread.py", line 31, in _python_exit
+2026-08-04 15:52:17+05:30     t.join()
+2026-08-04 15:52:17+05:30   File "/usr/lib/python3.12/threading.py", line 1147, in join
+2026-08-04 15:52:17+05:30     self._wait_for_tstate_lock()
+2026-08-04 15:52:17+05:30   File "/usr/lib/python3.12/threading.py", line 1167, in _wait_for_tstate_lock
+2026-08-04 15:52:17+05:30     if lock.acquire(block, timeout):
+2026-08-04 15:52:17+05:30        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-04 15:52:17+05:30 KeyboardInterrupt: 
+2026-08-04 15:52:17+05:30 2026-08-04 10:22:17,909 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'connection_state_changed', 't': 63.431, 'state': '0'}
+2026-08-04 15:52:17+05:30 2026-08-04 10:22:17,910 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'disconnected', 't': 63.432, 'state': '0', 'reason': '1'}
+2026-08-04 15:52:17+05:30 2026-08-04 10:22:17,919 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'connection_state_changed', 't': 60.282, 'state': '0'}
+2026-08-04 15:52:18+05:30 [METRICS] GPU_util=0% GPU_temp=27C GPU_mem=4.0GB/95.0GB (reserved=4.3GB) RSS=12744MB CPU_user=30.9s CPU_sys=6.6s sessions=0 pool=4/4
+2026-08-04 15:52:20+05:30 Runner failed with exception: Runner has been shutting down for too long (grace period: 30 seconds)
+2026-08-04 16:34:00+05:30 Building image im-rqUEXN3ABwW6PCnyGWlNDH
+2026-08-04 16:34:02+05:30 
+2026-08-04 16:34:02+05:30 => Step 0: FROM base
+2026-08-04 16:34:02+05:30 
+2026-08-04 16:34:02+05:30 => Step 1: RUN TORCH_CUDA_ARCH_LIST='8.9 12.0' MAX_JOBS=8 NVCC_THREADS=4 pip install git+https://github.com/thu-ml/SageAttention.git --no-build-isolation || echo 'SAGEATTN_INSTALL_FAILED'
+2026-08-04 16:34:03+05:30 Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+2026-08-04 16:34:03+05:30 Collecting git+https://github.com/thu-ml/SageAttention.git
+2026-08-04 16:34:03+05:30   Cloning https://github.com/thu-ml/SageAttention.git to /tmp/pip-req-build-8iw_20d_
+2026-08-04 16:34:03+05:30   Running command git clone --filter=blob:none --quiet https://github.com/thu-ml/SageAttention.git /tmp/pip-req-build-8iw_20d_
+2026-08-04 16:34:06+05:30   Resolved https://github.com/thu-ml/SageAttention.git to commit d1a57a546c3d395b1ffcbeecc66d81db76f3b4b5
+2026-08-04 16:34:06+05:30   Preparing metadata (pyproject.toml): started
+2026-08-04 16:34:10+05:30   Preparing metadata (pyproject.toml): finished with status 'done'
+2026-08-04 16:34:10+05:30 Building wheels for collected packages: sageattention
+2026-08-04 16:34:10+05:30   Building wheel for sageattention (pyproject.toml): started
+2026-08-04 16:35:28+05:30   Building wheel for sageattention (pyproject.toml): still running...
+2026-08-04 16:36:53+05:30   Building wheel for sageattention (pyproject.toml): still running...
+2026-08-04 16:36:56+05:30   Building wheel for sageattention (pyproject.toml): finished with status 'done'
+2026-08-04 16:36:56+05:30   Created wheel for sageattention: filename=sageattention-2.2.0-cp312-cp312-linux_x86_64.whl size=15820056 sha256=f5a10b4901ad6fbdaa40d62a0be3ea87c735a4388d243c6178adcf29b4e76b6e
+2026-08-04 16:36:56+05:30   Stored in directory: /tmp/pip-ephem-wheel-cache-2ylu4g1k/wheels/0b/10/ac/d2c20b4736b44d4004fe05d118dfb5caf3eaa288ec4fb974f2
+2026-08-04 16:36:56+05:30 Successfully built sageattention
+2026-08-04 16:36:57+05:30 Installing collected packages: sageattention
+2026-08-04 16:36:57+05:30 Successfully installed sageattention-2.2.0
+2026-08-04 16:36:58+05:30 Saving image...
+2026-08-04 16:37:05+05:30 Image saved, took 7.16s
+2026-08-04 16:37:05+05:30 
+2026-08-04 16:37:05+05:30 Built image im-rqUEXN3ABwW6PCnyGWlNDH in 185.44s
+2026-08-04 16:37:05+05:30 
+2026-08-04 16:37:05+05:30 
+2026-08-04 16:37:08+05:30 Building image im-ZMJxs3b8FAmFcZpNakZNGa
+2026-08-04 16:37:10+05:30 
+2026-08-04 16:37:10+05:30 => Step 0: FROM base
+2026-08-04 16:37:10+05:30 
+2026-08-04 16:37:10+05:30 => Step 1: RUN python -c "from sageattention import sageattn; print('sageattention OK')" 2>/dev/null || echo 'sageattention NOT available'
+2026-08-04 16:37:18+05:30 sageattention OK
+2026-08-04 16:37:19+05:30 Saving image...
+2026-08-04 16:37:26+05:30 Image saved, took 6.48s
+2026-08-04 16:37:26+05:30 
+2026-08-04 16:37:26+05:30 Built image im-ZMJxs3b8FAmFcZpNakZNGa in 18.07s
+2026-08-04 16:37:26+05:30 
+2026-08-04 16:37:26+05:30 
+2026-08-04 16:37:28+05:30 Building image im-q1vh9rZjWnhTrbQzw4Tesg
+2026-08-04 16:37:29+05:30 
+2026-08-04 16:37:29+05:30 => Step 0: FROM base
+2026-08-04 16:37:29+05:30 
+2026-08-04 16:37:29+05:30 => Step 1: RUN python -c "import sageattention.core as c; print(f'SM89_ENABLED={c.SM89_ENABLED} SM80_ENABLED={c.SM80_ENABLED} SM90_ENABLED={c.SM90_ENABLED}')" 2>/dev/null || echo 'sageattention core check failed'
+2026-08-04 16:37:37+05:30 SM89_ENABLED=True SM80_ENABLED=True SM90_ENABLED=False
+2026-08-04 16:37:39+05:30 Saving image...
+2026-08-04 16:37:43+05:30 Image saved, took 3.98s
+2026-08-04 16:37:43+05:30 
+2026-08-04 16:37:43+05:30 Built image im-q1vh9rZjWnhTrbQzw4Tesg in 15.03s
+2026-08-04 16:37:43+05:30 
+2026-08-04 16:37:43+05:30 
+2026-08-04 16:37:44+05:30 Building image im-2QAUTehi7UTU5euz4b9rQZ
+2026-08-04 16:37:45+05:30 
+2026-08-04 16:37:45+05:30 => Step 0: FROM base
+2026-08-04 16:37:45+05:30 
+2026-08-04 16:37:45+05:30 => Step 1: COPY /.requirements.txt /.requirements.txt
+2026-08-04 16:37:45+05:30 
+2026-08-04 16:37:45+05:30 => Step 2: RUN python -m pip install -r /.requirements.txt
+2026-08-04 16:37:47+05:30 Looking in indexes: http://pypi-mirror.modal.local:5555/simple
+2026-08-04 16:37:47+05:30 Collecting runpod>=1.6.2 (from -r /.requirements.txt (line 1))
+2026-08-04 16:37:47+05:30   Downloading runpod-1.11.0-py3-none-any.whl.metadata (11 kB)
+2026-08-04 16:37:47+05:30 Collecting livekit>=1.0.0 (from -r /.requirements.txt (line 5))
+2026-08-04 16:37:47+05:30   Downloading livekit-1.1.14-py3-none-manylinux_2_28_x86_64.whl.metadata (1.5 kB)
+2026-08-04 16:37:47+05:30 Collecting livekit-api>=1.0.0 (from -r /.requirements.txt (line 6))
+2026-08-04 16:37:47+05:30   Downloading livekit_api-1.2.0-py3-none-any.whl.metadata (1.4 kB)
+2026-08-04 16:37:47+05:30 Requirement already satisfied: numpy>=1.26.4 in /usr/local/lib/python3.12/dist-packages (from -r /.requirements.txt (line 7)) (2.1.0)
+2026-08-04 16:37:47+05:30 Collecting websockets>=12.0 (from -r /.requirements.txt (line 8))
+2026-08-04 16:37:47+05:30   Downloading websockets-17.0.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.3 kB)
+2026-08-04 16:37:47+05:30 Collecting librosa>=0.10.1 (from -r /.requirements.txt (line 9))
+2026-08-04 16:37:47+05:30   Downloading librosa-0.11.0-py3-none-any.whl.metadata (8.7 kB)
+2026-08-04 16:37:47+05:30 Collecting soundfile>=0.12.1 (from -r /.requirements.txt (line 10))
+2026-08-04 16:37:47+05:30   Downloading soundfile-0.14.0-py2.py3-none-manylinux_2_28_x86_64.whl.metadata (18 kB)
+2026-08-04 16:37:47+05:30 Collecting av>=14.0.0 (from -r /.requirements.txt (line 11))
+2026-08-04 16:37:47+05:30   Downloading av-18.0.0-cp311-abi3-manylinux_2_28_x86_64.whl.metadata (4.5 kB)
+2026-08-04 16:37:48+05:30 Collecting boto3>=1.34.0 (from -r /.requirements.txt (line 12))
+2026-08-04 16:37:48+05:30   Downloading boto3-1.43.63-py3-none-any.whl.metadata (6.6 kB)
+2026-08-04 16:37:48+05:30 Requirement already satisfied: requests>=2.31.0 in /usr/local/lib/python3.12/dist-packages (from -r /.requirements.txt (line 13)) (2.33.1)
+2026-08-04 16:37:48+05:30 Requirement already satisfied: tqdm>=4.66.1 in /usr/local/lib/python3.12/dist-packages (from -r /.requirements.txt (line 14)) (4.67.3)
+2026-08-04 16:37:48+05:30 Requirement already satisfied: aiohttp>=3.10.11 in /usr/local/lib/python3.12/dist-packages (from -r /.requirements.txt (line 15)) (3.13.5)

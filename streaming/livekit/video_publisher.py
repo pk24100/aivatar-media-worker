@@ -1,11 +1,54 @@
 # Publish avatar video frames to a LiveKit room.
 import asyncio
 import logging
+import os
 import time
 import numpy as np
 from livekit import rtc
 
 _logger = logging.getLogger("VideoPublisher")
+
+
+def _resolve_video_codec():
+    """Resolve video codec and encoder backend from AIVATAR_VIDEO_CODEC env var.
+
+    Supported values:
+      - "vp8"    (default): VP8 software encoding via libvpx. Bypasses NVENC entirely.
+      - "h264_sw": H264 software encoding via OpenH264. Bypasses NVENC.
+      - "h264_hw": H264 hardware encoding via NVENC. Fails on Blackwell GPUs
+                   with older LiveKit SDK NVENC wrappers.
+
+    Returns (video_codec_enum, encoder_backend_value_or_None).
+    """
+    choice = os.environ.get("AIVATAR_VIDEO_CODEC", "vp8").lower().strip()
+
+    if choice == "h264_hw":
+        return rtc.VideoCodec.H264, _get_encoder_backend("hardware")
+    elif choice == "h264_sw":
+        return rtc.VideoCodec.H264, _get_encoder_backend("software")
+    else:
+        if choice != "vp8":
+            _logger.warning(
+                "AIVATAR_VIDEO_CODEC='%s' not recognized, defaulting to 'vp8'", choice,
+            )
+        return rtc.VideoCodec.VP8, None
+
+
+def _get_encoder_backend(mode: str):
+    """Get VideoEncoderBackend enum value for the given mode, or None if unavailable."""
+    backend_enum = getattr(rtc, "VideoEncoderBackend", None)
+    if backend_enum is None:
+        _logger.warning(
+            "VideoEncoderBackend not available in installed livekit-rtc version; "
+            "AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.",
+        )
+        return None
+    attr = {
+        "software": "ENCODER_BACKEND_SOFTWARE",
+        "hardware": "ENCODER_BACKEND_HARDWARE",
+        "nvenc": "ENCODER_BACKEND_NVENC",
+    }.get(mode, "ENCODER_BACKEND_HARDWARE")
+    return getattr(backend_enum, attr, None)
 
 
 # Publish video frames to a LiveKit room.
@@ -17,11 +60,13 @@ class VideoPublisher:
         fps: int = 25,
         max_bitrate: int = 3_000_000,
         track_name: str = "aivatar-video",
+        session_id: str = "",
     ):
         self.room = room
         self.fps = fps
         self.max_bitrate = max_bitrate
         self.track_name = track_name
+        self.session_id = session_id
         self.video_source = None
         self.track = None
         self.first_frame_published = asyncio.Event()
@@ -114,15 +159,37 @@ class VideoPublisher:
         _logger.info("[VP-DIAG] Creating video track %dx%d", self._width, self._height)
         self.video_source = rtc.VideoSource(self._width, self._height)
         self.track = rtc.LocalVideoTrack.create_video_track(self.track_name, self.video_source)
-        options = rtc.TrackPublishOptions(
+
+        video_codec, encoder_backend = _resolve_video_codec()
+        codec_name = "VP8" if video_codec == rtc.VideoCodec.VP8 else "H264"
+        encoder_name = "auto"
+        if encoder_backend is not None:
+            be = getattr(rtc, "VideoEncoderBackend", None)
+            if be is not None:
+                if encoder_backend == be.ENCODER_BACKEND_SOFTWARE:
+                    encoder_name = "software"
+                elif encoder_backend == be.ENCODER_BACKEND_HARDWARE:
+                    encoder_name = "hardware"
+                elif encoder_backend == be.ENCODER_BACKEND_NVENC:
+                    encoder_name = "nvenc"
+
+        options_kwargs = dict(
             source=rtc.TrackSource.SOURCE_CAMERA,
             simulcast=False,
             video_encoding=rtc.VideoEncoding(
                 max_framerate=int(self.fps),
                 max_bitrate=self.max_bitrate,
             ),
-            video_codec=rtc.VideoCodec.H264,
+            video_codec=video_codec,
         )
+        if encoder_backend is not None:
+            options_kwargs["video_encoder"] = encoder_backend
+
+        _logger.info(
+            "[VP-DIAG] Codec=%s encoder=%s (AIVATAR_VIDEO_CODEC=%s)",
+            codec_name, encoder_name, os.environ.get("AIVATAR_VIDEO_CODEC", "vp8"),
+        )
+        options = rtc.TrackPublishOptions(**options_kwargs)
         _logger.info("[VP-DIAG] Calling publish_track()...")
         _pub_t0 = time.monotonic()
         await self.room.local_participant.publish_track(self.track, options)
@@ -188,9 +255,10 @@ class VideoPublisher:
             if self._metrics_frames > 0:
                 desync_pct = (self._metrics_repeated_live_frames + self._metrics_idle_frames) / self._metrics_frames * 100.0
             _logger.info(
-                "VIDEO_PUBLISH_METRICS windowMs=%.0f frames=%d effectiveFps=%.1f "
+                "VIDEO_PUBLISH_METRICS session=%s windowMs=%.0f frames=%d effectiveFps=%.1f "
                 "liveFrames=%d repeatedLiveFrames=%d idleFrames=%d "
                 "desyncPct=%.1f maxGapMs=%.1f maxCaptureMs=%.1f",
+                self.session_id,
                 elapsed * 1000,
                 self._metrics_frames,
                 self._metrics_frames / elapsed,

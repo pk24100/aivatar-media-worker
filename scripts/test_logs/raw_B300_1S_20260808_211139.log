@@ -1,0 +1,246 @@
+2026-08-08 21:09:04+05:30 Creating CPU memory snapshot for Function.
+2026-08-08 21:09:09+05:30 
+2026-08-08 21:09:09+05:30 =============
+2026-08-08 21:09:09+05:30 == PyTorch ==
+2026-08-08 21:09:09+05:30 =============
+2026-08-08 21:09:09+05:30 
+2026-08-08 21:09:09+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-08 21:09:09+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-08 21:09:09+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-08 21:09:09+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-08 21:09:09+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-08 21:09:09+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-08 21:09:09+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-08 21:09:09+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-08 21:09:09+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-08 21:09:09+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-08 21:09:09+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-08 21:09:09+05:30 Copyright (c) 2015      Google Inc.
+2026-08-08 21:09:09+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-08 21:09:09+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-08 21:09:09+05:30 All rights reserved.
+2026-08-08 21:09:09+05:30 
+2026-08-08 21:09:09+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-08 21:09:09+05:30 
+2026-08-08 21:09:09+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-08 21:09:09+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-08 21:09:09+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-08 21:09:09+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-08 21:09:10+05:30 
+2026-08-08 21:09:10+05:30 ERROR: The NVIDIA Driver is present, but CUDA failed to initialize.  GPU functionality will not be available.
+2026-08-08 21:09:10+05:30    [[ No CUDA-capable device is detected (error 100) ]]
+2026-08-08 21:09:10+05:30 
+2026-08-08 21:09:12+05:30 [STRESS] Target GPU: B300 (arch=10.3, codec=vp8)
+2026-08-08 21:09:12+05:30 [STRESS] CPU snapshot load with WORKER_CONCURRENCY=15
+2026-08-08 21:09:41+05:30 W0808 15:39:41.431000 2 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-08 21:09:41+05:30 W0808 15:39:41.652000 2 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-08 21:09:41+05:30 Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+2026-08-08 21:09:53+05:30 Matplotlib is building the font cache; this may take a moment.
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] flash_attn version: 2.7.4.post1
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] flash_attn_interface (FA3) NOT available
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] sageattention available
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] SAGE_DIAG SM89_ENABLED=False SM80_ENABLED=False SM90_ENABLED=False
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] SAGE_DIAG _qattn_sm89 NOT importable: cannot import name '_qattn_sm89' from 'sageattention' (/usr/local/lib/python3.12/dist-packages/sageattention/__init__.py)
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] SAGE_DIAG sm100 dispatch in source: True
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] SAGE_DIAG sm103 dispatch in source: True
+2026-08-08 21:10:13+05:30 [SNAP_CREATE] Loading FlashHead pipeline on CPU...
+2026-08-08 21:10:13+05:30 2026-08-08 15:40:13.130 | INFO     | flash_head.src.distributed.usp_device:get_device:20 - FLASHHEAD_LOAD_DEVICE=cpu, returning CPU device for snapshot
+2026-08-08 21:10:13+05:30 2026-08-08 15:40:13.130 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cpu
+2026-08-08 21:10:17+05:30 There are modules in CausalVideoAutoencoder that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-08 21:10:19+05:30 There are modules in WanModelAudioProject that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-08 21:10:23+05:30 Some weights of Wav2Vec2Model were not initialized from the model checkpoint at /app/models/wav2vec2-base-960h and are newly initialized: ['masked_spec_embed']
+2026-08-08 21:10:23+05:30 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-08 21:10:23+05:30 2026-08-08 15:40:23.839 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:102 - Cached Lite model components for reuse
+2026-08-08 21:10:23+05:30 [SNAP_CREATE] Pipeline loaded to CPU in 10709.0ms
+2026-08-08 21:10:23+05:30 [modal] Default avatar manifest not found at /app/config/default_avatars.manifest.json - falling back to per-session URL fetch
+2026-08-08 21:10:23+05:30 [modal] Default idle cache: cachedIdleVideoCount=0 failed=0
+2026-08-08 21:10:23+05:30 [SNAP_PRE_RESET] SIGSEGV handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_PRE_RESET] SIGABRT handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_PRE_RESET] SIGBUS handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_PRE_RESET] SIGFPE handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_POST_RESET] SIGSEGV handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_POST_RESET] SIGABRT handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_POST_RESET] SIGBUS handler: 0
+2026-08-08 21:10:23+05:30 [SNAP_POST_RESET] SIGFPE handler: 0
+2026-08-08 21:10:23+05:30 [STRESS] Pipeline loaded to CPU for snapshot
+2026-08-08 21:10:36+05:30 Snapshot created. Restoring Function from memory snapshot.
+2026-08-08 21:10:37+05:30 Restoring Function from memory snapshot.
+2026-08-08 21:10:40+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-08 21:10:40+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-08 21:10:44+05:30 2026-08-08 15:40:44.176 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-08 21:10:44+05:30 [RESTORE] Pipeline moved to cuda in 3242.0ms
+2026-08-08 21:10:44+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-08 21:10:44+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-08 21:11:08+05:30 [flash_attention] sageattn failed (SM89 kernel is not available. Make sure you GPUs with compute capability 8.9.), falling back to SDPA
+2026-08-08 21:11:10+05:30 2026-08-08 15:41:10.902 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=4246.0ms decode=30.8ms color=791.6ms encode=25.9ms total=5094.6ms
+2026-08-08 21:11:10+05:30 2026-08-08 15:41:10.903 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=4246.0ms steps=[s0=4138.8 s1=37.2 s2=35.3 s3=34.8] n_steps=4
+2026-08-08 21:11:10+05:30 2026-08-08 15:41:10.904 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=5096.0ms post=0.2ms
+2026-08-08 21:11:10+05:30 [RESTORE] Warmup completed in 26686.6ms
+2026-08-08 21:11:10+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4333089792 reserved=5943328768 memory_snapshot_segments=0
+2026-08-08 21:11:10+05:30 [RESTORE_POST] flash_attn version: 2.7.4.post1
+2026-08-08 21:11:10+05:30 [RESTORE_POST] flash_attn_interface (FA3) NOT available
+2026-08-08 21:11:10+05:30 [RESTORE_POST] sageattention available
+2026-08-08 21:11:10+05:30 [RESTORE_POST] SAGE_DIAG SM89_ENABLED=False SM80_ENABLED=False SM90_ENABLED=False
+2026-08-08 21:11:10+05:30 [RESTORE_POST] SAGE_DIAG _qattn_sm89 NOT importable: cannot import name '_qattn_sm89' from 'sageattention' (/usr/local/lib/python3.12/dist-packages/sageattention/__init__.py)
+2026-08-08 21:11:10+05:30 [RESTORE_POST] SAGE_DIAG sm100 dispatch in source: True
+2026-08-08 21:11:10+05:30 [RESTORE_POST] SAGE_DIAG sm103 dispatch in source: True
+2026-08-08 21:11:10+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-08 21:11:11+05:30 [SERVE] Starting serve() post-restore (STRESS TEST, concurrency=15)
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=15 max_size=15
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Loading pipeline 1/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Pipeline 1/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Loading pipeline 2/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Pipeline 2/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Loading pipeline 3/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Pipeline 3/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Loading pipeline 4/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,167 [INFO] utils.model_pool: Pipeline 4/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 5/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 5/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 6/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 6/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 7/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 7/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 8/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 8/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 9/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 9/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 10/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 10/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 11/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 11/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 12/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 12/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 13/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 13/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 14/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 14/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Loading pipeline 15/15...
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,168 [INFO] utils.model_pool: Pipeline 15/15 loaded successfully.
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,169 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-08 21:11:12+05:30 [STRESS] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-08 21:11:12+05:30 [STRESS] /readyz patched: prewarm check relaxed
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] flash_attn version: 2.7.4.post1
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] flash_attn_interface (FA3) NOT available
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] sageattention available
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] SAGE_DIAG SM89_ENABLED=False SM80_ENABLED=False SM90_ENABLED=False
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] SAGE_DIAG _qattn_sm89 NOT importable: cannot import name '_qattn_sm89' from 'sageattention' (/usr/local/lib/python3.12/dist-packages/sageattention/__init__.py)
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] SAGE_DIAG sm100 dispatch in source: True
+2026-08-08 21:11:12+05:30 [SERVE_POST_RESTORE] SAGE_DIAG sm103 dispatch in source: True
+2026-08-08 21:11:12+05:30 [SERVE] Pipeline in model_pool: current_size=15 available=15
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,176 [INFO] modal_app_stress: aiohttp background thread started ident=46787084723904
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,181 [INFO] streaming.websocket_server: Starting WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-08 21:11:12+05:30 2026-08-08 15:41:12,199 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-08 21:11:12+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-08 21:11:12+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4333089792 reserved=5943328768 memory_snapshot_segments=0
+2026-08-08 21:11:13+05:30 [prewarm] Connecting to wss://ai-14ksodzi.livekit.cloud room=prewarm-fd5d1ee5 slot=1/1 attempt=1/required...
+2026-08-08 21:11:14+05:30 Nvidia Decoder is supported.
+2026-08-08 21:11:16+05:30 2026-08-08 15:41:16,166 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-08 21:11:16+05:30 [prewarm] Connected slot=1/1 in 3541.9 ms, adding to pool
+2026-08-08 21:11:16+05:30 2026-08-08 15:41:16,575 [INFO] modal_app_stress: aiohttp site started thread=46787084723904 event_loop=46786886168032
+2026-08-08 21:11:16+05:30 [STRESS] Running batched warmup cycle (background)...[STRESS] Pool status: current_size=15 available=15/15
+2026-08-08 21:11:16+05:30 
+2026-08-08 21:11:16+05:30 [STRESS] Prewarm pool size=1. Test script will mint rooms for sessions 2-N.2026-08-08 15:41:16,641 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-08 21:11:16+05:30 
+2026-08-08 21:11:16+05:30 2026-08-08 15:41:16,797 [INFO] aiohttp.access: 172.20.10.155 [08/Aug/2026:15:41:16 +0000] "GET /readyz HTTP/1.1" 200 400 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 21:11:16+05:30 [METRICS] GPU_util=0% GPU_temp=51C GPU_mem=4.0GB/267.7GB (reserved=5.5GB) RSS=14981MB CPU_user=81.2s CPU_sys=25.1s sessions=0 pool=15/15
+2026-08-08 21:11:16+05:30     GET /readyz -> 200 OK  (duration: 133.8 s, execution: 193.7 ms)
+2026-08-08 21:11:18+05:30 2026-08-08 15:41:18.087 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=620.4ms decode=85.7ms color+encode=60.6ms total=766.9ms batch_size=1
+2026-08-08 21:11:18+05:30 2026-08-08 15:41:18.087 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=620.4ms steps=[s0=512.7 s1=37.4 s2=35.3 s3=35.0] n_steps=4 batch_size=1
+2026-08-08 21:11:18+05:30 2026-08-08 15:41:18,254 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-08 21:11:18+05:30 2026-08-08 15:41:18,254 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-08 21:11:18+05:30 [STRESS] Batched warmup completed in 1767.8ms
+2026-08-08 21:11:20+05:30 2026-08-08 15:41:20,745 [INFO] handler: [claim_room] Claimed room prewarm-fd5d1ee5 for new session
+2026-08-08 21:11:20+05:30 2026-08-08 15:41:20,746 [INFO] aiohttp.access: 172.20.10.155 [08/Aug/2026:15:41:20 +0000] "POST /room/claim HTTP/1.1" 200 965 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 21:11:20+05:30    POST /room/claim -> 200 OK  (duration: 98.5 ms, execution: 52.5 ms)
+2026-08-08 21:11:21+05:30 [METRICS] GPU_util=0% GPU_temp=51C GPU_mem=4.1GB/267.7GB (reserved=5.5GB) RSS=14981MB CPU_user=84.5s CPU_sys=25.5s sessions=0 pool=15/15
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,196 [INFO] handler: [pod_session_start] Received session=conc-test-1-c0a0d2 room=prewarm-fd5d1ee5 ingestion=websocket hasIdleAsset=False
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,198 [INFO] streaming.websocket_server: Registered WebSocket session: conc-test-1-c0a0d2
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,198 [INFO] aiohttp.access: 172.20.10.155 [08/Aug/2026:15:41:24 +0000] "POST /sessions/start HTTP/1.1" 202 271 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,199 [INFO] handler: [handler] Reusing pre-warmed LiveKit room prewarm-fd5d1ee5 connection_state=1 identity=prewarm-prewarm-fd5d1ee5
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,201 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46787084723904 thread_name=modal-aiohttp-server event_loop_id=46786886168032
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,202 [INFO] batched_stream_processor: Connecting to LiveKit room=prewarm-fd5d1ee5 url=wss://ai-14ksodzi.livekit.cloud session=conc-test-1-c0a0d2
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,202 [INFO] batched_stream_processor: Reusing pre-connected LiveKit room=prewarm-fd5d1ee5 session=conc-test-1-c0a0d2 connection_state=1
+2026-08-08 21:11:24+05:30    POST /sessions/start -> 202 Accepted  (duration: 122.3 ms, execution: 73.6 ms)
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,532 [INFO] batched_stream_processor: IDLE_FALLBACK_PUBLISHED session=conc-test-1-c0a0d2
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,532 [INFO] batched_stream_processor: Registering session conc-test-1-c0a0d2 with BatchedStreamingEngine
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,534 [INFO] BatchedStreamingEngine: Session conc-test-1-c0a0d2 added (total=1)
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,714 [INFO] batched_stream_processor: Session conc-test-1-c0a0d2 registered with engine in 181.7 ms (avatar prepared)
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,714 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,715 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,716 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,716 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,724 [INFO] VideoPublisher: [VP-DIAG] Codec=VP8 encoder=auto (AIVATAR_VIDEO_CODEC=vp8)
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,724 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,756 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 31.8 ms
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,770 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'local_track_published', 't': 0.568, 'sid': 'TR_VCDqps6ns6khSA', 'kind': 2}
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,771 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=conc-test-1-c0a0d2 room=prewarm-fd5d1ee5
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,792 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCDqps6ns6khSA from prewarm-prewarm-fd5d1ee5
+2026-08-08 21:11:24+05:30 2026-08-08 15:41:24,824 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-08 21:11:26+05:30 2026-08-08 15:41:26,409 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'participant_connected', 't': 2.208, 'identity': 'viewer-script-conc-test-1-c0a0d2'}
+2026-08-08 21:11:27+05:30 [METRICS] GPU_util=0% GPU_temp=51C GPU_mem=4.1GB/267.7GB (reserved=5.5GB) RSS=14981MB CPU_user=88.7s CPU_sys=26.2s sessions=1 pool=15/15
+2026-08-08 21:11:28+05:30 2026-08-08 15:41:28,647 [INFO] handler: WS_REQUEST_RECEIVED session=conc-test-1-c0a0d2 origin= ip=172.20.10.155
+2026-08-08 21:11:28+05:30 2026-08-08 15:41:28,648 [INFO] handler: WS_CONNECT session=conc-test-1-c0a0d2 origin= ip=172.20.10.155 handlerMs=0.9
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29.710 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=306.6ms decode=31.9ms color+encode=11.5ms total=350.4ms batch_size=1
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29.711 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=306.6ms steps=[s0=71.6 s1=59.2 s2=48.6 s3=127.2] n_steps=4 batch_size=1
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29,726 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=conc-test-1-c0a0d2 windowMs=5011 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=55.1 maxCaptureMs=4.6
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29,787 [INFO] AudioPublisher: [AP-DIAG] Calling publish_track()...
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29,800 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29,818 [INFO] AudioPublisher: [AP-DIAG] publish_track() completed in 30.7 ms (16000 Hz, 1 ch)
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29,827 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'local_track_published', 't': 5.625, 'sid': 'TR_AM8bvfsj4bM5rv', 'kind': 1}
+2026-08-08 21:11:29+05:30 2026-08-08 15:41:29,924 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-08 21:11:30+05:30 2026-08-08 15:41:30,118 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-08-08 21:11:30+05:30 2026-08-08 15:41:30.780 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=415.0ms decode=32.0ms color+encode=22.8ms total=472.6ms batch_size=1
+2026-08-08 21:11:30+05:30 2026-08-08 15:41:30.781 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=415.0ms steps=[s0=195.5 s1=85.4 s2=66.4 s3=67.7] n_steps=4 batch_size=1
+2026-08-08 21:11:31+05:30 2026-08-08 15:41:31.253 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=353.3ms decode=19.9ms color+encode=14.2ms total=387.5ms batch_size=1
+2026-08-08 21:11:31+05:30 2026-08-08 15:41:31.253 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=353.3ms steps=[s0=86.9 s1=67.1 s2=72.9 s3=126.4] n_steps=4 batch_size=1
+2026-08-08 21:11:32+05:30 2026-08-08 15:41:32.175 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=280.1ms decode=22.3ms color+encode=39.5ms total=342.2ms batch_size=1
+2026-08-08 21:11:32+05:30 2026-08-08 15:41:32.175 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=280.1ms steps=[s0=80.6 s1=69.7 s2=72.0 s3=57.8] n_steps=4 batch_size=1
+2026-08-08 21:11:32+05:30 [METRICS] GPU_util=21% GPU_temp=53C GPU_mem=4.1GB/267.7GB (reserved=5.5GB) RSS=14981MB CPU_user=95.2s CPU_sys=26.8s sessions=1 pool=15/15
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33.124 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=300.9ms decode=22.6ms color+encode=13.6ms total=337.3ms batch_size=1
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33.124 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=300.9ms steps=[s0=70.3 s1=75.3 s2=89.5 s3=65.8] n_steps=4 batch_size=1
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33,183 [INFO] handler: UTTERANCE_END_RECEIVED session=conc-test-1-c0a0d2
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33,183 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=conc-test-1-c0a0d2 keep_alive=True
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33,184 [INFO] BatchedStreamingEngine: Session conc-test-1-c0a0d2 marked for drain (keep_alive=True)
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33.965 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=189.9ms decode=19.6ms color+encode=14.9ms total=224.6ms batch_size=1
+2026-08-08 21:11:33+05:30 2026-08-08 15:41:33.965 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=189.9ms steps=[s0=43.4 s1=42.5 s2=53.1 s3=50.9] n_steps=4 batch_size=1
+2026-08-08 21:11:34+05:30 2026-08-08 15:41:34,036 [INFO] streaming.state_manager: [SM] Dropped 12 stale frames to protect A/V sync (qsize now 33)
+2026-08-08 21:11:34+05:30 2026-08-08 15:41:34,762 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=conc-test-1-c0a0d2 windowMs=5034 frames=126 effectiveFps=25.0 liveFrames=117 repeatedLiveFrames=0 idleFrames=9 desyncPct=7.1 maxGapMs=77.1 maxCaptureMs=5.6
+2026-08-08 21:11:34+05:30 2026-08-08 15:41:34.931 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=192.5ms decode=20.2ms color+encode=16.9ms total=229.8ms batch_size=1
+2026-08-08 21:11:34+05:30 2026-08-08 15:41:34.932 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=192.5ms steps=[s0=49.0 s1=43.5 s2=47.0 s3=52.9] n_steps=4 batch_size=1
+2026-08-08 21:11:35+05:30 2026-08-08 15:41:35.875 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=178.1ms decode=23.8ms color+encode=11.2ms total=213.2ms batch_size=1
+2026-08-08 21:11:35+05:30 2026-08-08 15:41:35.876 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=178.1ms steps=[s0=43.8 s1=47.0 s2=40.5 s3=46.8] n_steps=4 batch_size=1
+2026-08-08 21:11:36+05:30 2026-08-08 15:41:36.859 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=205.5ms decode=19.8ms color+encode=11.2ms total=236.7ms batch_size=1
+2026-08-08 21:11:36+05:30 2026-08-08 15:41:36.859 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=205.5ms steps=[s0=47.6 s1=44.6 s2=66.9 s3=46.4] n_steps=4 batch_size=1
+2026-08-08 21:11:36+05:30 2026-08-08 15:41:36,916 [INFO] BatchedStreamingEngine: cycle=10 batch=1 sessions=['conc-test-1-c0a0d2'] embed=11.1ms infer=238.5ms xfer=55.4ms total=305.0ms
+2026-08-08 21:11:37+05:30 [METRICS] GPU_util=0% GPU_temp=52C GPU_mem=4.1GB/267.7GB (reserved=5.5GB) RSS=14981MB CPU_user=101.2s CPU_sys=27.3s sessions=1 pool=15/15
+2026-08-08 21:11:37+05:30 2026-08-08 15:41:37,658 [INFO] handler: WS_CLOSED session=conc-test-1-c0a0d2 ip=172.20.10.155
+2026-08-08 21:11:37+05:30 2026-08-08 15:41:37,659 [INFO] handler: WS_CONNECTION_LOST session=conc-test-1-c0a0d2 ip=172.20.10.155
+2026-08-08 21:11:37+05:30 2026-08-08 15:41:37,660 [INFO] aiohttp.access: 172.20.10.155 [08/Aug/2026:15:41:28 +0000] "GET /ws/conc-test-1-c0a0d2 HTTP/1.1" 101 0 "-" "Python/3.14 websockets/16.1.1"
+2026-08-08 21:11:37+05:30 CONNECT /ws/conc-test-1-c0a0d2 -> 101 Switching Protocols  (duration: 9.13 s, execution: 9.06 s)
+2026-08-08 21:11:37+05:30 2026-08-08 15:41:37.854 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=233.6ms decode=19.9ms color+encode=18.9ms total=272.6ms batch_size=1
+2026-08-08 21:11:37+05:30 2026-08-08 15:41:37.855 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=233.6ms steps=[s0=46.5 s1=83.3 s2=54.9 s3=48.8] n_steps=4 batch_size=1
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38,701 [INFO] BatchedStreamingEngine: Session conc-test-1-c0a0d2 marked for drain (keep_alive=False)
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38,702 [INFO] streaming.websocket_server: Unregistered WebSocket session: conc-test-1-c0a0d2
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38,736 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'connection_state_changed', 't': 14.534, 'state': '0'}
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38,740 [INFO] batched_stream_processor: [BATCHED-DIAG] {'event': 'disconnected', 't': 14.538, 'state': '0', 'reason': '1'}
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38,747 [INFO] aiohttp.access: 172.20.10.155 [08/Aug/2026:15:41:38 +0000] "POST /sessions/conc-test-1-c0a0d2/end HTTP/1.1" 200 232 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38,852 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "prewarm-fd5d1ee5" with reason: ClientInitiated
+2026-08-08 21:11:38+05:30    POST /sessions/conc-test-1-c0a0d2/end -> 200 OK  (duration: 254.0 ms, execution: 192.9 ms)
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38.940 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=368.0ms decode=19.8ms color+encode=11.2ms total=399.2ms batch_size=1
+2026-08-08 21:11:38+05:30 2026-08-08 15:41:38.940 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=368.0ms steps=[s0=44.3 s1=44.1 s2=244.4 s3=35.1] n_steps=4 batch_size=1
+2026-08-08 21:11:39+05:30 2026-08-08 15:41:39.676 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=145.1ms decode=19.9ms color+encode=11.1ms total=176.4ms batch_size=1
+2026-08-08 21:11:39+05:30 2026-08-08 15:41:39.677 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=145.1ms steps=[s0=37.5 s1=36.0 s2=35.7 s3=35.9] n_steps=4 batch_size=1
+2026-08-08 21:11:40+05:30 2026-08-08 15:41:40.645 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=151.2ms decode=20.3ms color+encode=11.3ms total=183.0ms batch_size=1
+2026-08-08 21:11:40+05:30 2026-08-08 15:41:40.645 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=151.2ms steps=[s0=38.1 s1=36.5 s2=38.3 s3=38.3] n_steps=4 batch_size=1
+2026-08-08 21:11:41+05:30 2026-08-08 15:41:41.603 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=148.7ms decode=19.8ms color+encode=11.2ms total=180.0ms batch_size=1
+2026-08-08 21:11:41+05:30 2026-08-08 15:41:41.604 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=148.7ms steps=[s0=38.3 s1=37.1 s2=36.7 s3=36.6] n_steps=4 batch_size=1
+2026-08-08 21:11:42+05:30 2026-08-08 15:41:42.562 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=147.9ms decode=19.8ms color+encode=12.3ms total=180.2ms batch_size=1
+2026-08-08 21:11:42+05:30 2026-08-08 15:41:42.563 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=147.9ms steps=[s0=38.2 s1=39.1 s2=35.5 s3=35.1] n_steps=4 batch_size=1
+2026-08-08 21:11:42+05:30 [METRICS] GPU_util=20% GPU_temp=53C GPU_mem=4.1GB/267.7GB (reserved=5.5GB) RSS=14981MB CPU_user=105.3s CPU_sys=27.5s sessions=0 pool=15/15
+2026-08-08 21:11:43+05:30 2026-08-08 15:41:43.519 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=146.5ms decode=19.8ms color+encode=11.2ms total=177.7ms batch_size=1
+2026-08-08 21:11:43+05:30 2026-08-08 15:41:43.519 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=146.5ms steps=[s0=37.3 s1=36.8 s2=36.2 s3=36.3] n_steps=4 batch_size=1
+2026-08-08 21:11:44+05:30 2026-08-08 15:41:44.476 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=143.6ms decode=19.9ms color+encode=11.2ms total=174.8ms batch_size=1
+2026-08-08 21:11:44+05:30 2026-08-08 15:41:44.477 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=143.6ms steps=[s0=36.5 s1=35.6 s2=35.7 s3=35.7] n_steps=4 batch_size=1
+2026-08-08 21:11:44+05:30 2026-08-08 15:41:44,543 [INFO] BatchedStreamingEngine: Session conc-test-1-c0a0d2 removed (total=0)

@@ -1,0 +1,90 @@
+{
+  "gpu_type": "B300",
+  "num_sessions": 1,
+  "duration_s": 10,
+  "timestamp": "20260808_211150",
+  "summary": {
+    "verdict": "FAIL",
+    "verdict_avg_fps": 11.6,
+    "verdict_basis": "per-session generated FPS + per-session inference < 960ms",
+    "successful": 1,
+    "failed": 0,
+    "generated_fps_avg": 11.6,
+    "viewer_fps_avg": 25.0,
+    "inference_ms_p95": 305.0,
+    "inference_ms_max": 305.0,
+    "inference_budget_ms": 960,
+    "inference_pass": true,
+    "per_session_generated_fps": {
+      "conc-test-1-c0a0d2": {
+        "avg": 11.6,
+        "min": 0.0,
+        "max": 23.2,
+        "samples": [
+          0.0,
+          23.2
+        ],
+        "idle_pct_avg": 53.5
+      }
+    }
+  },
+  "log_metrics": {
+    "per_session_generated_fps": {
+      "conc-test-1-c0a0d2": {
+        "avg": 11.6,
+        "min": 0.0,
+        "max": 23.2,
+        "samples": [
+          0.0,
+          23.2
+        ],
+        "idle_pct_avg": 53.5
+      }
+    },
+    "generated_fps_samples": [
+      0.0,
+      23.2
+    ],
+    "effective_fps_samples": [
+      25.1,
+      25.0
+    ],
+    "idle_frames_pct_avg": 53.5,
+    "inference_ms_samples": [
+      305.0
+    ],
+    "per_session_inference_ms": [
+      305.0
+    ],
+    "batch_size_avg": 1.0,
+    "generated_fps_avg": 11.6,
+    "generated_fps_min": 0.0,
+    "generated_fps_max": 23.2,
+    "inference_ms_avg": 305.0,
+    "inference_ms_p95": 305.0,
+    "inference_ms_max": 305.0,
+    "batch_inference_ms_avg": 305.0,
+    "batch_inference_ms_p95": 305.0,
+    "batch_inference_ms_max": 305.0
+  },
+  "session_results": [
+    {
+      "session_id": "conc-test-1-c0a0d2",
+      "room_name": "prewarm-fd5d1ee5",
+      "status": "COMPLETED",
+      "error": "",
+      "frames_received": 252,
+      "fps_samples": [
+        17.0,
+        25.0
+      ],
+      "avg_fps": 21.0,
+      "steady_state_avg_fps": 25.0,
+      "first_frame_latency_s": 0.5
+    }
+  ],
+  "raw_log_files": [
+    "C:\\Users\\prajw\\Documents\\AiVatar\\V2(video based)\\Codebase Complete\\aivatar-media-worker\\scripts\\test_logs\\raw_B300_1S_ta-01KZH0E6K6GBB_20260808_211139.log"
+  ],
+  "parsed_log_file": "C:\\Users\\prajw\\Documents\\AiVatar\\V2(video based)\\Codebase Complete\\aivatar-media-worker\\scripts\\test_logs\\parsed_B300_1S_20260808_211139.json"
+}

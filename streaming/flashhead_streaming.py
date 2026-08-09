@@ -13,6 +13,7 @@ import boto3
 import requests
 import socket
 import ipaddress
+import torch
 from collections import deque
 
 from utils.default_avatar_cache import default_avatar_cache
@@ -211,7 +212,6 @@ class FlashHeadStreamingEngine:
         # cycle of max(slice_realtime, inference_time) instead of
         # slice_realtime + inference_time, keeping production matched to
         # consumption at 25 fps.
-        _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
         slice_realtime = self.slice_len / float(self.tgt_fps)  # e.g. 24/25 = 0.96s
         while len(self.pending_audio) >= self.slice_samples:
             now = time.monotonic()
@@ -247,9 +247,7 @@ class FlashHeadStreamingEngine:
             video = run_pipeline(self.pipeline, audio_embedding)
             _infer_ms = round((time.monotonic() - _t0) * 1000, 1)
 
-            if _profile:
-                import torch as _torch
-                _torch.cuda.synchronize()
+            torch.cuda.synchronize()
             _t_xfer = time.monotonic()
             video = video[self.motion_frames_num:]
             _n_frames = video.shape[0]
@@ -260,13 +258,12 @@ class FlashHeadStreamingEngine:
                 self.frame_queue.put_nowait(frames_np[i])
             self.audio_queue.put_nowait(human_speech_array)
 
-            if _profile:
-                _total_ms = _deque_ms + _ctx_ms + _embed_ms + _infer_ms + _xfer_ms
-                logger.info(
-                    "ENGINE_BREAKDOWN deque=%.1fms ctx=%.1fms embed=%.1fms "
-                    "infer=%.1fms xfer=%.1fms total=%.1fms",
-                    _deque_ms, _ctx_ms, _embed_ms, _infer_ms, _xfer_ms, _total_ms,
-                )
+            _total_ms = _deque_ms + _ctx_ms + _embed_ms + _infer_ms + _xfer_ms
+            logger.info(
+                "ENGINE_BREAKDOWN deque=%.1fms ctx=%.1fms embed=%.1fms "
+                "infer=%.1fms xfer=%.1fms total=%.1fms",
+                _deque_ms, _ctx_ms, _embed_ms, _infer_ms, _xfer_ms, _total_ms,
+            )
 
             self._metrics_slices += 1
             self._metrics_inference_total_ms += _infer_ms

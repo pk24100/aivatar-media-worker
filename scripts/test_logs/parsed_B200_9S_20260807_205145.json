@@ -1,0 +1,18 @@
+{
+  "per_session_generated_fps": {},
+  "generated_fps_samples": [],
+  "effective_fps_samples": [],
+  "idle_frames_pct_avg": 0.0,
+  "inference_ms_samples": [],
+  "per_session_inference_ms": [],
+  "batch_size_avg": 0.0,
+  "generated_fps_avg": 0.0,
+  "generated_fps_min": 0.0,
+  "generated_fps_max": 0.0,
+  "inference_ms_avg": 0.0,
+  "inference_ms_p95": 0.0,
+  "inference_ms_max": 0.0,
+  "batch_inference_ms_avg": 0.0,
+  "batch_inference_ms_p95": 0.0,
+  "batch_inference_ms_max": 0.0
+}

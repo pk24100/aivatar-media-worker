@@ -1,0 +1,108 @@
+2026-08-06 20:14:52+05:30 Restoring Function from memory snapshot.
+2026-08-06 20:14:55+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-06 20:14:55+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-06 20:14:55+05:30 2026-08-06 14:44:55.741 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:205 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-06 20:14:55+05:30 [RESTORE] Pipeline moved to cuda in 544.7ms
+2026-08-06 20:14:55+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-06 20:14:55+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-06 20:14:59+05:30 /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2340: UserWarning: Dynamo does not know how to trace the builtin `sageattention._fused.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.quant_per_warp_int8_cuda.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+2026-08-06 20:14:59+05:30 If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+2026-08-06 20:14:59+05:30 If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+2026-08-06 20:14:59+05:30   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+2026-08-06 20:14:59+05:30 /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2340: UserWarning: Dynamo does not know how to trace the builtin `sageattention._fused.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.quant_per_block_int8_fuse_sub_mean_cuda.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+2026-08-06 20:14:59+05:30 If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+2026-08-06 20:14:59+05:30 If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+2026-08-06 20:14:59+05:30   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+2026-08-06 20:14:59+05:30 /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2340: UserWarning: Dynamo does not know how to trace the builtin `sageattention._fused.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.transpose_pad_permute_cuda.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+2026-08-06 20:14:59+05:30 If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+2026-08-06 20:14:59+05:30 If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+2026-08-06 20:14:59+05:30   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+2026-08-06 20:14:59+05:30 /usr/local/lib/python3.12/dist-packages/torch/_dynamo/variables/functions.py:2340: UserWarning: Dynamo does not know how to trace the builtin `sageattention._fused.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.scale_fuse_quant_cuda.` This function is either a Python builtin (e.g. _warnings.warn) or a third-party C/C++ Python extension (perhaps created with pybind).
+2026-08-06 20:14:59+05:30 If it is a Python builtin, please file an issue on GitHub so the PyTorch team can add support for it and see the next case for a workaround.
+2026-08-06 20:14:59+05:30 If it is a third-party C/C++ Python extension, please either wrap it into a PyTorch-understood custom operator (see https://pytorch.org/tutorials/advanced/custom_ops_landing_page.html for more details) or, if it is traceable, use `torch.compiler.allow_in_graph`.
+2026-08-06 20:14:59+05:30   torch._dynamo.utils.warn_once(explanation + "\n" + "\n".join(hints))
+2026-08-06 20:15:03+05:30 2026-08-06 14:45:03.863 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:391 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=7757.7ms decode=47.9ms color=6.2ms encode=17.0ms total=7829.0ms
+2026-08-06 20:15:03+05:30 2026-08-06 14:45:03.864 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:398 - [generate] DENOISE_STEPS total=7757.7ms steps=[s0=7508.6 s1=84.4 s2=82.1 s3=82.6] n_steps=4
+2026-08-06 20:15:03+05:30 2026-08-06 14:45:03.864 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=7829.6ms post=0.2ms
+2026-08-06 20:15:03+05:30 [RESTORE] Warmup completed in 8122.4ms
+2026-08-06 20:15:03+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4333089792 reserved=5943328768 memory_snapshot_segments=0
+2026-08-06 20:15:03+05:30 [RESTORE_POST] flash_attn version: 2.7.4.post1
+2026-08-06 20:15:03+05:30 [RESTORE_POST] flash_attn_interface (FA3) NOT available
+2026-08-06 20:15:03+05:30 [RESTORE_POST] sageattention available
+2026-08-06 20:15:03+05:30 [SAGEATTN_VERIFY] SM89_ENABLED=True SM80_ENABLED=True SM90_ENABLED=False
+2026-08-06 20:15:03+05:30 [SAGEATTN_VERIFY] PASS: sageattn runtime OK, output shape=torch.Size([1, 12, 64, 64])
+2026-08-06 20:15:03+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-06 20:15:04+05:30 [SERVE] Starting serve() post-restore (STRESS TEST, concurrency=15)
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,218 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,218 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=15 max_size=15
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 1/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 1/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 2/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 2/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 3/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 3/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 4/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 4/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 5/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 5/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 6/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 6/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 7/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 7/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 8/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 8/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 9/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 9/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 10/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 10/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 11/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 11/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 12/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 12/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 13/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 13/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 14/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 14/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Loading pipeline 15/15...
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] utils.model_pool: Pipeline 15/15 loaded successfully.
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,219 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-06 20:15:04+05:30 [STRESS] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-06 20:15:04+05:30 [STRESS] /readyz patched: prewarm check relaxed
+2026-08-06 20:15:04+05:30 [SERVE_POST_RESTORE] flash_attn version: 2.7.4.post1
+2026-08-06 20:15:04+05:30 [SERVE_POST_RESTORE] flash_attn_interface (FA3) NOT available
+2026-08-06 20:15:04+05:30 [SERVE_POST_RESTORE] sageattention available
+2026-08-06 20:15:04+05:30 [SERVE] Pipeline in model_pool: current_size=15 available=15
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,220 [INFO] modal_app_stress: aiohttp background thread started ident=46861695198912
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,221 [INFO] streaming.websocket_server: Starting WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-06 20:15:04+05:30 2026-08-06 14:45:04,224 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-06 20:15:04+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-06 20:15:04+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4333089792 reserved=5943328768 memory_snapshot_segments=0
+2026-08-06 20:15:04+05:30 [prewarm] Connecting to wss://ai-14ksodzi.livekit.cloud room=prewarm-46c6bef8 slot=1/1 attempt=1/required...
+2026-08-06 20:15:05+05:30 Nvidia Decoder is supported.
+2026-08-06 20:15:05+05:30 2026-08-06 14:45:05,607 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-06 20:15:05+05:30 [prewarm] Connected slot=1/1 in 896.8 ms, adding to pool
+2026-08-06 20:15:05+05:30 2026-08-06 14:45:05,864 [INFO] modal_app_stress: aiohttp site started thread=46861695198912 event_loop=46861489617472
+2026-08-06 20:15:05+05:30 [STRESS] Running batched warmup cycle (background)...[STRESS] Pool status: current_size=15 available=15/15
+2026-08-06 20:15:05+05:30 
+2026-08-06 20:15:05+05:30 [STRESS] Prewarm pool size=1. Test script will mint rooms for sessions 2-N.
+2026-08-06 20:15:05+05:30 2026-08-06 14:45:05,876 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-06 20:15:05+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=22.1s CPU_sys=7.4s sessions=0 pool=15/15
+2026-08-06 20:15:06+05:30 2026-08-06 14:45:06.401 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:544 - [generate_batch] GPU_BREAKDOWN denoise=367.5ms decode=47.1ms color+encode=21.2ms total=436.0ms batch_size=1
+2026-08-06 20:15:06+05:30 2026-08-06 14:45:06.401 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:551 - [generate_batch] DENOISE_STEPS total=367.5ms steps=[s0=101.5 s1=91.5 s2=85.0 s3=89.5] n_steps=4 batch_size=1
+2026-08-06 20:15:06+05:30 2026-08-06 14:45:06,430 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-06 20:15:06+05:30 2026-08-06 14:45:06,431 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-06 20:15:06+05:30 [STRESS] Batched warmup completed in 664.5ms
+2026-08-06 20:15:10+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.1GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=26.7s CPU_sys=7.4s sessions=0 pool=15/15
+2026-08-06 20:15:15+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.1GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=31.1s CPU_sys=7.5s sessions=0 pool=15/15
+2026-08-06 20:15:17+05:30 2026-08-06 14:45:17,575 [INFO] aiohttp.access: 172.20.1.190 [06/Aug/2026:14:45:17 +0000] "POST /sessions/conc-test-3-112ad2/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-06 20:15:17+05:30    POST /sessions/conc-test-3-112ad2/end -> 404 Not Found  (duration: 55.3 ms, execution: 18.4 ms)
+2026-08-06 20:15:21+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.1GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=35.5s CPU_sys=7.5s sessions=0 pool=15/15
+2026-08-06 20:15:21+05:30 2026-08-06 14:45:21,764 [INFO] aiohttp.access: 172.20.1.190 [06/Aug/2026:14:45:21 +0000] "POST /sessions/conc-test-4-7e6f95/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-06 20:15:21+05:30    POST /sessions/conc-test-4-7e6f95/end -> 404 Not Found  (duration: 54.4 ms, execution: 19.4 ms)
+2026-08-06 20:15:26+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.1GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=39.5s CPU_sys=7.6s sessions=0 pool=15/15
+2026-08-06 20:15:29+05:30 2026-08-06 14:45:29,761 [INFO] aiohttp.access: 172.20.1.190 [06/Aug/2026:14:45:29 +0000] "POST /sessions/conc-test-5-6924ee/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-06 20:15:29+05:30    POST /sessions/conc-test-5-6924ee/end -> 404 Not Found  (duration: 57.8 ms, execution: 19.4 ms)
+2026-08-06 20:15:31+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.1GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=43.7s CPU_sys=7.6s sessions=0 pool=15/15
+2026-08-06 20:15:34+05:30 2026-08-06 14:45:34,171 [INFO] aiohttp.access: 172.20.1.190 [06/Aug/2026:14:45:34 +0000] "POST /sessions/conc-test-6-9be393/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-06 20:15:34+05:30    POST /sessions/conc-test-6-9be393/end -> 404 Not Found  (duration: 63.0 ms, execution: 25.6 ms)
+2026-08-06 20:15:36+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.1GB/95.0GB (reserved=5.5GB) RSS=15007MB CPU_user=47.5s CPU_sys=7.7s sessions=0 pool=15/15

@@ -518,7 +518,7 @@ async def run_batched_streaming_session(
         )
 
         fps = infer_params["tgt_fps"]
-        publisher = VideoPublisher(room, fps=fps)
+        publisher = VideoPublisher(room, fps=fps, session_id=session_id)
         publish_task = asyncio.create_task(publisher.publish_from_state_manager(state_manager))
 
         if idle_loop and idle_loop.is_valid():

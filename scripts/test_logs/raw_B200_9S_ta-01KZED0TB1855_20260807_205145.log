@@ -1,0 +1,61 @@
+2026-08-07 20:51:15+05:30 Creating CPU memory snapshot for Function.
+2026-08-07 20:51:18+05:30 
+2026-08-07 20:51:18+05:30 =============
+2026-08-07 20:51:18+05:30 == PyTorch ==
+2026-08-07 20:51:18+05:30 =============
+2026-08-07 20:51:18+05:30 
+2026-08-07 20:51:18+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-07 20:51:18+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-07 20:51:18+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-07 20:51:18+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-07 20:51:18+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-07 20:51:18+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-07 20:51:18+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-07 20:51:18+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-07 20:51:18+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-07 20:51:18+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-07 20:51:18+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-07 20:51:18+05:30 Copyright (c) 2015      Google Inc.
+2026-08-07 20:51:18+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-07 20:51:18+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-07 20:51:18+05:30 All rights reserved.
+2026-08-07 20:51:18+05:30 
+2026-08-07 20:51:18+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-07 20:51:18+05:30 
+2026-08-07 20:51:18+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-07 20:51:18+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-07 20:51:18+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-07 20:51:18+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-07 20:51:18+05:30 
+2026-08-07 20:51:18+05:30 ERROR: The NVIDIA Driver is present, but CUDA failed to initialize.  GPU functionality will not be available.
+2026-08-07 20:51:18+05:30    [[ No CUDA-capable device is detected (error 100) ]]
+2026-08-07 20:51:18+05:30 
+2026-08-07 20:51:19+05:30 [STRESS] Target GPU: B200 (arch=10.0, codec=vp8)
+2026-08-07 20:51:19+05:30 [STRESS] CPU snapshot load with WORKER_CONCURRENCY=15
+2026-08-07 20:51:27+05:30 W0807 15:21:27.774000 2 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-07 20:51:27+05:30 W0807 15:21:27.822000 2 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-07 20:51:27+05:30 Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+2026-08-07 20:51:34+05:30 Matplotlib is building the font cache; this may take a moment.
+2026-08-07 20:51:35+05:30 [SNAP_CREATE] flash_attn version: 2.7.4.post1
+2026-08-07 20:51:35+05:30 [SNAP_CREATE] flash_attn_interface (FA3) NOT available
+2026-08-07 20:51:35+05:30 [SNAP_CREATE] sageattention available
+2026-08-07 20:51:35+05:30 [SNAP_CREATE] Loading FlashHead pipeline on CPU...
+2026-08-07 20:51:35+05:30 2026-08-07 15:21:35.768 | INFO     | flash_head.src.distributed.usp_device:get_device:20 - FLASHHEAD_LOAD_DEVICE=cpu, returning CPU device for snapshot
+2026-08-07 20:51:35+05:30 2026-08-07 15:21:35.768 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cpu
+2026-08-07 20:51:38+05:30 There are modules in CausalVideoAutoencoder that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-07 20:51:39+05:30 There are modules in WanModelAudioProject that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-07 20:51:41+05:30 Some weights of Wav2Vec2Model were not initialized from the model checkpoint at /app/models/wav2vec2-base-960h and are newly initialized: ['masked_spec_embed']
+2026-08-07 20:51:41+05:30 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-07 20:51:41+05:30 2026-08-07 15:21:41.621 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:102 - Cached Lite model components for reuse
+2026-08-07 20:51:41+05:30 [SNAP_CREATE] Pipeline loaded to CPU in 5853.5ms
+2026-08-07 20:51:41+05:30 [modal] Default avatar manifest not found at /app/config/default_avatars.manifest.json - falling back to per-session URL fetch
+2026-08-07 20:51:41+05:30 [modal] Default idle cache: cachedIdleVideoCount=0 failed=0
+2026-08-07 20:51:41+05:30 [SNAP_PRE_RESET] SIGSEGV handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_PRE_RESET] SIGABRT handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_PRE_RESET] SIGBUS handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_PRE_RESET] SIGFPE handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_POST_RESET] SIGSEGV handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_POST_RESET] SIGABRT handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_POST_RESET] SIGBUS handler: 0
+2026-08-07 20:51:41+05:30 [SNAP_POST_RESET] SIGFPE handler: 0
+2026-08-07 20:51:41+05:30 [STRESS] Pipeline loaded to CPU for snapshot

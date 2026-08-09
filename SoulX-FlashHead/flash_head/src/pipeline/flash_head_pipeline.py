@@ -283,13 +283,11 @@ class FlashHeadPipeline:
 
     @torch.no_grad()
     def generate(self, audio_embedding):
-        _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
         _gen_t0 = time.time()
         # evaluation mode
         with torch.no_grad():
 
-            if _profile:
-                torch.cuda.synchronize()
+            torch.cuda.synchronize()
             _t_noise = time.time()
             # sample videos
             noise = torch.randn(
@@ -300,9 +298,8 @@ class FlashHeadPipeline:
                 dtype=self.param_dtype,
                 device=self.device,
                 generator=self.generator)
-            if _profile:
-                torch.cuda.synchronize()
-                _noise_ms = (time.time() - _t_noise) * 1000
+            torch.cuda.synchronize()
+            _noise_ms = (time.time() - _t_noise) * 1000
 
             _denoise_total = 0.0
             _denoise_step_ms = []
@@ -349,44 +346,39 @@ class FlashHeadPipeline:
 
             noise[:, :self.latent_motion_frames.shape[1]] = self.latent_motion_frames
 
-            if _profile:
-                torch.cuda.synchronize()
+            torch.cuda.synchronize()
             start_decode_time = time.time()
 
             videos = self.vae.decode(noise)
 
-            if _profile:
-                torch.cuda.synchronize()
+            torch.cuda.synchronize()
             end_decode_time = time.time()
             _decode_ms = (end_decode_time - start_decode_time) * 1000
         
-        if _profile:
-            torch.cuda.synchronize()
+        torch.cuda.synchronize()
         start_color_correction_time = time.time()
         if self.color_correction_strength > 0.0:
             videos = match_and_blend_colors_torch(videos, self.original_color_reference, self.color_correction_strength)
 
         cond_frame = videos[:, :, -self.motion_frames_num:].to(self.device)
-        if _profile:
-            torch.cuda.synchronize()
+        torch.cuda.synchronize()
         end_color_correction_time = time.time()
         _color_ms = (end_color_correction_time - start_color_correction_time) * 1000
 
         torch.cuda.synchronize()
         start_encode_time = time.time()
         self.latent_motion_frames = self.vae.encode(cond_frame)
-        if _profile:
-            torch.cuda.synchronize()
+        torch.cuda.synchronize()
         end_encode_time = time.time()
         _encode_ms = (end_encode_time - start_encode_time) * 1000
 
-        if _profile:
-            _total_ms = (time.time() - _gen_t0) * 1000
-            logger.info(
-                f"[generate] GPU_BREAKDOWN noise={_noise_ms:.1f}ms denoise={_denoise_total:.1f}ms "
-                f"decode={_decode_ms:.1f}ms color={_color_ms:.1f}ms "
-                f"encode={_encode_ms:.1f}ms total={_total_ms:.1f}ms"
-            )
+        torch.cuda.synchronize()
+        _total_ms = (time.time() - _gen_t0) * 1000
+        logger.info(
+            f"[generate] GPU_BREAKDOWN noise={_noise_ms:.1f}ms denoise={_denoise_total:.1f}ms "
+            f"decode={_decode_ms:.1f}ms color={_color_ms:.1f}ms "
+            f"encode={_encode_ms:.1f}ms total={_total_ms:.1f}ms"
+        )
 
         _step_str = " ".join(f"s{i}={ms:.1f}" for i, ms in enumerate(_denoise_step_ms))
         logger.info(
@@ -418,7 +410,6 @@ class FlashHeadPipeline:
             videos_list: list of (C, T, H, W) float32 tensors
             updated_motion_frames_list: list of (C, motion_latent, H, W) tensors
         """
-        _profile = os.environ.get("ENGINE_PROFILE", "0") == "1"
         _gen_t0 = time.time()
         batch_size = len(audio_embeddings)
 
@@ -498,24 +489,22 @@ class FlashHeadPipeline:
                 mf = latent_motion_frames_list[b]
                 noise_batch[b, :, :mf.shape[1]] = mf
 
-            if _profile:
-                torch.cuda.synchronize()
+            torch.cuda.synchronize()
             start_decode_time = time.time()
 
             videos = self.vae.decode_batch(noise_batch)
 
-            if _profile:
-                torch.cuda.synchronize()
+            torch.cuda.synchronize()
             end_decode_time = time.time()
             _decode_ms = (end_decode_time - start_decode_time) * 1000
 
         # Per-session color correction and motion frame update
-        if _profile:
-            torch.cuda.synchronize()
+        torch.cuda.synchronize()
         start_color_time = time.time()
 
         updated_motion_frames_list = []
         videos_list = []
+        cond_frames_list = []
         for b in range(batch_size):
             video_b = videos[b:b+1]
 
@@ -523,17 +512,18 @@ class FlashHeadPipeline:
                 video_b = match_and_blend_colors_torch(
                     video_b, original_color_refs[b], color_correction_strengths[b])
 
-            cond_frame = video_b[:, :, -self.motion_frames_num:].to(self.device)
-            updated_motion_frames_list.append(self.vae.encode(cond_frame))
+            cond_frames_list.append(video_b[:, :, -self.motion_frames_num:].to(self.device))
             videos_list.append(video_b[0].to(torch.float32))
 
-        if _profile:
-            torch.cuda.synchronize()
+        cond_frames_batch = torch.cat(cond_frames_list, dim=0)
+        encoded_batch = self.vae.encode_batch(cond_frames_batch)
+        updated_motion_frames_list = [encoded_batch[b] for b in range(batch_size)]
+
+        torch.cuda.synchronize()
         end_color_time = time.time()
         _color_ms = (end_color_time - start_color_time) * 1000
 
-        if _profile:
-            torch.cuda.synchronize()
+        torch.cuda.synchronize()
         _total_ms = (time.time() - _gen_t0) * 1000
         logger.info(
             f"[generate_batch] GPU_BREAKDOWN denoise={_denoise_total:.1f}ms "

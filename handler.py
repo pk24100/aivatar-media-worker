@@ -33,10 +33,10 @@ WS_INACTIVITY_TIMEOUT = int(os.environ.get("WS_INACTIVITY_TIMEOUT", "45"))
 NO_AUDIO_SESSION_TIMEOUT = int(os.environ.get("NO_AUDIO_SESSION_TIMEOUT", "120"))
 SESSION_IDLE_CHECK_INTERVAL = int(os.environ.get("SESSION_IDLE_CHECK_INTERVAL", "5"))
 BACKEND_INTERNAL_URL = os.environ.get("BACKEND_INTERNAL_URL", "")
-WS_AUDIO_RATE_PER_SEC = 60          # max audio messages/sec (sustained)
-WS_AUDIO_BURST = 200                # token bucket burst capacity
-WS_MAX_BYTES_PER_SEC = 192_000      # 48kHz 16-bit mono real-time ceiling
-WS_MAX_CONNECTIONS_PER_IP = 10      # max concurrent WS per IP per 60s window
+WS_AUDIO_RATE_PER_SEC = int(os.environ.get("WS_AUDIO_RATE_PER_SEC", "60"))  # max audio messages/sec (sustained)
+WS_AUDIO_BURST = int(os.environ.get("WS_AUDIO_BURST", "200"))  # token bucket burst capacity
+WS_MAX_BYTES_PER_SEC = int(os.environ.get("WS_MAX_BYTES_PER_SEC", "192000"))  # 48kHz 16-bit mono real-time ceiling
+WS_MAX_CONNECTIONS_PER_IP = int(os.environ.get("WS_MAX_CONNECTIONS_PER_IP", "10"))  # max concurrent WS per IP per 60s window
 
 # --- Fix 13: One-time JWT tracking (jti -> expiry timestamp) ---
 _used_jti: dict = {}
@@ -545,7 +545,7 @@ async def _start_pod_session(event):
             "status": "ALREADY_STARTED",
             "sessionId": session_id,
         }
-    if model_pool.get_available_count() <= 0:
+    if not (_BATCHED_INFERENCE and batched_engine is not None) and model_pool.get_available_count() <= 0:
         raise ValueError("No pipeline capacity available")
 
     if event.get("ingestionMethod", "websocket") == "websocket":

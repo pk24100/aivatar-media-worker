@@ -1,0 +1,37 @@
+2026-08-07 23:06:18+05:30 Creating CPU memory snapshot for Function.
+2026-08-07 23:06:20+05:30 
+2026-08-07 23:06:20+05:30 =============
+2026-08-07 23:06:20+05:30 == PyTorch ==
+2026-08-07 23:06:20+05:30 =============
+2026-08-07 23:06:20+05:30 
+2026-08-07 23:06:20+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-07 23:06:20+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-07 23:06:21+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-07 23:06:21+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-07 23:06:21+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-07 23:06:21+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-07 23:06:21+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-07 23:06:21+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-07 23:06:21+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-07 23:06:21+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-07 23:06:21+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-07 23:06:21+05:30 Copyright (c) 2015      Google Inc.
+2026-08-07 23:06:21+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-07 23:06:21+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-07 23:06:21+05:30 All rights reserved.
+2026-08-07 23:06:21+05:30 
+2026-08-07 23:06:21+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-07 23:06:21+05:30 
+2026-08-07 23:06:21+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-07 23:06:21+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-07 23:06:21+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-07 23:06:21+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-07 23:06:21+05:30 
+2026-08-07 23:06:21+05:30 ERROR: The NVIDIA Driver is present, but CUDA failed to initialize.  GPU functionality will not be available.
+2026-08-07 23:06:21+05:30    [[ No CUDA-capable device is detected (error 100) ]]
+2026-08-07 23:06:21+05:30 
+2026-08-07 23:06:23+05:30 [STRESS] Target GPU: B200 (arch=10.0, codec=vp8)
+2026-08-07 23:06:23+05:30 [STRESS] CPU snapshot load with WORKER_CONCURRENCY=15
+2026-08-07 23:06:45+05:30 W0807 17:36:45.102000 2 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-07 23:06:45+05:30 W0807 17:36:45.217000 2 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-07 23:06:45+05:30 Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`

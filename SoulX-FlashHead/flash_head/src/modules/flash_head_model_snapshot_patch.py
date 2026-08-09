@@ -48,21 +48,31 @@ try:
     SAGE_ATTN_AVAILABLE = True
 except ModuleNotFoundError:
     SAGE_ATTN_AVAILABLE = False
+
+# Runtime flag: set to False if sageattn() crashes at inference time
+# (e.g. sm120/Blackwell GPUs hit SM89 assertion in sageattention 2.2.0)
+_SAGE_ATTN_RUNTIME_OK = True
     
     
 # Compute flash attention using the best available optimized kernel.
 def flash_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, num_heads: int, compatibility_mode=False):
+    global _SAGE_ATTN_RUNTIME_OK
     if compatibility_mode:
         q = rearrange(q, "b s (n d) -> b n s d", n=num_heads)
         k = rearrange(k, "b s (n d) -> b n s d", n=num_heads)
         v = rearrange(v, "b s (n d) -> b n s d", n=num_heads)
         x = F.scaled_dot_product_attention(q, k, v)
         x = rearrange(x, "b n s d -> b s (n d)", n=num_heads)
-    elif SAGE_ATTN_AVAILABLE:
+    elif SAGE_ATTN_AVAILABLE and _SAGE_ATTN_RUNTIME_OK:
         q = rearrange(q, "b s (n d) -> b n s d", n=num_heads)
         k = rearrange(k, "b s (n d) -> b n s d", n=num_heads)
         v = rearrange(v, "b s (n d) -> b n s d", n=num_heads)
-        x = sageattn(q, k, v)
+        try:
+            x = sageattn(q, k, v)
+        except (AssertionError, RuntimeError, ValueError) as e:
+            _SAGE_ATTN_RUNTIME_OK = False
+            print(f"[flash_attention] sageattn failed ({e}), falling back to SDPA", flush=True)
+            x = F.scaled_dot_product_attention(q, k, v)
         x = rearrange(x, "b n s d -> b s (n d)", n=num_heads)
     elif FLASH_ATTN_3_AVAILABLE:
         q = rearrange(q, "b s (n d) -> b s n d", n=num_heads)

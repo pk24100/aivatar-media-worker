@@ -1,0 +1,39 @@
+{
+  "per_session_generated_fps": {
+    "conc-test-1-769410": {
+      "avg": 6.5,
+      "min": 0.0,
+      "max": 13.0,
+      "samples": [
+        0.0,
+        13.0
+      ],
+      "idle_pct_avg": 73.8
+    }
+  },
+  "generated_fps_samples": [
+    0.0,
+    13.0
+  ],
+  "effective_fps_samples": [
+    25.1,
+    24.8
+  ],
+  "idle_frames_pct_avg": 73.8,
+  "inference_ms_samples": [
+    450.3
+  ],
+  "per_session_inference_ms": [
+    450.3
+  ],
+  "batch_size_avg": 1.0,
+  "generated_fps_avg": 6.5,
+  "generated_fps_min": 0.0,
+  "generated_fps_max": 13.0,
+  "inference_ms_avg": 450.3,
+  "inference_ms_p95": 450.3,
+  "inference_ms_max": 450.3,
+  "batch_inference_ms_avg": 450.3,
+  "batch_inference_ms_p95": 450.3,
+  "batch_inference_ms_max": 450.3
+}

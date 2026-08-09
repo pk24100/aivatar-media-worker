@@ -466,7 +466,7 @@ class BatchedStreamingEngine:
             )
             self.sessions[session_id] = session
             logger.info("Session %s added (total=%d)", session_id, len(self.sessions))
-        session.prepare_avatar(avatar_path)
+            session.prepare_avatar(avatar_path)
         return session
 
     def remove_session(self, session_id, keep_alive=False):

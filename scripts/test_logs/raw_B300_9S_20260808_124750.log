@@ -1,0 +1,83 @@
+2026-08-08 12:47:10+05:30 Restoring Function from memory snapshot.
+2026-08-08 12:47:14+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-08 12:47:14+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-08 12:47:16+05:30 2026-08-08 07:17:16.596 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-08 12:47:16+05:30 [RESTORE] Pipeline moved to cuda in 2628.6ms
+2026-08-08 12:47:16+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-08 12:47:16+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-08 12:47:40+05:30 [flash_attention] sageattn failed (SM89 kernel is not available. Make sure you GPUs with compute capability 8.9.), falling back to SDPA
+2026-08-08 12:47:43+05:30 2026-08-08 07:17:43.526 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=4297.4ms decode=32.2ms color=765.4ms encode=25.4ms total=5120.6ms
+2026-08-08 12:47:43+05:30 2026-08-08 07:17:43.527 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=4297.4ms steps=[s0=4175.6 s1=42.2 s2=40.1 s3=39.5] n_steps=4
+2026-08-08 12:47:43+05:30 2026-08-08 07:17:43.528 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=5122.5ms post=0.1ms
+2026-08-08 12:47:43+05:30 [RESTORE] Warmup completed in 26885.3ms
+2026-08-08 12:47:43+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4333089792 reserved=5943328768 memory_snapshot_segments=0
+2026-08-08 12:47:43+05:30 [RESTORE_POST] flash_attn version: 2.7.4.post1
+2026-08-08 12:47:43+05:30 [RESTORE_POST] flash_attn_interface (FA3) NOT available
+2026-08-08 12:47:43+05:30 [RESTORE_POST] sageattention available
+2026-08-08 12:47:43+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-08 12:47:44+05:30 [SERVE] Starting serve() post-restore (STRESS TEST, concurrency=15)
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=15 max_size=15
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Loading pipeline 1/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Pipeline 1/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Loading pipeline 2/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Pipeline 2/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Loading pipeline 3/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Pipeline 3/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Loading pipeline 4/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Pipeline 4/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Loading pipeline 5/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Pipeline 5/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,031 [INFO] utils.model_pool: Loading pipeline 6/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 6/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 7/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 7/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 8/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 8/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 9/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 9/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 10/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 10/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 11/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 11/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 12/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 12/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 13/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 13/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 14/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 14/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Loading pipeline 15/15...
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,032 [INFO] utils.model_pool: Pipeline 15/15 loaded successfully.
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,033 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-08 12:47:45+05:30 [STRESS] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-08 12:47:45+05:30 [STRESS] /readyz patched: prewarm check relaxed
+2026-08-08 12:47:45+05:30 [SERVE_POST_RESTORE] flash_attn version: 2.7.4.post1
+2026-08-08 12:47:45+05:30 [SERVE_POST_RESTORE] flash_attn_interface (FA3) NOT available
+2026-08-08 12:47:45+05:30 [SERVE_POST_RESTORE] sageattention available
+2026-08-08 12:47:45+05:30 [SERVE] Pipeline in model_pool: current_size=15 available=15
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,037 [INFO] modal_app_stress: aiohttp background thread started ident=46749299287744
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,038 [INFO] streaming.websocket_server: Starting WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-08 12:47:45+05:30 2026-08-08 07:17:45,056 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-08 12:47:45+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-08 12:47:45+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4333089792 reserved=5943328768 memory_snapshot_segments=0
+2026-08-08 12:47:45+05:30 [prewarm] Connecting to wss://ai-14ksodzi.livekit.cloud room=prewarm-8baafdae slot=1/1 attempt=1/required...
+2026-08-08 12:47:47+05:30 Nvidia Decoder is supported.
+2026-08-08 12:47:48+05:30 2026-08-08 07:17:48,695 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-08 12:47:49+05:30 [prewarm] Connected slot=1/1 in 3185.6 ms, adding to pool
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,018 [INFO] modal_app_stress: aiohttp site started thread=46749299287744 event_loop=46749293604032
+2026-08-08 12:47:49+05:30 [STRESS] Running batched warmup cycle (background)...
+2026-08-08 12:47:49+05:30 [STRESS] Pool status: current_size=15 available=15/15
+2026-08-08 12:47:49+05:30 [STRESS] Prewarm pool size=1. Test script will mint rooms for sessions 2-N.
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,100 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-08 12:47:49+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/267.7GB (reserved=5.5GB) RSS=14980MB CPU_user=74.4s CPU_sys=21.9s sessions=0 pool=15/15
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,330 [INFO] aiohttp.access: 172.20.13.51 [08/Aug/2026:07:17:49 +0000] "POST /sessions/conc-test-5-6e7500/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,384 [INFO] aiohttp.access: 172.20.13.51 [08/Aug/2026:07:17:49 +0000] "POST /sessions/conc-test-6-8ade0c/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,467 [INFO] aiohttp.access: 172.20.13.51 [08/Aug/2026:07:17:49 +0000] "POST /sessions/conc-test-7-e6c8be/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,533 [INFO] aiohttp.access: 172.20.13.51 [08/Aug/2026:07:17:49 +0000] "POST /sessions/conc-test-8-74c125/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 12:47:49+05:30 2026-08-08 07:17:49,581 [INFO] aiohttp.access: 172.20.13.51 [08/Aug/2026:07:17:49 +0000] "POST /sessions/conc-test-9-7ff8c2/end HTTP/1.1" 404 243 "-" "Python/3.14 aiohttp/3.14.1"
+2026-08-08 12:47:49+05:30    POST /sessions/conc-test-9-7ff8c2/end -> 404 Not Found  (duration: 5.87 s, execution: 494.6 ms)
+2026-08-08 12:47:50+05:30 2026-08-08 07:17:50.608 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=262.8ms decode=79.2ms color+encode=66.8ms total=412.9ms batch_size=1
+2026-08-08 12:47:50+05:30 2026-08-08 07:17:50.609 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=262.8ms steps=[s0=147.2 s1=39.8 s2=38.1 s3=37.7] n_steps=4 batch_size=1
+2026-08-08 12:47:50+05:30 2026-08-08 07:17:50,777 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-08 12:47:50+05:30 2026-08-08 07:17:50,779 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-08 12:47:50+05:30 [STRESS] Batched warmup completed in 1856.0ms
