@@ -1,6 +1,6 @@
 """
-Shared aiohttp app factory used by both RunPod (handler.py) and Modal (modal_app.py).
-Do not fork this file per provider — only the serving wrapper differs.
+Shared aiohttp app factory used by the Modal worker (handler.py, modal_app.py).
+Do not fork this file per provider - only the serving wrapper differs.
 """
 
 from aiohttp import web
@@ -18,7 +18,6 @@ async def build_app() -> web.Application:
     app.router.add_get("/health", handler.pod_health)
     app.router.add_get("/healthz", handler.pod_health)
     app.router.add_get("/readyz", handler.pod_ready)
-    app.router.add_post("/room/claim", handler.claim_room)
     app.router.add_post("/sessions/start", handler.pod_session_start)
     app.router.add_post("/sessions/{session_id}/end", handler.pod_session_end)
     app.router.add_get("/sessions/{session_id}/status", handler.pod_session_status)

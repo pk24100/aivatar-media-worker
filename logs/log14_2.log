@@ -1,0 +1,284 @@
+﻿2026-09-06 02:05:47+05:30 Restoring Function from memory snapshot.
+2026-09-06 02:05:54+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-09-06 02:05:54+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-09-06 02:05:55+05:30 2026-09-05 20:35:55.326 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-09-06 02:05:55+05:30 [RESTORE] Pipeline moved to cuda in 1193.3ms
+2026-09-06 02:05:55+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-09-06 02:05:55+05:30 [RESTORE] Running warmup inference on GPU...
+2026-09-06 02:05:58+05:30 2026-09-05 20:35:58.696 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2292.5ms decode=74.9ms color=9.9ms encode=22.6ms total=2400.2ms
+2026-09-06 02:05:58+05:30 2026-09-05 20:35:58.696 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2292.5ms steps=[s0=2168.5 s1=41.9 s2=41.2 s3=40.9] n_steps=4
+2026-09-06 02:05:58+05:30 2026-09-05 20:35:58.696 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2400.5ms post=0.1ms
+2026-09-06 02:05:58+05:30 [RESTORE] Warmup completed in 3220.2ms
+2026-09-06 02:05:58+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-09-06 02:05:58+05:30 [RESTORE] Netstack prime OK target=1.1.1.1:53 elapsedMs=0.3
+2026-09-06 02:05:58+05:30 [RESTORE] CPU snapshot restore complete
+2026-09-06 02:05:58+05:30 [SERVE] Starting serve() post-restore
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,207 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,208 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,209 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-09-06 02:05:59+05:30 BatchedStreamingEngine started (wait_window=20ms)
+2026-09-06 02:05:59+05:30 Pipeline in model_pool: current_size=3 available=3
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,211 [INFO] modal_app: aiohttp background thread started ident=47945678382784
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,237 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,237 [INFO] streaming.transport.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-09-06 02:05:59+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-09-06 02:05:59+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-09-06 02:05:59+05:30 [SERVE] Running batched warmup cycle (background)...
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,248 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-09-06 02:05:59+05:30 [SERVE] UDP heartbeat started interval=3.0s
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,251 [INFO] modal_app: aiohttp site started thread=47945678382784 event_loop=47945549944672
+2026-09-06 02:05:59+05:30 [modal] Pool status: current_size=3 available=3/3
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,281 [INFO] handler: [pod_session_start] Received session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf room=manual-d100b5c0 hasIdleAsset=True
+2026-09-06 02:05:59+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15870MB CPU_user=22.9s CPU_sys=5.5s sessions=0 pool=3/3
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59.629 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=173.8ms decode=77.0ms color+encode=29.4ms total=280.4ms batch_size=1
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59.629 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=173.8ms steps=[s0=47.2 s1=41.3 s2=42.9 s3=42.3] n_steps=4 batch_size=1
+2026-09-06 02:05:59+05:30 [SERVE] Batched warmup completed in 667.0ms
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,906 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-09-06 02:05:59+05:30 2026-09-05 20:35:59,907 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,662 [INFO] streaming.transport.websocket_server: Registered WebSocket session: 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf provider_profile=none telephony_provider=none
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,665 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47945678382784 thread_name=modal-aiohttp-server event_loop_id=47945549944672
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,665 [INFO] batched_stream_processor: Connecting to egress type=livekit room=manual-d100b5c0 url=wss://ai-14ksodzi.livekit.cloud session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,667 [INFO] streaming.orchestration.idle_video: Downloading idle video asset
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,667 [INFO] batched_stream_processor: Registering session 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf with BatchedStreamingEngine
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,677 [INFO] BatchedStreamingEngine: Session 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf added (total=1)
+2026-09-06 02:06:00+05:30 2026-09-05 20:36:00,896 [INFO] batched_stream_processor: Session 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf registered with engine in 229.3 ms (avatar prepared)
+2026-09-06 02:06:01+05:30 2026-09-05 20:36:01,053 [INFO] streaming.orchestration.idle_video: Loading idle video frames from /tmp/tmp9w_bb54m.mp4
+2026-09-06 02:06:02+05:30 2026-09-05 20:36:02,024 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:35:59 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-09-06 02:06:02+05:30    POST /sessions/start -> 202 Accepted  (duration: 17.1 s, execution: 2.78 s)
+2026-09-06 02:06:02+05:30 2026-09-05 20:36:02,166 [INFO] streaming.orchestration.idle_video: Loaded 375 frames for idle loop
+2026-09-06 02:06:02+05:30 2026-09-05 20:36:02,927 [INFO] handler: WS_REQUEST_RECEIVED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf origin= ip=172.20.6.214
+2026-09-06 02:06:02+05:30 2026-09-05 20:36:02,928 [INFO] handler: WS_CONNECT session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf origin= ip=172.20.6.214 handlerMs=0.8
+2026-09-06 02:06:03+05:30 2026-09-05 20:36:03,222 [INFO] handler: WS_FRAME_RECEIVED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf type=1 size=250 ip=172.20.6.214
+2026-09-06 02:06:03+05:30 2026-09-05 20:36:03,222 [INFO] handler: WS_SEND_RESPONSE session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf type=started ip=172.20.6.214
+2026-09-06 02:06:03+05:30 [HEARTBEAT-GATED] UDP response blocked failures=1
+2026-09-06 02:06:03+05:30 2026-09-05 20:36:03,883 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_BLOCKED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf targets=ai-14ksodzi.turn.livekit.cloud:3478,ai-14ksodzi.livekit.cloud:3478 error=TimeoutError: timed out
+2026-09-06 02:06:03+05:30 2026-09-05 20:36:03,917 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_READY session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf target=ai-14ksodzi.turn.livekit.cloud:443 waitedMs=3251 transport=tcp
+2026-09-06 02:06:03+05:30 2026-09-05 20:36:03,918 [INFO] LiveKitEgressAdapter: LIVEKIT_RELAY_FIRST session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf reason=udp_silent_tcp_443_ready family=IPv4 host=ai-14ksodzi.turn.livekit.cloud
+2026-09-06 02:06:04+05:30 [METRICS] GPU_util=3% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=38.3s CPU_sys=10.2s sessions=1 pool=3/3
+2026-09-06 02:06:04+05:30 Nvidia Decoder is supported.
+2026-09-06 02:06:04+05:30 2026-09-05 20:36:04,606 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,130 [INFO] LiveKitEgressAdapter: LIVEKIT_CONNECT_SUCCEEDED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf attempt=1/3 elapsedMs=1212.4
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,132 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf state=1
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,134 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,136 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,138 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received. Creating track...
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,138 [INFO] VideoPublisher: [VP-DIAG] Creating video track 1024x1024
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,140 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,140 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,140 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,176 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 35.9 ms
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,179 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCCLpZwHuDYnSa from e2e-test-worker
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,187 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:06:05+05:30 2026-09-05 20:36:05,189 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf room=manual-d100b5c0
+2026-09-06 02:06:09+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=42.0s CPU_sys=10.6s sessions=1 pool=3/3
+2026-09-06 02:06:10+05:30 2026-09-05 20:36:10,143 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf windowMs=5012 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.0 maxCaptureMs=2.1
+2026-09-06 02:06:14+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=46.1s CPU_sys=10.8s sessions=1 pool=3/3
+2026-09-06 02:06:15+05:30 2026-09-05 20:36:15,182 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.4 maxCaptureMs=1.0
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,455 [INFO] handler: WS_FRAME_RECEIVED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf type=1 size=30 ip=172.20.6.214
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,455 [INFO] handler: WS_SEND_RESPONSE session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf type=ended ip=172.20.6.214
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,456 [INFO] handler: SESSION_END_RECEIVED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,456 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf keep_alive=False
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,456 [INFO] BatchedStreamingEngine: Session 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf marked for drain (keep_alive=False)
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,458 [INFO] BatchedStreamingEngine: Session 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf removed (total=0)
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,557 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf cycles=1 elapsed=100.9ms keep_alive=False
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,564 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:06:16+05:30 CONNECT /ws/432a1b0e-55e2-45e0-943f-d2e5abc5e1cf -> 101 Switching Protocols  (duration: 13.9 s, execution: 13.8 s)
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,944 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf state=0
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,945 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_DISCONNECTED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf reason=1
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,947 [INFO] livekit: livekit::room:1788:livekit::room - Disconnected from room "manual-d100b5c0" with reason: ClientInitiated
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,948 [INFO] streaming.transport.websocket_server: Unregistered WebSocket session: 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,957 [INFO] handler: [handler] run_batched_streaming_session() completed in 16292.5ms for 432a1b0e-55e2-45e0-943f-d2e5abc5e1cf
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,957 [INFO] handler: WS_SESSION_ENDED session=432a1b0e-55e2-45e0-943f-d2e5abc5e1cf ip=172.20.6.214
+2026-09-06 02:06:16+05:30 2026-09-05 20:36:16,957 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:36:02 +0000] "GET /ws/432a1b0e-55e2-45e0-943f-d2e5abc5e1cf HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-09-06 02:06:19+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=49.1s CPU_sys=10.8s sessions=0 pool=3/3
+2026-09-06 02:06:24+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=51.0s CPU_sys=10.9s sessions=0 pool=3/3
+2026-09-06 02:06:29+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=53.1s CPU_sys=10.9s sessions=0 pool=3/3
+2026-09-06 02:06:30+05:30 2026-09-05 20:36:30,682 [INFO] handler: [pod_session_start] Received session=f127a73d-1044-46f9-b10a-47e4344605a9 room=manual-f055dca6 hasIdleAsset=True
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,364 [INFO] streaming.transport.websocket_server: Registered WebSocket session: f127a73d-1044-46f9-b10a-47e4344605a9 provider_profile=none telephony_provider=none
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,366 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47945678382784 thread_name=modal-aiohttp-server event_loop_id=47945549944672
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,366 [INFO] batched_stream_processor: Connecting to egress type=livekit room=manual-f055dca6 url=wss://ai-14ksodzi.livekit.cloud session=f127a73d-1044-46f9-b10a-47e4344605a9
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,368 [INFO] batched_stream_processor: Registering session f127a73d-1044-46f9-b10a-47e4344605a9 with BatchedStreamingEngine
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,368 [INFO] streaming.orchestration.idle_video: Downloading idle video asset
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,369 [INFO] BatchedStreamingEngine: Session f127a73d-1044-46f9-b10a-47e4344605a9 added (total=1)
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,513 [INFO] batched_stream_processor: Session f127a73d-1044-46f9-b10a-47e4344605a9 registered with engine in 144.6 ms (avatar prepared)
+2026-09-06 02:06:31+05:30 2026-09-05 20:36:31,716 [INFO] streaming.orchestration.idle_video: Loading idle video frames from /tmp/tmpetpau8fs.mp4
+2026-09-06 02:06:32+05:30 2026-09-05 20:36:32,055 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:36:30 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-09-06 02:06:32+05:30    POST /sessions/start -> 202 Accepted  (duration: 1.44 s, execution: 1.41 s)
+2026-09-06 02:06:32+05:30 2026-09-05 20:36:32,765 [INFO] streaming.orchestration.idle_video: Loaded 375 frames for idle loop
+2026-09-06 02:06:33+05:30 2026-09-05 20:36:33,419 [INFO] handler: WS_REQUEST_RECEIVED session=f127a73d-1044-46f9-b10a-47e4344605a9 origin= ip=172.20.6.214
+2026-09-06 02:06:33+05:30 2026-09-05 20:36:33,419 [INFO] handler: WS_CONNECT session=f127a73d-1044-46f9-b10a-47e4344605a9 origin= ip=172.20.6.214 handlerMs=0.7
+2026-09-06 02:06:33+05:30 2026-09-05 20:36:33,701 [INFO] handler: WS_FRAME_RECEIVED session=f127a73d-1044-46f9-b10a-47e4344605a9 type=1 size=250 ip=172.20.6.214
+2026-09-06 02:06:33+05:30 2026-09-05 20:36:33,701 [INFO] handler: WS_SEND_RESPONSE session=f127a73d-1044-46f9-b10a-47e4344605a9 type=started ip=172.20.6.214
+2026-09-06 02:06:34+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=67.7s CPU_sys=15.5s sessions=1 pool=3/3
+2026-09-06 02:06:34+05:30 2026-09-05 20:36:34,577 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_BLOCKED session=f127a73d-1044-46f9-b10a-47e4344605a9 targets=ai-14ksodzi.turn.livekit.cloud:3478,ai-14ksodzi.livekit.cloud:3478 error=TimeoutError: timed out
+2026-09-06 02:06:34+05:30 2026-09-05 20:36:34,611 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_READY session=f127a73d-1044-46f9-b10a-47e4344605a9 target=ai-14ksodzi.turn.livekit.cloud:443 waitedMs=3243 transport=tcp
+2026-09-06 02:06:34+05:30 2026-09-05 20:36:34,612 [INFO] LiveKitEgressAdapter: LIVEKIT_RELAY_FIRST session=f127a73d-1044-46f9-b10a-47e4344605a9 reason=udp_silent_tcp_443_ready family=IPv4 host=ai-14ksodzi.turn.livekit.cloud
+2026-09-06 02:06:34+05:30 2026-09-05 20:36:34,654 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,141 [INFO] LiveKitEgressAdapter: LIVEKIT_CONNECT_SUCCEEDED session=f127a73d-1044-46f9-b10a-47e4344605a9 attempt=1/3 elapsedMs=529.5
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,144 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=f127a73d-1044-46f9-b10a-47e4344605a9 state=1
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,145 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,147 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,149 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received. Creating track...
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,149 [INFO] VideoPublisher: [VP-DIAG] Creating video track 1024x1024
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,151 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,151 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,151 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,189 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 37.4 ms
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,191 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCUCdcjrVnELXQ from e2e-test-worker
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,196 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:06:35+05:30 2026-09-05 20:36:35,197 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=f127a73d-1044-46f9-b10a-47e4344605a9 room=manual-f055dca6
+2026-09-06 02:06:39+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=71.7s CPU_sys=15.8s sessions=1 pool=3/3
+2026-09-06 02:06:40+05:30 2026-09-05 20:36:40,154 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f127a73d-1044-46f9-b10a-47e4344605a9 windowMs=5012 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.4 maxCaptureMs=1.3
+2026-09-06 02:06:44+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=75.7s CPU_sys=15.9s sessions=1 pool=3/3
+2026-09-06 02:06:45+05:30 2026-09-05 20:36:45,195 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f127a73d-1044-46f9-b10a-47e4344605a9 windowMs=5040 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.1 maxCaptureMs=1.5
+2026-09-06 02:06:48+05:30 2026-09-05 20:36:48,979 [INFO] handler: WS_FRAME_RECEIVED session=f127a73d-1044-46f9-b10a-47e4344605a9 type=1 size=34 ip=172.20.6.214
+2026-09-06 02:06:48+05:30 2026-09-05 20:36:48,980 [INFO] handler: WS_SEND_RESPONSE session=f127a73d-1044-46f9-b10a-47e4344605a9 type=pong ip=172.20.6.214
+2026-09-06 02:06:49+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=79.8s CPU_sys=16.1s sessions=1 pool=3/3
+2026-09-06 02:06:50+05:30 2026-09-05 20:36:50,233 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f127a73d-1044-46f9-b10a-47e4344605a9 windowMs=5038 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=53.8 maxCaptureMs=0.9
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,484 [INFO] handler: WS_FRAME_RECEIVED session=f127a73d-1044-46f9-b10a-47e4344605a9 type=1 size=30 ip=172.20.6.214
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,484 [INFO] handler: WS_SEND_RESPONSE session=f127a73d-1044-46f9-b10a-47e4344605a9 type=ended ip=172.20.6.214
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,484 [INFO] handler: SESSION_END_RECEIVED session=f127a73d-1044-46f9-b10a-47e4344605a9
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,484 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=f127a73d-1044-46f9-b10a-47e4344605a9 keep_alive=False
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,484 [INFO] BatchedStreamingEngine: Session f127a73d-1044-46f9-b10a-47e4344605a9 marked for drain (keep_alive=False)
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,485 [INFO] BatchedStreamingEngine: Session f127a73d-1044-46f9-b10a-47e4344605a9 removed (total=0)
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,586 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=f127a73d-1044-46f9-b10a-47e4344605a9 cycles=1 elapsed=101.8ms keep_alive=False
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,599 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:06:51+05:30 CONNECT /ws/f127a73d-1044-46f9-b10a-47e4344605a9 -> 101 Switching Protocols  (duration: 18.4 s, execution: 18.4 s)
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,805 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=f127a73d-1044-46f9-b10a-47e4344605a9 state=0
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,805 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_DISCONNECTED session=f127a73d-1044-46f9-b10a-47e4344605a9 reason=1
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,806 [INFO] streaming.transport.websocket_server: Unregistered WebSocket session: f127a73d-1044-46f9-b10a-47e4344605a9
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,819 [INFO] handler: [handler] run_batched_streaming_session() completed in 20453.5ms for f127a73d-1044-46f9-b10a-47e4344605a9
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,820 [INFO] handler: WS_SESSION_ENDED session=f127a73d-1044-46f9-b10a-47e4344605a9 ip=172.20.6.214
+2026-09-06 02:06:51+05:30 2026-09-05 20:36:51,820 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:36:33 +0000] "GET /ws/f127a73d-1044-46f9-b10a-47e4344605a9 HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-09-06 02:06:54+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=82.9s CPU_sys=16.2s sessions=0 pool=3/3
+2026-09-06 02:06:54+05:30 2026-09-05 20:36:54,627 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:36:54 +0000] "POST /sessions/f127a73d-1044-46f9-b10a-47e4344605a9/end HTTP/1.1" 404 261 "-" "node"
+2026-09-06 02:06:54+05:30    POST /sessions/f127a73d-1044-46f9-b10a-47e4344605a9/end -> 404 Not Found  (duration: 51.1 ms, execution: 20.1 ms)
+2026-09-06 02:06:59+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=85.5s CPU_sys=16.2s sessions=0 pool=3/3
+2026-09-06 02:07:04+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=88.0s CPU_sys=16.3s sessions=0 pool=3/3
+2026-09-06 02:07:07+05:30 2026-09-05 20:37:07,967 [INFO] handler: [pod_session_start] Received session=375691a3-2dbe-43c5-b1fe-0392c01fc95d room=manual-20a2a5b0 hasIdleAsset=True
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,661 [INFO] streaming.transport.websocket_server: Registered WebSocket session: 375691a3-2dbe-43c5-b1fe-0392c01fc95d provider_profile=none telephony_provider=none
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,662 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47945678382784 thread_name=modal-aiohttp-server event_loop_id=47945549944672
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,662 [INFO] batched_stream_processor: Connecting to egress type=livekit room=manual-20a2a5b0 url=wss://ai-14ksodzi.livekit.cloud session=375691a3-2dbe-43c5-b1fe-0392c01fc95d
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,663 [INFO] batched_stream_processor: Registering session 375691a3-2dbe-43c5-b1fe-0392c01fc95d with BatchedStreamingEngine
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,663 [INFO] streaming.orchestration.idle_video: Downloading idle video asset
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,665 [INFO] BatchedStreamingEngine: Session 375691a3-2dbe-43c5-b1fe-0392c01fc95d added (total=1)
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,857 [INFO] batched_stream_processor: Session 375691a3-2dbe-43c5-b1fe-0392c01fc95d registered with engine in 194.2 ms (avatar prepared)
+2026-09-06 02:07:08+05:30 2026-09-05 20:37:08,995 [INFO] streaming.orchestration.idle_video: Loading idle video frames from /tmp/tmpvh_upl04.mp4
+2026-09-06 02:07:09+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=98.7s CPU_sys=20.0s sessions=1 pool=3/3
+2026-09-06 02:07:09+05:30 2026-09-05 20:37:09,826 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:37:07 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-09-06 02:07:09+05:30    POST /sessions/start -> 202 Accepted  (duration: 1.92 s, execution: 1.89 s)
+2026-09-06 02:07:09+05:30 2026-09-05 20:37:09,993 [INFO] streaming.orchestration.idle_video: Loaded 375 frames for idle loop
+2026-09-06 02:07:10+05:30 2026-09-05 20:37:10,350 [INFO] handler: [pod_session_start] Received session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 room=manual-cf7f1a70 hasIdleAsset=True
+2026-09-06 02:07:10+05:30 2026-09-05 20:37:10,892 [INFO] handler: WS_REQUEST_RECEIVED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d origin= ip=172.20.6.214
+2026-09-06 02:07:10+05:30 2026-09-05 20:37:10,893 [INFO] handler: WS_CONNECT session=375691a3-2dbe-43c5-b1fe-0392c01fc95d origin= ip=172.20.6.214 handlerMs=0.5
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,054 [INFO] streaming.transport.websocket_server: Registered WebSocket session: b2925363-f721-4b89-8ab4-fd20d36a8ea6 provider_profile=none telephony_provider=none
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,057 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47945678382784 thread_name=modal-aiohttp-server event_loop_id=47945549944672
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,057 [INFO] batched_stream_processor: Connecting to egress type=livekit room=manual-cf7f1a70 url=wss://ai-14ksodzi.livekit.cloud session=b2925363-f721-4b89-8ab4-fd20d36a8ea6
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,060 [INFO] batched_stream_processor: Registering session b2925363-f721-4b89-8ab4-fd20d36a8ea6 with BatchedStreamingEngine
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,061 [INFO] streaming.orchestration.idle_video: Downloading idle video asset
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,062 [INFO] BatchedStreamingEngine: Session b2925363-f721-4b89-8ab4-fd20d36a8ea6 added (total=2)
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,196 [INFO] handler: WS_FRAME_RECEIVED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d type=1 size=250 ip=172.20.6.214
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,197 [INFO] handler: WS_SEND_RESPONSE session=375691a3-2dbe-43c5-b1fe-0392c01fc95d type=started ip=172.20.6.214
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,304 [INFO] batched_stream_processor: Session b2925363-f721-4b89-8ab4-fd20d36a8ea6 registered with engine in 243.5 ms (avatar prepared)
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,450 [INFO] streaming.orchestration.idle_video: Loading idle video frames from /tmp/tmpmipn3ndx.mp4
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,738 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:37:10 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-09-06 02:07:11+05:30    POST /sessions/start -> 202 Accepted  (duration: 1.46 s, execution: 1.42 s)
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,872 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_BLOCKED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d targets=ai-14ksodzi.turn.livekit.cloud:3478,ai-14ksodzi.livekit.cloud:3478 error=TimeoutError: timed out
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,904 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_READY session=375691a3-2dbe-43c5-b1fe-0392c01fc95d target=ai-14ksodzi.turn.livekit.cloud:443 waitedMs=3241 transport=tcp
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,904 [INFO] LiveKitEgressAdapter: LIVEKIT_RELAY_FIRST session=375691a3-2dbe-43c5-b1fe-0392c01fc95d reason=udp_silent_tcp_443_ready family=IPv4 host=ai-14ksodzi.turn.livekit.cloud
+2026-09-06 02:07:11+05:30 2026-09-05 20:37:11,959 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,168 [INFO] streaming.orchestration.idle_video: Loaded 375 frames for idle loop
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,463 [INFO] LiveKitEgressAdapter: LIVEKIT_CONNECT_SUCCEEDED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d attempt=1/3 elapsedMs=558.8
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,466 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=375691a3-2dbe-43c5-b1fe-0392c01fc95d state=1
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,467 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=700 buffer=18 peak=42 MAX=54 TARGET=43
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,469 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=700 buffer=18 peak=42 MAX=54 TARGET=43
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,471 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received. Creating track...
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,471 [INFO] VideoPublisher: [VP-DIAG] Creating video track 1024x1024
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,472 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,472 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,473 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,507 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 33.8 ms
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,509 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCoSkNUf7Mwtzh from e2e-test-worker
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,514 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:07:12+05:30 2026-09-05 20:37:12,514 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d room=manual-20a2a5b0
+2026-09-06 02:07:13+05:30 2026-09-05 20:37:13,117 [INFO] handler: WS_REQUEST_RECEIVED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 origin= ip=172.20.6.214
+2026-09-06 02:07:13+05:30 2026-09-05 20:37:13,118 [INFO] handler: WS_CONNECT session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 origin= ip=172.20.6.214 handlerMs=0.4
+2026-09-06 02:07:13+05:30 2026-09-05 20:37:13,436 [INFO] handler: WS_FRAME_RECEIVED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 type=1 size=250 ip=172.20.6.214
+2026-09-06 02:07:13+05:30 2026-09-05 20:37:13,436 [INFO] handler: WS_SEND_RESPONSE session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 type=started ip=172.20.6.214
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,276 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_BLOCKED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 targets=ai-14ksodzi.turn.livekit.cloud:3478,ai-14ksodzi.livekit.cloud:3478 error=TimeoutError: timed out
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,315 [WARNING] LiveKitEgressAdapter: LIVEKIT_NET_PROBE_READY session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 target=ai-14ksodzi.turn.livekit.cloud:443 waitedMs=3255 transport=tcp
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,315 [INFO] LiveKitEgressAdapter: LIVEKIT_RELAY_FIRST session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 reason=udp_silent_tcp_443_ready family=IPv4 host=ai-14ksodzi.turn.livekit.cloud
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,341 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-06 02:07:14+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=114.0s CPU_sys=25.0s sessions=2 pool=3/3
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,866 [INFO] LiveKitEgressAdapter: LIVEKIT_CONNECT_SUCCEEDED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 attempt=1/3 elapsedMs=550.9
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,868 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=700 buffer=18 peak=42 MAX=54 TARGET=43
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,869 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 state=1
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,871 [INFO] streaming.orchestration.state_manager: [SM] Adaptive caps: p95_ms=700 buffer=18 peak=42 MAX=54 TARGET=43
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,879 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received. Creating track...
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,880 [INFO] VideoPublisher: [VP-DIAG] Creating video track 1024x1024
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,881 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,881 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,881 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,918 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 36.8 ms
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,918 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCfajYZuFJZ4o2 from e2e-test-worker
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,921 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:07:14+05:30 2026-09-05 20:37:14,925 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 room=manual-cf7f1a70
+2026-09-06 02:07:17+05:30 2026-09-05 20:37:17,478 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=375691a3-2dbe-43c5-b1fe-0392c01fc95d windowMs=5014 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=43.6 maxCaptureMs=1.3
+2026-09-06 02:07:19+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=119.5s CPU_sys=25.2s sessions=2 pool=3/3
+2026-09-06 02:07:19+05:30 2026-09-05 20:37:19,883 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 windowMs=5017 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=44.3 maxCaptureMs=1.2
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,246 [INFO] handler: WS_FRAME_RECEIVED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 type=1 size=30 ip=172.20.6.214
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,246 [INFO] handler: WS_SEND_RESPONSE session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 type=ended ip=172.20.6.214
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,246 [INFO] handler: SESSION_END_RECEIVED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,247 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 keep_alive=False
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,247 [INFO] BatchedStreamingEngine: Session b2925363-f721-4b89-8ab4-fd20d36a8ea6 marked for drain (keep_alive=False)
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,248 [INFO] BatchedStreamingEngine: Session b2925363-f721-4b89-8ab4-fd20d36a8ea6 removed (total=1)
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,349 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 cycles=1 elapsed=102.5ms keep_alive=False
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,364 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,483 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 state=0
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,483 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_DISCONNECTED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 reason=1
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,483 [INFO] streaming.transport.websocket_server: Unregistered WebSocket session: b2925363-f721-4b89-8ab4-fd20d36a8ea6
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,497 [INFO] handler: [handler] run_batched_streaming_session() completed in 9440.5ms for b2925363-f721-4b89-8ab4-fd20d36a8ea6
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,497 [INFO] handler: WS_SESSION_ENDED session=b2925363-f721-4b89-8ab4-fd20d36a8ea6 ip=172.20.6.214
+2026-09-06 02:07:20+05:30 2026-09-05 20:37:20,501 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:37:13 +0000] "GET /ws/b2925363-f721-4b89-8ab4-fd20d36a8ea6 HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-09-06 02:07:20+05:30 CONNECT /ws/b2925363-f721-4b89-8ab4-fd20d36a8ea6 -> 101 Switching Protocols  (duration: 7.44 s, execution: 7.41 s)
+2026-09-06 02:07:22+05:30 2026-09-05 20:37:22,516 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=375691a3-2dbe-43c5-b1fe-0392c01fc95d windowMs=5038 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.6 maxCaptureMs=1.2
+2026-09-06 02:07:23+05:30 2026-09-05 20:37:23,408 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:37:23 +0000] "POST /sessions/b2925363-f721-4b89-8ab4-fd20d36a8ea6/end HTTP/1.1" 404 261 "-" "node"
+2026-09-06 02:07:23+05:30    POST /sessions/b2925363-f721-4b89-8ab4-fd20d36a8ea6/end -> 404 Not Found  (duration: 53.1 ms, execution: 22.2 ms)
+2026-09-06 02:07:24+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=123.8s CPU_sys=25.4s sessions=1 pool=3/3
+2026-09-06 02:07:26+05:30 2026-09-05 20:37:26,490 [INFO] handler: WS_FRAME_RECEIVED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d type=1 size=34 ip=172.20.6.214
+2026-09-06 02:07:26+05:30 2026-09-05 20:37:26,490 [INFO] handler: WS_SEND_RESPONSE session=375691a3-2dbe-43c5-b1fe-0392c01fc95d type=pong ip=172.20.6.214
+2026-09-06 02:07:27+05:30 2026-09-05 20:37:27,556 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=375691a3-2dbe-43c5-b1fe-0392c01fc95d windowMs=5040 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=52.5 maxCaptureMs=1.1
+2026-09-06 02:07:29+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15870MB CPU_user=127.3s CPU_sys=25.5s sessions=1 pool=3/3
+2026-09-06 02:07:32+05:30 2026-09-05 20:37:32,595 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=375691a3-2dbe-43c5-b1fe-0392c01fc95d windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=42.2 maxCaptureMs=1.3
+2026-09-06 02:07:34+05:30 [EXIT] Starting graceful shutdown
+2026-09-06 02:07:34+05:30 [EXIT] Shutting down Modal serve runtime
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,640 [INFO] handler: WORKER_TERMINATION_REQUESTED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d reason=worker_shutdown
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,640 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d keep_alive=False
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,640 [INFO] BatchedStreamingEngine: Session 375691a3-2dbe-43c5-b1fe-0392c01fc95d marked for drain (keep_alive=False)
+2026-09-06 02:07:34+05:30 [EXIT] Signalled 1 active session(s)
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,641 [INFO] websockets.server: server closing
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,641 [INFO] websockets.server: server closed
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,642 [INFO] streaming.transport.websocket_server: WebSocket ingestion server stopped
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,642 [INFO] BatchedStreamingEngine: Session 375691a3-2dbe-43c5-b1fe-0392c01fc95d removed (total=0)
+2026-09-06 02:07:34+05:30 [EXIT] Draining 1 active session task(s)
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,742 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d cycles=1 elapsed=102.3ms keep_alive=False
+2026-09-06 02:07:34+05:30 2026-09-05 20:37:34,750 [INFO] livekit: livekit::rtc_engine::peer_transport:522:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-06 02:07:35+05:30 2026-09-05 20:37:35,091 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_STATE session=375691a3-2dbe-43c5-b1fe-0392c01fc95d state=0
+2026-09-06 02:07:35+05:30 2026-09-05 20:37:35,092 [INFO] LiveKitEgressAdapter: LIVEKIT_ROOM_DISCONNECTED session=375691a3-2dbe-43c5-b1fe-0392c01fc95d reason=1
+2026-09-06 02:07:35+05:30 2026-09-05 20:37:35,093 [INFO] streaming.transport.websocket_server: Unregistered WebSocket session: 375691a3-2dbe-43c5-b1fe-0392c01fc95d
+2026-09-06 02:07:35+05:30 2026-09-05 20:37:35,111 [INFO] handler: [handler] run_batched_streaming_session() completed in 26449.6ms for 375691a3-2dbe-43c5-b1fe-0392c01fc95d
+2026-09-06 02:07:35+05:30 2026-09-05 20:37:35,327 [INFO] handler: WS_CONNECTION_LOST session=375691a3-2dbe-43c5-b1fe-0392c01fc95d closed=True close_code=1000 exception=None ip=172.20.6.214
+2026-09-06 02:07:35+05:30 2026-09-05 20:37:35,327 [INFO] aiohttp.access: 172.20.6.214 [05/Sep/2026:20:37:10 +0000] "GET /ws/375691a3-2dbe-43c5-b1fe-0392c01fc95d HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-09-06 02:07:36+05:30 [EXIT] Cancelling 1 orphaned reconnect-expiry task(s)
+2026-09-06 02:07:36+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-09-06 02:07:36+05:30 2026-09-05 20:37:36,834 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-09-06 02:07:36+05:30 2026-09-05 20:37:36,834 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-09-06 02:07:36+05:30 2026-09-05 20:37:36,834 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-09-06 02:07:36+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-09-06 02:07:36+05:30 [EXIT] Graceful shutdown complete

@@ -32,7 +32,7 @@ if [ "${DOWNLOAD_FLASHHEAD}" = "1" ] || [ "${DOWNLOAD_FLASHHEAD}" = "true" ] || 
         --local-dir ./models/SoulX-FlashHead-1_3B
     echo "   Done!"
 else
-    echo "1. Skipping SoulX-FlashHead-1_3B download (RunPod cached-model flow)."
+    echo "1. Skipping SoulX-FlashHead-1_3B download (Modal baked-image flow)."
     echo "   Set DOWNLOAD_FLASHHEAD=1 to download a local fallback checkpoint copy."
 fi
 
@@ -53,4 +53,4 @@ if [ -d ./models/SoulX-FlashHead-1_3B ]; then
 fi
 du -sh ./models/wav2vec2-base-960h
 echo ""
-echo "You can now run: ./scripts/build_on_runpod.sh"
+echo "See modal_worker/image.py for the Modal baked-image model download step."

@@ -1,0 +1,4525 @@
+{
+  "experiment": "aivatar-livekit-bound-socket-experiment",
+  "interfaces": {
+    "eth0": "172.20.9.55"
+  },
+  "interval_seconds": 1.0,
+  "iterations": 50,
+  "local_ipv4": "172.20.9.55",
+  "resolved_ipv4": [
+    "161.115.182.100",
+    "161.115.182.113"
+  ],
+  "restore_epoch": 1788948191.3852081,
+  "selected_interface": "eth0",
+  "selected_remote_ip": "161.115.182.100",
+  "snapshot_created_epoch": 1788948186.6672714,
+  "started_at": "2026-09-09T10:03:11.414431+00:00",
+  "summary": {
+    "counts": {
+      "tcp:443:bound": {
+        "connected": 50
+      },
+      "tcp:443:unbound": {
+        "connected": 50
+      },
+      "tcp:7881:bound": {
+        "failed_without_errno": 50
+      },
+      "tcp:7881:unbound": {
+        "failed_without_errno": 50
+      },
+      "udp:3478:bound": {
+        "sent_no_response": 50
+      },
+      "udp:3478:unbound": {
+        "sent_no_response": 50
+      }
+    },
+    "timeline": {
+      "tcp:443:bound:0-5s": {
+        "connected": 2
+      },
+      "tcp:443:bound:15s+": {
+        "connected": 44
+      },
+      "tcp:443:bound:5-15s": {
+        "connected": 4
+      },
+      "tcp:443:unbound:0-5s": {
+        "connected": 2
+      },
+      "tcp:443:unbound:15s+": {
+        "connected": 44
+      },
+      "tcp:443:unbound:5-15s": {
+        "connected": 4
+      },
+      "tcp:7881:bound:0-5s": {
+        "failed_without_errno": 2
+      },
+      "tcp:7881:bound:15s+": {
+        "failed_without_errno": 44
+      },
+      "tcp:7881:bound:5-15s": {
+        "failed_without_errno": 4
+      },
+      "tcp:7881:unbound:0-5s": {
+        "failed_without_errno": 2
+      },
+      "tcp:7881:unbound:15s+": {
+        "failed_without_errno": 44
+      },
+      "tcp:7881:unbound:5-15s": {
+        "failed_without_errno": 4
+      },
+      "udp:3478:bound:0-5s": {
+        "sent_no_response": 2
+      },
+      "udp:3478:bound:15s+": {
+        "sent_no_response": 44
+      },
+      "udp:3478:bound:5-15s": {
+        "sent_no_response": 4
+      },
+      "udp:3478:unbound:0-5s": {
+        "sent_no_response": 2
+      },
+      "udp:3478:unbound:15s+": {
+        "sent_no_response": 44
+      },
+      "udp:3478:unbound:5-15s": {
+        "sent_no_response": 4
+      }
+    }
+  },
+  "system": {
+    "after_trials": {
+      "hostname": "modal",
+      "interfaces": {
+        "eth0": "172.20.9.55"
+      },
+      "proc_net_if_inet6": "",
+      "proc_net_route": "Iface\tDestination\tGateway\tFlags\tRefCnt\tUse\tMetric\tMask\tMTU\tWindow\tIRTT                                                         \neth0\t000014AC\t00000000\t0001\t0\t0\t0\t0000FFFF\t0\t0\t0                                                                               \neth0\t00000000\t010014AC\t0003\t0\t0\t0\t00000000\t0\t0\t0                                                                               \n"
+    },
+    "at_restore": {
+      "hostname": "modal",
+      "interfaces": {
+        "eth0": "172.20.9.55"
+      },
+      "proc_net_if_inet6": "",
+      "proc_net_route": "Iface\tDestination\tGateway\tFlags\tRefCnt\tUse\tMetric\tMask\tMTU\tWindow\tIRTT                                                         \neth0\t000014AC\t00000000\t0001\t0\t0\t0\t0000FFFF\t0\t0\t0                                                                               \neth0\t00000000\t010014AC\t0003\t0\t0\t0\t00000000\t0\t0\t0                                                                               \n"
+    },
+    "platform": "Linux-4.4.0-x86_64-with-glibc2.39"
+  },
+  "target_host": "ai-14ksodzi.turn.livekit.cloud",
+  "target_source": "livekit_secret",
+  "tcp_ports": [
+    443,
+    7881
+  ],
+  "timeout_seconds": 0.4,
+  "trials": [
+    {
+      "bound": false,
+      "elapsed_ms": 400.733,
+      "errno": null,
+      "error": null,
+      "iteration": 1,
+      "local": [
+        "0.0.0.0",
+        44997
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 441.549
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.246,
+      "errno": null,
+      "error": null,
+      "iteration": 1,
+      "local": [
+        "172.20.9.55",
+        36519
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 842.863
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.584,
+      "errno": null,
+      "error": null,
+      "iteration": 1,
+      "local": [
+        "172.20.9.55",
+        53176
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 853.499
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.966,
+      "errno": null,
+      "error": null,
+      "iteration": 1,
+      "local": [
+        "172.20.9.55",
+        56876
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 864.509
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.715,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 1,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 1265.252
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 402.198,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 1,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 1667.474
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.773,
+      "errno": null,
+      "error": null,
+      "iteration": 2,
+      "local": [
+        "172.20.9.55",
+        64387
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 3069.717
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.488,
+      "errno": null,
+      "error": null,
+      "iteration": 2,
+      "local": [
+        "0.0.0.0",
+        61041
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 3470.229
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.816,
+      "errno": null,
+      "error": null,
+      "iteration": 2,
+      "local": [
+        "172.20.9.55",
+        40510
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 3480.07
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.349,
+      "errno": null,
+      "error": null,
+      "iteration": 2,
+      "local": [
+        "172.20.9.55",
+        49663
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 3490.436
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.367,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 2,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 3890.825
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.209,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 2,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 4292.057
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.525,
+      "errno": null,
+      "error": null,
+      "iteration": 3,
+      "local": [
+        "0.0.0.0",
+        53347
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 5693.973
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.026,
+      "errno": null,
+      "error": null,
+      "iteration": 3,
+      "local": [
+        "172.20.9.55",
+        65211
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 6095.022
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.858,
+      "errno": null,
+      "error": null,
+      "iteration": 3,
+      "local": [
+        "172.20.9.55",
+        58901
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 6105.895
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.057,
+      "errno": null,
+      "error": null,
+      "iteration": 3,
+      "local": [
+        "172.20.9.55",
+        26835
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 6115.959
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.45,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 3,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 6517.428
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.36,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 3,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 6918.811
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.768,
+      "errno": null,
+      "error": null,
+      "iteration": 4,
+      "local": [
+        "172.20.9.55",
+        50556
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 8320.19
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.298,
+      "errno": null,
+      "error": null,
+      "iteration": 4,
+      "local": [
+        "0.0.0.0",
+        36725
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 8720.511
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.571,
+      "errno": null,
+      "error": null,
+      "iteration": 4,
+      "local": [
+        "172.20.9.55",
+        23748
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 8731.098
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.782,
+      "errno": null,
+      "error": null,
+      "iteration": 4,
+      "local": [
+        "172.20.9.55",
+        20788
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 8740.896
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.079,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 4,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 9142.002
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.958,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 4,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 9542.985
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.198,
+      "errno": null,
+      "error": null,
+      "iteration": 5,
+      "local": [
+        "0.0.0.0",
+        38460
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 10944.942
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.224,
+      "errno": null,
+      "error": null,
+      "iteration": 5,
+      "local": [
+        "172.20.9.55",
+        64227
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 11346.191
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.881,
+      "errno": null,
+      "error": null,
+      "iteration": 5,
+      "local": [
+        "172.20.9.55",
+        58940
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 11356.089
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.886,
+      "errno": null,
+      "error": null,
+      "iteration": 5,
+      "local": [
+        "172.20.9.55",
+        17777
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 11366.983
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.682,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 5,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 11767.69
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.83,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 5,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 12168.552
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.52,
+      "errno": null,
+      "error": null,
+      "iteration": 6,
+      "local": [
+        "172.20.9.55",
+        60036
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 13569.601
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.79,
+      "errno": null,
+      "error": null,
+      "iteration": 6,
+      "local": [
+        "0.0.0.0",
+        36989
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 13970.417
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.586,
+      "errno": null,
+      "error": null,
+      "iteration": 6,
+      "local": [
+        "172.20.9.55",
+        50212
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 13981.018
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.574,
+      "errno": null,
+      "error": null,
+      "iteration": 6,
+      "local": [
+        "172.20.9.55",
+        22967
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 13990.6
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.318,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 6,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 14391.935
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.298,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 6,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 14793.256
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.797,
+      "errno": null,
+      "error": null,
+      "iteration": 7,
+      "local": [
+        "0.0.0.0",
+        25902
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 16194.37
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.357,
+      "errno": null,
+      "error": null,
+      "iteration": 7,
+      "local": [
+        "172.20.9.55",
+        57185
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 16595.756
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.105,
+      "errno": null,
+      "error": null,
+      "iteration": 7,
+      "local": [
+        "172.20.9.55",
+        49127
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 16605.886
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.478,
+      "errno": null,
+      "error": null,
+      "iteration": 7,
+      "local": [
+        "172.20.9.55",
+        42011
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 16615.395
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.472,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 7,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 17015.893
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.626,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 7,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 17416.543
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.87,
+      "errno": null,
+      "error": null,
+      "iteration": 8,
+      "local": [
+        "172.20.9.55",
+        49524
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 18818.15
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.884,
+      "errno": null,
+      "error": null,
+      "iteration": 8,
+      "local": [
+        "0.0.0.0",
+        51981
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 19219.059
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.878,
+      "errno": null,
+      "error": null,
+      "iteration": 8,
+      "local": [
+        "172.20.9.55",
+        33392
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 19228.954
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.061,
+      "errno": null,
+      "error": null,
+      "iteration": 8,
+      "local": [
+        "172.20.9.55",
+        25083
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 19239.025
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.189,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 8,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 19640.232
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.769,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 8,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 20041.023
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.174,
+      "errno": null,
+      "error": null,
+      "iteration": 9,
+      "local": [
+        "0.0.0.0",
+        17683
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 21443.417
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.862,
+      "errno": null,
+      "error": null,
+      "iteration": 9,
+      "local": [
+        "172.20.9.55",
+        25518
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 21844.307
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.805,
+      "errno": null,
+      "error": null,
+      "iteration": 9,
+      "local": [
+        "172.20.9.55",
+        63981
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 21854.13
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.983,
+      "errno": null,
+      "error": null,
+      "iteration": 9,
+      "local": [
+        "172.20.9.55",
+        18802
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 21865.127
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.373,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 9,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 22265.527
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.916,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 9,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 22666.469
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.732,
+      "errno": null,
+      "error": null,
+      "iteration": 10,
+      "local": [
+        "172.20.9.55",
+        42625
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 24068.452
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.428,
+      "errno": null,
+      "error": null,
+      "iteration": 10,
+      "local": [
+        "0.0.0.0",
+        54946
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 24468.942
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.691,
+      "errno": null,
+      "error": null,
+      "iteration": 10,
+      "local": [
+        "172.20.9.55",
+        47917
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 24479.675
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.525,
+      "errno": null,
+      "error": null,
+      "iteration": 10,
+      "local": [
+        "172.20.9.55",
+        50671
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 24489.218
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.368,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 10,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 24890.612
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.202,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 10,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 25291.841
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.581,
+      "errno": null,
+      "error": null,
+      "iteration": 11,
+      "local": [
+        "0.0.0.0",
+        27996
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 26694.494
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.405,
+      "errno": null,
+      "error": null,
+      "iteration": 11,
+      "local": [
+        "172.20.9.55",
+        19123
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 27095.931
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.643,
+      "errno": null,
+      "error": null,
+      "iteration": 11,
+      "local": [
+        "172.20.9.55",
+        42411
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 27106.605
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.641,
+      "errno": null,
+      "error": null,
+      "iteration": 11,
+      "local": [
+        "172.20.9.55",
+        29429
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 27116.262
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.338,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 11,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 27517.621
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.536,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 11,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 27918.185
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.479,
+      "errno": null,
+      "error": null,
+      "iteration": 12,
+      "local": [
+        "172.20.9.55",
+        41848
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 29319.717
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.44,
+      "errno": null,
+      "error": null,
+      "iteration": 12,
+      "local": [
+        "0.0.0.0",
+        29350
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 29720.182
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.74,
+      "errno": null,
+      "error": null,
+      "iteration": 12,
+      "local": [
+        "172.20.9.55",
+        19703
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 29729.941
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.908,
+      "errno": null,
+      "error": null,
+      "iteration": 12,
+      "local": [
+        "172.20.9.55",
+        35732
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 29740.873
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.327,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 12,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 30141.218
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.246,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 12,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 30542.486
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.031,
+      "errno": null,
+      "error": null,
+      "iteration": 13,
+      "local": [
+        "0.0.0.0",
+        40077
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 31943.895
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.523,
+      "errno": null,
+      "error": null,
+      "iteration": 13,
+      "local": [
+        "172.20.9.55",
+        30418
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 32344.448
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.516,
+      "errno": null,
+      "error": null,
+      "iteration": 13,
+      "local": [
+        "172.20.9.55",
+        44426
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 32354.989
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.729,
+      "errno": null,
+      "error": null,
+      "iteration": 13,
+      "local": [
+        "172.20.9.55",
+        51332
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 32364.734
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.846,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 13,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 32765.594
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.754,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 13,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 33166.372
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.154,
+      "errno": null,
+      "error": null,
+      "iteration": 14,
+      "local": [
+        "172.20.9.55",
+        25857
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 34567.959
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.736,
+      "errno": null,
+      "error": null,
+      "iteration": 14,
+      "local": [
+        "0.0.0.0",
+        33001
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 34968.72
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.809,
+      "errno": null,
+      "error": null,
+      "iteration": 14,
+      "local": [
+        "172.20.9.55",
+        40946
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 34978.544
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.3,
+      "errno": null,
+      "error": null,
+      "iteration": 14,
+      "local": [
+        "172.20.9.55",
+        41446
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 34987.85
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.138,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 14,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 35388.997
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.901,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 14,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 35789.919
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.124,
+      "errno": null,
+      "error": null,
+      "iteration": 15,
+      "local": [
+        "0.0.0.0",
+        27791
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 37191.536
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.053,
+      "errno": null,
+      "error": null,
+      "iteration": 15,
+      "local": [
+        "172.20.9.55",
+        59474
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 37592.622
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 11.08,
+      "errno": null,
+      "error": null,
+      "iteration": 15,
+      "local": [
+        "172.20.9.55",
+        20283
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 37603.712
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.815,
+      "errno": null,
+      "error": null,
+      "iteration": 15,
+      "local": [
+        "172.20.9.55",
+        17637
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 37613.535
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.291,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 15,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 38014.843
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.587,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 15,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 38415.454
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.547,
+      "errno": null,
+      "error": null,
+      "iteration": 16,
+      "local": [
+        "172.20.9.55",
+        51001
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 39816.498
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.312,
+      "errno": null,
+      "error": null,
+      "iteration": 16,
+      "local": [
+        "0.0.0.0",
+        63430
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 40217.84
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.659,
+      "errno": null,
+      "error": null,
+      "iteration": 16,
+      "local": [
+        "172.20.9.55",
+        16693
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 40227.522
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.399,
+      "errno": null,
+      "error": null,
+      "iteration": 16,
+      "local": [
+        "172.20.9.55",
+        22902
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 40236.953
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.607,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 16,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 40637.583
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.913,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 16,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 41038.52
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.92,
+      "errno": null,
+      "error": null,
+      "iteration": 17,
+      "local": [
+        "0.0.0.0",
+        23766
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 42440.531
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.836,
+      "errno": null,
+      "error": null,
+      "iteration": 17,
+      "local": [
+        "172.20.9.55",
+        34494
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 42841.395
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.347,
+      "errno": null,
+      "error": null,
+      "iteration": 17,
+      "local": [
+        "172.20.9.55",
+        17610
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 42851.772
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.381,
+      "errno": null,
+      "error": null,
+      "iteration": 17,
+      "local": [
+        "172.20.9.55",
+        56140
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 42862.179
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.278,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 17,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 43262.477
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.815,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 17,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 43663.314
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.686,
+      "errno": null,
+      "error": null,
+      "iteration": 18,
+      "local": [
+        "172.20.9.55",
+        51594
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 45064.43
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.431,
+      "errno": null,
+      "error": null,
+      "iteration": 18,
+      "local": [
+        "0.0.0.0",
+        49676
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 45464.883
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.214,
+      "errno": null,
+      "error": null,
+      "iteration": 18,
+      "local": [
+        "172.20.9.55",
+        47535
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 45476.114
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.489,
+      "errno": null,
+      "error": null,
+      "iteration": 18,
+      "local": [
+        "172.20.9.55",
+        22804
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 45485.611
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.754,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 18,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 45886.387
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.469,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 18,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 46286.881
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.021,
+      "errno": null,
+      "error": null,
+      "iteration": 19,
+      "local": [
+        "0.0.0.0",
+        63586
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 47689.013
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.807,
+      "errno": null,
+      "error": null,
+      "iteration": 19,
+      "local": [
+        "172.20.9.55",
+        28575
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 48089.849
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 11.061,
+      "errno": null,
+      "error": null,
+      "iteration": 19,
+      "local": [
+        "172.20.9.55",
+        18468
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 48100.944
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.391,
+      "errno": null,
+      "error": null,
+      "iteration": 19,
+      "local": [
+        "172.20.9.55",
+        56358
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 48111.349
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.772,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 19,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 48512.142
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.924,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 19,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 48913.09
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.005,
+      "errno": null,
+      "error": null,
+      "iteration": 20,
+      "local": [
+        "172.20.9.55",
+        58601
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 50314.882
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.404,
+      "errno": null,
+      "error": null,
+      "iteration": 20,
+      "local": [
+        "0.0.0.0",
+        50983
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 50715.336
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.874,
+      "errno": null,
+      "error": null,
+      "iteration": 20,
+      "local": [
+        "172.20.9.55",
+        65299
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 50725.236
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 11.17,
+      "errno": null,
+      "error": null,
+      "iteration": 20,
+      "local": [
+        "172.20.9.55",
+        23098
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 50736.428
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.866,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 20,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 51137.32
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.718,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 20,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 51538.651
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.477,
+      "errno": null,
+      "error": null,
+      "iteration": 21,
+      "local": [
+        "0.0.0.0",
+        44882
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 52940.1
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.131,
+      "errno": null,
+      "error": null,
+      "iteration": 21,
+      "local": [
+        "172.20.9.55",
+        30726
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 53341.261
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.111,
+      "errno": null,
+      "error": null,
+      "iteration": 21,
+      "local": [
+        "172.20.9.55",
+        21834
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 53351.404
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.166,
+      "errno": null,
+      "error": null,
+      "iteration": 21,
+      "local": [
+        "172.20.9.55",
+        53218
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 53362.586
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.401,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 21,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 53764.008
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.011,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 21,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 54165.045
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.033,
+      "errno": null,
+      "error": null,
+      "iteration": 22,
+      "local": [
+        "172.20.9.55",
+        16647
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 55566.972
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.315,
+      "errno": null,
+      "error": null,
+      "iteration": 22,
+      "local": [
+        "0.0.0.0",
+        42464
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 55968.324
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.975,
+      "errno": null,
+      "error": null,
+      "iteration": 22,
+      "local": [
+        "172.20.9.55",
+        40579
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 55980.342
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.613,
+      "errno": null,
+      "error": null,
+      "iteration": 22,
+      "local": [
+        "172.20.9.55",
+        16527
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 55991.01
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.982,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 22,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 56392.023
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.951,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 22,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 56792.998
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.499,
+      "errno": null,
+      "error": null,
+      "iteration": 23,
+      "local": [
+        "0.0.0.0",
+        32460
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 58195.272
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.479,
+      "errno": null,
+      "error": null,
+      "iteration": 23,
+      "local": [
+        "172.20.9.55",
+        21220
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 58596.793
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.807,
+      "errno": null,
+      "error": null,
+      "iteration": 23,
+      "local": [
+        "172.20.9.55",
+        23044
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 58607.682
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.594,
+      "errno": null,
+      "error": null,
+      "iteration": 23,
+      "local": [
+        "172.20.9.55",
+        31560
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 58618.298
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.223,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 23,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 59019.548
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.938,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 23,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 59420.523
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.826,
+      "errno": null,
+      "error": null,
+      "iteration": 24,
+      "local": [
+        "172.20.9.55",
+        55509
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 60821.986
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.065,
+      "errno": null,
+      "error": null,
+      "iteration": 24,
+      "local": [
+        "0.0.0.0",
+        36679
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 61223.077
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.308,
+      "errno": null,
+      "error": null,
+      "iteration": 24,
+      "local": [
+        "172.20.9.55",
+        34650
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 61234.42
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.441,
+      "errno": null,
+      "error": null,
+      "iteration": 24,
+      "local": [
+        "172.20.9.55",
+        64320
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 61244.876
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.414,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 24,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 61646.323
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.119,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 24,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 62047.467
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.517,
+      "errno": null,
+      "error": null,
+      "iteration": 25,
+      "local": [
+        "0.0.0.0",
+        37671
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 63449.551
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.8,
+      "errno": null,
+      "error": null,
+      "iteration": 25,
+      "local": [
+        "172.20.9.55",
+        56816
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 63851.382
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.921,
+      "errno": null,
+      "error": null,
+      "iteration": 25,
+      "local": [
+        "172.20.9.55",
+        25981
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 63862.326
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.614,
+      "errno": null,
+      "error": null,
+      "iteration": 25,
+      "local": [
+        "172.20.9.55",
+        44209
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 63872.953
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.673,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 25,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 64273.645
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.344,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 25,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 64675.042
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.966,
+      "errno": null,
+      "error": null,
+      "iteration": 26,
+      "local": [
+        "172.20.9.55",
+        30161
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 66076.875
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.817,
+      "errno": null,
+      "error": null,
+      "iteration": 26,
+      "local": [
+        "0.0.0.0",
+        42271
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 66477.719
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.448,
+      "errno": null,
+      "error": null,
+      "iteration": 26,
+      "local": [
+        "172.20.9.55",
+        33601
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 66488.182
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 11.021,
+      "errno": null,
+      "error": null,
+      "iteration": 26,
+      "local": [
+        "172.20.9.55",
+        49745
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 66499.211
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.749,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 26,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 66899.978
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.649,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 26,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 67300.65
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.866,
+      "errno": null,
+      "error": null,
+      "iteration": 27,
+      "local": [
+        "0.0.0.0",
+        19938
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 68702.036
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.381,
+      "errno": null,
+      "error": null,
+      "iteration": 27,
+      "local": [
+        "172.20.9.55",
+        32908
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 69103.443
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 11.077,
+      "errno": null,
+      "error": null,
+      "iteration": 27,
+      "local": [
+        "172.20.9.55",
+        35771
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 69114.538
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.412,
+      "errno": null,
+      "error": null,
+      "iteration": 27,
+      "local": [
+        "172.20.9.55",
+        57270
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 69124.984
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.16,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 27,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 69526.171
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.114,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 27,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 69927.309
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.663,
+      "errno": null,
+      "error": null,
+      "iteration": 28,
+      "local": [
+        "172.20.9.55",
+        49616
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 71329.19
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.267,
+      "errno": null,
+      "error": null,
+      "iteration": 28,
+      "local": [
+        "0.0.0.0",
+        41964
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 71730.485
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.578,
+      "errno": null,
+      "error": null,
+      "iteration": 28,
+      "local": [
+        "172.20.9.55",
+        32728
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 71740.08
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.351,
+      "errno": null,
+      "error": null,
+      "iteration": 28,
+      "local": [
+        "172.20.9.55",
+        30119
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 71749.441
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.665,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 28,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 72150.126
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.166,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 28,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 72551.32
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.075,
+      "errno": null,
+      "error": null,
+      "iteration": 29,
+      "local": [
+        "0.0.0.0",
+        42117
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 73952.905
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.095,
+      "errno": null,
+      "error": null,
+      "iteration": 29,
+      "local": [
+        "172.20.9.55",
+        53668
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 74354.015
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 11.029,
+      "errno": null,
+      "error": null,
+      "iteration": 29,
+      "local": [
+        "172.20.9.55",
+        32956
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 74365.056
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.8,
+      "errno": null,
+      "error": null,
+      "iteration": 29,
+      "local": [
+        "172.20.9.55",
+        53147
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 74374.863
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.811,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 29,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 74775.685
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.85,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 29,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 75176.547
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.823,
+      "errno": null,
+      "error": null,
+      "iteration": 30,
+      "local": [
+        "172.20.9.55",
+        52140
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 76577.889
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.193,
+      "errno": null,
+      "error": null,
+      "iteration": 30,
+      "local": [
+        "0.0.0.0",
+        40431
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 76979.107
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.508,
+      "errno": null,
+      "error": null,
+      "iteration": 30,
+      "local": [
+        "172.20.9.55",
+        35071
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 76989.627
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.473,
+      "errno": null,
+      "error": null,
+      "iteration": 30,
+      "local": [
+        "172.20.9.55",
+        56462
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 76999.108
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.317,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 30,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 77400.445
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.664,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 30,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 77801.133
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.145,
+      "errno": null,
+      "error": null,
+      "iteration": 31,
+      "local": [
+        "0.0.0.0",
+        40305
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 79203.364
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.626,
+      "errno": null,
+      "error": null,
+      "iteration": 31,
+      "local": [
+        "172.20.9.55",
+        51143
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 79604.016
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.803,
+      "errno": null,
+      "error": null,
+      "iteration": 31,
+      "local": [
+        "172.20.9.55",
+        56701
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 79614.836
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.381,
+      "errno": null,
+      "error": null,
+      "iteration": 31,
+      "local": [
+        "172.20.9.55",
+        18187
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 79625.231
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.965,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 31,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 80026.223
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 402.077,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 31,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 80428.335
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.036,
+      "errno": null,
+      "error": null,
+      "iteration": 32,
+      "local": [
+        "172.20.9.55",
+        22020
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 81829.801
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.708,
+      "errno": null,
+      "error": null,
+      "iteration": 32,
+      "local": [
+        "0.0.0.0",
+        31300
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 82230.532
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.66,
+      "errno": null,
+      "error": null,
+      "iteration": 32,
+      "local": [
+        "172.20.9.55",
+        35657
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 82240.21
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.946,
+      "errno": null,
+      "error": null,
+      "iteration": 32,
+      "local": [
+        "172.20.9.55",
+        31539
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 82250.186
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.896,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 32,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 82652.104
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.911,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 32,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 83053.037
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.132,
+      "errno": null,
+      "error": null,
+      "iteration": 33,
+      "local": [
+        "0.0.0.0",
+        63432
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 84454.432
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.184,
+      "errno": null,
+      "error": null,
+      "iteration": 33,
+      "local": [
+        "172.20.9.55",
+        24081
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 84855.64
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.9,
+      "errno": null,
+      "error": null,
+      "iteration": 33,
+      "local": [
+        "172.20.9.55",
+        49836
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 84865.557
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.516,
+      "errno": null,
+      "error": null,
+      "iteration": 33,
+      "local": [
+        "172.20.9.55",
+        59493
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 84875.099
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.721,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 33,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 85275.848
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.368,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 33,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 85676.241
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.989,
+      "errno": null,
+      "error": null,
+      "iteration": 34,
+      "local": [
+        "172.20.9.55",
+        25766
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 87078.059
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.917,
+      "errno": null,
+      "error": null,
+      "iteration": 34,
+      "local": [
+        "0.0.0.0",
+        36475
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 87478.997
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.592,
+      "errno": null,
+      "error": null,
+      "iteration": 34,
+      "local": [
+        "172.20.9.55",
+        49707
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 87489.619
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.378,
+      "errno": null,
+      "error": null,
+      "iteration": 34,
+      "local": [
+        "172.20.9.55",
+        43283
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 87500.024
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.241,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 34,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 87901.291
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.078,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 34,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 88302.394
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.584,
+      "errno": null,
+      "error": null,
+      "iteration": 35,
+      "local": [
+        "0.0.0.0",
+        56553
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 89703.605
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.928,
+      "errno": null,
+      "error": null,
+      "iteration": 35,
+      "local": [
+        "172.20.9.55",
+        30169
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 90104.553
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.71,
+      "errno": null,
+      "error": null,
+      "iteration": 35,
+      "local": [
+        "172.20.9.55",
+        25394
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 90114.282
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.118,
+      "errno": null,
+      "error": null,
+      "iteration": 35,
+      "local": [
+        "172.20.9.55",
+        48416
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 90124.409
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.087,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 35,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 90525.506
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.988,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 35,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 90926.51
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.051,
+      "errno": null,
+      "error": null,
+      "iteration": 36,
+      "local": [
+        "172.20.9.55",
+        52926
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 92327.763
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.058,
+      "errno": null,
+      "error": null,
+      "iteration": 36,
+      "local": [
+        "0.0.0.0",
+        36724
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 92728.842
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.033,
+      "errno": null,
+      "error": null,
+      "iteration": 36,
+      "local": [
+        "172.20.9.55",
+        33670
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 92739.893
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.614,
+      "errno": null,
+      "error": null,
+      "iteration": 36,
+      "local": [
+        "172.20.9.55",
+        18701
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 92749.516
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.997,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 36,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 93150.525
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.086,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 36,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 93551.623
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.454,
+      "errno": null,
+      "error": null,
+      "iteration": 37,
+      "local": [
+        "0.0.0.0",
+        58940
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 94952.543
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.077,
+      "errno": null,
+      "error": null,
+      "iteration": 37,
+      "local": [
+        "172.20.9.55",
+        45859
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 95353.637
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.399,
+      "errno": null,
+      "error": null,
+      "iteration": 37,
+      "local": [
+        "172.20.9.55",
+        24473
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 95363.048
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.419,
+      "errno": null,
+      "error": null,
+      "iteration": 37,
+      "local": [
+        "172.20.9.55",
+        35903
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 95372.489
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.223,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 37,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 95773.723
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.88,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 37,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 96174.615
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.464,
+      "errno": null,
+      "error": null,
+      "iteration": 38,
+      "local": [
+        "172.20.9.55",
+        41458
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 97577.093
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.946,
+      "errno": null,
+      "error": null,
+      "iteration": 38,
+      "local": [
+        "0.0.0.0",
+        61659
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 97978.057
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.76,
+      "errno": null,
+      "error": null,
+      "iteration": 38,
+      "local": [
+        "172.20.9.55",
+        57324
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 97987.831
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.356,
+      "errno": null,
+      "error": null,
+      "iteration": 38,
+      "local": [
+        "172.20.9.55",
+        50435
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 97997.198
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.021,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 38,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 98398.229
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.87,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 38,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 98799.11
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.655,
+      "errno": null,
+      "error": null,
+      "iteration": 39,
+      "local": [
+        "0.0.0.0",
+        35301
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 100200.743
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.262,
+      "errno": null,
+      "error": null,
+      "iteration": 39,
+      "local": [
+        "172.20.9.55",
+        54512
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 100601.022
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.128,
+      "errno": null,
+      "error": null,
+      "iteration": 39,
+      "local": [
+        "172.20.9.55",
+        39869
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 100611.161
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.044,
+      "errno": null,
+      "error": null,
+      "iteration": 39,
+      "local": [
+        "172.20.9.55",
+        35648
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 100621.213
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.709,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 39,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 101021.934
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.925,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 39,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 101422.872
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.563,
+      "errno": null,
+      "error": null,
+      "iteration": 40,
+      "local": [
+        "172.20.9.55",
+        49474
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 102823.954
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.49,
+      "errno": null,
+      "error": null,
+      "iteration": 40,
+      "local": [
+        "0.0.0.0",
+        56890
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 103224.476
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.892,
+      "errno": null,
+      "error": null,
+      "iteration": 40,
+      "local": [
+        "172.20.9.55",
+        24846
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 103234.385
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.39,
+      "errno": null,
+      "error": null,
+      "iteration": 40,
+      "local": [
+        "172.20.9.55",
+        52587
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 103244.781
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.732,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 40,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 103645.533
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.751,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 40,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 104046.315
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.585,
+      "errno": null,
+      "error": null,
+      "iteration": 41,
+      "local": [
+        "0.0.0.0",
+        17307
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 105447.29
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.512,
+      "errno": null,
+      "error": null,
+      "iteration": 41,
+      "local": [
+        "172.20.9.55",
+        30403
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 105848.831
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.662,
+      "errno": null,
+      "error": null,
+      "iteration": 41,
+      "local": [
+        "172.20.9.55",
+        55616
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 105859.512
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.643,
+      "errno": null,
+      "error": null,
+      "iteration": 41,
+      "local": [
+        "172.20.9.55",
+        63316
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 105870.163
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.722,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 41,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 106270.906
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.027,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 41,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 106671.954
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.986,
+      "errno": null,
+      "error": null,
+      "iteration": 42,
+      "local": [
+        "172.20.9.55",
+        28188
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 108073.795
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.343,
+      "errno": null,
+      "error": null,
+      "iteration": 42,
+      "local": [
+        "0.0.0.0",
+        63210
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 108475.176
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.231,
+      "errno": null,
+      "error": null,
+      "iteration": 42,
+      "local": [
+        "172.20.9.55",
+        51588
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 108486.434
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.398,
+      "errno": null,
+      "error": null,
+      "iteration": 42,
+      "local": [
+        "172.20.9.55",
+        19107
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 108496.861
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.956,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 42,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 108897.836
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.748,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 42,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 109298.607
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.792,
+      "errno": null,
+      "error": null,
+      "iteration": 43,
+      "local": [
+        "0.0.0.0",
+        54216
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 110701.5
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.672,
+      "errno": null,
+      "error": null,
+      "iteration": 43,
+      "local": [
+        "172.20.9.55",
+        49933
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 111102.202
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.29,
+      "errno": null,
+      "error": null,
+      "iteration": 43,
+      "local": [
+        "172.20.9.55",
+        21199
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 111112.515
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.388,
+      "errno": null,
+      "error": null,
+      "iteration": 43,
+      "local": [
+        "172.20.9.55",
+        59214
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 111122.921
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.975,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 43,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 111523.917
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.952,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 43,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 111924.891
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.47,
+      "errno": null,
+      "error": null,
+      "iteration": 44,
+      "local": [
+        "172.20.9.55",
+        17110
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 113327.052
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.431,
+      "errno": null,
+      "error": null,
+      "iteration": 44,
+      "local": [
+        "0.0.0.0",
+        17870
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 113728.514
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.156,
+      "errno": null,
+      "error": null,
+      "iteration": 44,
+      "local": [
+        "172.20.9.55",
+        60829
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 113738.747
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 12.555,
+      "errno": null,
+      "error": null,
+      "iteration": 44,
+      "local": [
+        "172.20.9.55",
+        59401
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 113751.322
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.573,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 44,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 114152.922
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.824,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 44,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 114554.769
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.616,
+      "errno": null,
+      "error": null,
+      "iteration": 45,
+      "local": [
+        "0.0.0.0",
+        28608
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 115956.957
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.445,
+      "errno": null,
+      "error": null,
+      "iteration": 45,
+      "local": [
+        "172.20.9.55",
+        51137
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 116357.442
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.068,
+      "errno": null,
+      "error": null,
+      "iteration": 45,
+      "local": [
+        "172.20.9.55",
+        24335
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 116367.528
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.485,
+      "errno": null,
+      "error": null,
+      "iteration": 45,
+      "local": [
+        "172.20.9.55",
+        27136
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 116378.021
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.838,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 45,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 116778.878
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.622,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 45,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 117180.526
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.82,
+      "errno": null,
+      "error": null,
+      "iteration": 46,
+      "local": [
+        "172.20.9.55",
+        45141
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 118581.873
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.244,
+      "errno": null,
+      "error": null,
+      "iteration": 46,
+      "local": [
+        "0.0.0.0",
+        17579
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 118983.141
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.264,
+      "errno": null,
+      "error": null,
+      "iteration": 46,
+      "local": [
+        "172.20.9.55",
+        39139
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 118993.437
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.62,
+      "errno": null,
+      "error": null,
+      "iteration": 46,
+      "local": [
+        "172.20.9.55",
+        32535
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 119003.081
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.76,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 46,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 119403.869
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.728,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 46,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 119804.62
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.853,
+      "errno": null,
+      "error": null,
+      "iteration": 47,
+      "local": [
+        "0.0.0.0",
+        23221
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 121206.568
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.217,
+      "errno": null,
+      "error": null,
+      "iteration": 47,
+      "local": [
+        "172.20.9.55",
+        44822
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 121607.809
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.75,
+      "errno": null,
+      "error": null,
+      "iteration": 47,
+      "local": [
+        "172.20.9.55",
+        18037
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 121617.577
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.836,
+      "errno": null,
+      "error": null,
+      "iteration": 47,
+      "local": [
+        "172.20.9.55",
+        33953
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 121629.441
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.72,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 47,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 122031.182
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.999,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 47,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 122432.205
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.874,
+      "errno": null,
+      "error": null,
+      "iteration": 48,
+      "local": [
+        "172.20.9.55",
+        24728
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 123833.77
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.897,
+      "errno": null,
+      "error": null,
+      "iteration": 48,
+      "local": [
+        "0.0.0.0",
+        17781
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 124234.691
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 11.73,
+      "errno": null,
+      "error": null,
+      "iteration": 48,
+      "local": [
+        "172.20.9.55",
+        43523
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 124246.439
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.465,
+      "errno": null,
+      "error": null,
+      "iteration": 48,
+      "local": [
+        "172.20.9.55",
+        31303
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 124255.914
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 400.812,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 48,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 124656.745
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 402.08,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 48,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 125058.846
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.099,
+      "errno": null,
+      "error": null,
+      "iteration": 49,
+      "local": [
+        "0.0.0.0",
+        61909
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 126460.481
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.23,
+      "errno": null,
+      "error": null,
+      "iteration": 49,
+      "local": [
+        "172.20.9.55",
+        45274
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 126861.725
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 9.835,
+      "errno": null,
+      "error": null,
+      "iteration": 49,
+      "local": [
+        "172.20.9.55",
+        63294
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 126871.57
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 9.892,
+      "errno": null,
+      "error": null,
+      "iteration": 49,
+      "local": [
+        "172.20.9.55",
+        26365
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 126881.469
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.429,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 49,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 127281.919
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.203,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 49,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 127683.138
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 400.693,
+      "errno": null,
+      "error": null,
+      "iteration": 50,
+      "local": [
+        "172.20.9.55",
+        44810
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 129085.112
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.129,
+      "errno": null,
+      "error": null,
+      "iteration": 50,
+      "local": [
+        "0.0.0.0",
+        36254
+      ],
+      "ok": true,
+      "protocol": "udp",
+      "remote": "161.115.182.100:3478",
+      "response": false,
+      "since_restore_ms": 129486.266
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 10.282,
+      "errno": null,
+      "error": null,
+      "iteration": 50,
+      "local": [
+        "172.20.9.55",
+        50993
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 129496.562
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 10.144,
+      "errno": null,
+      "error": null,
+      "iteration": 50,
+      "local": [
+        "172.20.9.55",
+        30076
+      ],
+      "ok": true,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:443",
+      "response": null,
+      "since_restore_ms": 129506.716
+    },
+    {
+      "bound": false,
+      "elapsed_ms": 401.209,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 50,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 129907.943
+    },
+    {
+      "bound": true,
+      "elapsed_ms": 401.013,
+      "errno": null,
+      "error": "timed out",
+      "iteration": 50,
+      "ok": false,
+      "protocol": "tcp",
+      "remote": "161.115.182.100:7881",
+      "response": null,
+      "since_restore_ms": 130308.972
+    }
+  ],
+  "udp_port": 3478
+}

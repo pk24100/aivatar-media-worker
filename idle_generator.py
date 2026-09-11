@@ -11,6 +11,7 @@ get_pipeline() on each request.
 """
 import asyncio
 import hashlib
+import logging
 import os
 import tempfile
 from pathlib import Path
@@ -26,6 +27,11 @@ import torch
 from aiohttp import web
 
 from flash_head.inference import get_audio_embedding, get_infer_params, get_pipeline, get_base_data, run_pipeline
+from streaming.core.upscale import get_output_size, upscale_slice_torch
+from utils.ssrf_fetch import validate_url
+
+
+logger = logging.getLogger("idle_generator")
 
 
 MAX_SOURCE_IMAGE_BYTES = 10 * 1024 * 1024
@@ -85,6 +91,18 @@ def set_pipeline(pipeline):
 
 
 def _download_source(url: str) -> str:
+    try:
+        validate_url(url, "image")
+    except Exception as exc:
+        try:
+            from utils.errors import sanitize_url_for_logging
+            _safe_src = sanitize_url_for_logging(url)
+        except Exception:
+            _safe_src = "[Redacted-URL]"
+        logger.warning("SSRF_WOULD_BLOCK kind=image url=%s err=%s", _safe_src, exc)
+        if os.getenv("SSRF_ENFORCE", "0").strip() == "1":
+            raise
+        # LOG-ONLY: still proceed with existing download below.
     fd, path = tempfile.mkstemp(suffix=".png")
     total = 0
     try:
@@ -119,8 +137,9 @@ def _generate_idle_clip(source_path: str, output_path: str, duration_seconds: fl
     get_base_data(pipeline, source_path, base_seed=42, use_face_crop=False)
     params = get_infer_params()
     fps = int(params["tgt_fps"])
-    width = int(params["width"])
-    height = int(params["height"])
+    # Published output size (default 1024x1024). Generation itself stays at
+    # the model's native resolution; frames are upscaled below before encode.
+    width, height = get_output_size()
     cached_duration = int(params["cached_audio_duration"])
     sample_rate = int(params["sample_rate"])
     audio_end_idx = cached_duration * fps
@@ -163,6 +182,7 @@ def _generate_idle_clip(source_path: str, output_path: str, duration_seconds: fl
         embedding = get_audio_embedding(pipeline, idle_audio, audio_start_idx, audio_end_idx)
 
         video = run_pipeline(pipeline, embedding)[int(params["motion_frames_num"]):]
+        video = upscale_slice_torch(video, width, height)
         frames.extend(frame.cpu().numpy().astype(np.uint8) for frame in video)
 
         # Small latent perturbation to prevent autoregressive convergence.
@@ -182,6 +202,9 @@ def _generate_idle_clip(source_path: str, output_path: str, duration_seconds: fl
     # Eye blinking comes from FlashHead model via murmuring audio.
     sway_pixels = float(os.getenv("IDLE_SWAY_PIXELS", "3.0"))
     sway_rate_hz = float(os.getenv("IDLE_SWAY_RATE_HZ", "0.15"))
+    # IDLE_SWAY_PIXELS is expressed at the model's native width; scale it so
+    # the relative motion is preserved at the published output size.
+    sway_pixels *= width / float(int(params["width"]))
 
     frames = _apply_2d_sway(
         frames[:target_frames], fps,
@@ -214,6 +237,13 @@ def _upload_and_complete(payload: dict):
         output_bytes = Path(output_path).read_bytes()
         sha256 = hashlib.sha256(output_bytes).hexdigest()
 
+        try:
+            validate_url(payload["outputPutUrl"], "video")
+        except Exception as exc:
+            logger.warning("SSRF_WOULD_BLOCK kind=video url=%s err=%s", payload.get("outputPutUrl"), exc)
+            if os.getenv("SSRF_ENFORCE", "0").strip() == "1":
+                raise
+            # LOG-ONLY: still proceed with existing PUT below (preserve query, headers).
         upload = requests.put(
             payload["outputPutUrl"],
             data=output_bytes,
@@ -224,6 +254,13 @@ def _upload_and_complete(payload: dict):
             timeout=(10, 60),
         )
         upload.raise_for_status()
+        try:
+            validate_url(payload["callbackUrl"], "callback")
+        except Exception as exc:
+            logger.warning("SSRF_WOULD_BLOCK kind=callback url=%s err=%s", payload.get("callbackUrl"), exc)
+            if os.getenv("SSRF_ENFORCE", "0").strip() == "1":
+                raise
+            # LOG-ONLY: still proceed with existing POST below (preserve Bearer).
         callback = requests.post(
             payload["callbackUrl"],
             headers={"Authorization": f"Bearer {payload['callbackToken']}"},
@@ -242,6 +279,13 @@ def _upload_and_complete(payload: dict):
         callback_url = payload.get("callbackUrl")
         callback_token = payload.get("callbackToken")
         if callback_url and callback_token:
+            try:
+                validate_url(callback_url.replace("/complete", "/failed"), "callback")
+            except Exception as ssrf_exc:
+                logger.warning("SSRF_WOULD_BLOCK kind=callback url=%s err=%s", callback_url, ssrf_exc)
+                if os.getenv("SSRF_ENFORCE", "0").strip() == "1":
+                    raise
+                # LOG-ONLY: still proceed with existing failure POST below.
             requests.post(
                 callback_url.replace("/complete", "/failed"),
                 headers={"Authorization": f"Bearer {callback_token}"},

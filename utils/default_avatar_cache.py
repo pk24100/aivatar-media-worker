@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import os
 import pathlib
 import re
 import tempfile
@@ -9,6 +10,8 @@ from urllib.parse import urlparse
 
 import requests
 from PIL import Image
+
+from utils.ssrf_fetch import validate_url
 
 
 logger = logging.getLogger("default_avatar_cache")
@@ -160,6 +163,13 @@ class DefaultAvatarCache:
         )
 
     def _download_avatar_bytes(self, url: str) -> bytes:
+        try:
+            validate_url(url, "image")
+        except Exception as exc:
+            logger.warning("SSRF_WOULD_BLOCK kind=image url=%s err=%s", url, exc)
+            if os.getenv("SSRF_ENFORCE", "0").strip() == "1":
+                raise
+            # LOG-ONLY: still proceed with existing download below.
         chunks = []
         total = 0
         with requests.get(url, timeout=(10, 30), stream=True) as response:

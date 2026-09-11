@@ -180,7 +180,7 @@ async def start_session(modal_url: str, payload: dict) -> dict:
                                 timeout=aiohttp.ClientTimeout(total=60)) as resp:
             text = await resp.text()
             if resp.status >= 400:
-                raise RuntimeError(f"sessions/start failed ({resp.status}): {text}")
+                raise RuntimeError(f"sessions/start failed with status {resp.status}")
             return json.loads(text)
 
 
@@ -190,10 +190,10 @@ async def end_session(modal_url: str, session_id: str):
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
-                text = await resp.text()
-                print(f"  [end] {session_id}: {resp.status} {text[:100]}")
-    except Exception as e:
-        print(f"  [end] {session_id}: failed - {e}")
+                await resp.read()
+                print(f"  [end] {session_id}: status={resp.status}")
+    except Exception as exc:
+        print(f"  [end] {session_id}: failed error={exc.__class__.__name__}")
 
 # ---------------------------------------------------------------------------
 # Keyboard watcher (Windows msvcrt, same as modal_direct_test.py)
@@ -281,8 +281,8 @@ async def viewer_measure_fps(
                     result.first_frame_time = time.monotonic()
                     latency = result.first_frame_time - result.start_time
                     print(f"  [{session_id}] First video frame received (latency={latency:.1f}s)")
-        except Exception as e:
-            print(f"  [{session_id}] Video stream error: {e}")
+        except Exception as exc:
+            print(f"  [{session_id}] Video stream error={exc.__class__.__name__}")
 
     try:
         await room.connect(
@@ -321,10 +321,10 @@ async def viewer_measure_fps(
             frame_count = 0
             window_start = time.monotonic()
 
-    except Exception as e:
-        print(f"  [{session_id}] Viewer error: {e}")
+    except Exception as exc:
+        print(f"  [{session_id}] Viewer error={exc.__class__.__name__}")
         result.status = "FAILED"
-        result.error = str(e)
+        result.error = f"Viewer failed ({exc.__class__.__name__})"
     finally:
         if connected:
             try:
@@ -382,7 +382,7 @@ async def stream_audio_ws(
 
     print(f"  [{session_id}] Streaming audio: {wav_path} (send_interval={send_interval}s, idle_gap={idle_gap_seconds}s)")
     try:
-        async with websockets.connect(ws_url, subprotocols=[f"aivatar.{ws_token}"]) as ws:
+        async with websockets.connect(ws_url, subprotocols=[f"facemode.{ws_token}"]) as ws:
             with wave.open(wav_path, "rb") as wf:
                 sr = wf.getframerate()
                 ch = wf.getnchannels()
@@ -417,8 +417,8 @@ async def stream_audio_ws(
                         await asyncio.sleep(idle_gap_seconds)
 
         print(f"  [{session_id}] Audio streaming ended ({iteration} iterations)")
-    except Exception as e:
-        print(f"  [{session_id}] Audio stream error: {e}")
+    except Exception as exc:
+        print(f"  [{session_id}] Audio stream error={exc.__class__.__name__}")
 
 # ---------------------------------------------------------------------------
 # Single session runner
@@ -447,7 +447,10 @@ async def run_single_session(
         try:
             claimed = await claim_room(modal_url)
         except Exception as claim_err:
-            print(f"  [{result.session_id}] Room claim failed ({type(claim_err).__name__}: {claim_err}), falling back to local mint")
+            print(
+                f"  [{result.session_id}] Room claim failed "
+                f"(error={claim_err.__class__.__name__}), falling back to local mint"
+            )
             claimed = None
         room_name = claimed.get("roomName") if claimed else None
         worker_token = claimed.get("workerToken") if claimed else None
@@ -457,7 +460,7 @@ async def run_single_session(
             room_name = f"conc-test-{uuid.uuid4().hex[:8]}"
             worker_token = mint_livekit_token(
                 livekit_key, livekit_secret,
-                room_name, identity=f"aivatar-worker-{result.session_id}",
+                room_name, identity=f"facemode-worker-{result.session_id}",
                 can_publish=True, ttl_seconds=1800,
             )
 
@@ -480,8 +483,7 @@ async def run_single_session(
         result.room_name = room_name
         print(f"  [{result.session_id}] Room: {room_name}")
         print(f"  [{result.session_id}] LiveKit URL: {livekit_url}")
-        print(f"  [{result.session_id}] Viewer token: {viewer_token}")
-        print(f"  [{result.session_id}] >> Paste token at https://meet.livekit.io to watch <<")
+        print(f"  [{result.session_id}] Viewer token minted for the in-process FPS viewer; value not printed")
 
         # Step 2: Start session on worker
         ingestion_token = f"test-{uuid.uuid4().hex[:8]}"
@@ -491,7 +493,6 @@ async def run_single_session(
             "customLivekitUrl": livekit_url,
             "sourceImage": source_image,
             "streaming": True,
-            "ingestionMethod": "websocket",
             "sessionId": result.session_id,
             "ingestionToken": ingestion_token,
         }
@@ -549,12 +550,10 @@ async def run_single_session(
         # Step 5: End session
         await end_session(modal_url, result.session_id)
 
-    except Exception as e:
-        print(f"  [{result.session_id}] ERROR: {type(e).__name__}: {e}")
-        import traceback
-        traceback.print_exc()
+    except Exception as exc:
+        print(f"  [{result.session_id}] ERROR: {exc.__class__.__name__}")
         result.status = "FAILED"
-        result.error = f"{type(e).__name__}: {e}"
+        result.error = f"Session failed ({exc.__class__.__name__})"
 
     return result
 
@@ -868,12 +867,12 @@ def _session_worker(args: dict, mp_stop_event: multiprocessing.Event,
                 "first_frame_time": res.first_frame_time,
                 "end_time": res.end_time,
             })
-        except Exception as e:
+        except Exception as exc:
             result_queue.put({
                 "session_id": session_id,
                 "room_name": "",
                 "status": "FAILED",
-                "error": f"{type(e).__name__}: {e}",
+                "error": f"Session process failed ({exc.__class__.__name__})",
                 "frames_received": 0,
                 "fps_samples": [],
                 "avg_fps": 0.0,

@@ -1,0 +1,310 @@
+2026-09-02 19:50:05+05:30 Restoring Function from memory snapshot.
+2026-09-02 19:50:08+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-09-02 19:50:08+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-09-02 19:50:09+05:30 2026-09-02 14:20:09.462 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-09-02 19:50:09+05:30 [RESTORE] Pipeline moved to cuda in 860.1ms
+2026-09-02 19:50:09+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-09-02 19:50:09+05:30 [RESTORE] Running warmup inference on GPU...
+2026-09-02 19:50:12+05:30 2026-09-02 14:20:12.464 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2460.3ms decode=80.4ms color=9.5ms encode=31.2ms total=2581.7ms
+2026-09-02 19:50:12+05:30 2026-09-02 14:20:12.464 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2460.3ms steps=[s0=2238.0 s1=75.3 s2=72.9 s3=74.1] n_steps=4
+2026-09-02 19:50:12+05:30 2026-09-02 14:20:12.465 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2582.7ms post=0.4ms
+2026-09-02 19:50:12+05:30 [RESTORE] Warmup completed in 3002.2ms
+2026-09-02 19:50:12+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-09-02 19:50:12+05:30 [RESTORE] CPU snapshot restore complete
+2026-09-02 19:50:12+05:30 [SERVE] Starting serve() post-restore
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,464 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,465 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,466 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-09-02 19:50:13+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-09-02 19:50:13+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,467 [INFO] modal_app: aiohttp background thread started ident=47039462168256
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,486 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,486 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-09-02 19:50:13+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-09-02 19:50:13+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-09-02 19:50:13+05:30 [SERVE] Running batched warmup cycle (background)...
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,490 [INFO] modal_app: aiohttp site started thread=47039462168256 event_loop=47039074964672
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,514 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-09-02 19:50:13+05:30 [modal] Pool status: current_size=3 available=3/3
+2026-09-02 19:50:13+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=23.9s CPU_sys=9.7s sessions=0 pool=3/3
+2026-09-02 19:50:13+05:30 2026-09-02 14:20:13,847 [INFO] handler: [pod_session_start] Received session=d9b5c252-8f12-40ec-991f-ce413c0230b6 room=manual-ae785bd9 hasIdleAsset=True
+2026-09-02 19:50:14+05:30 2026-09-02 14:20:14.103 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=336.1ms decode=84.1ms color+encode=44.2ms total=464.7ms batch_size=1
+2026-09-02 19:50:14+05:30 2026-09-02 14:20:14.103 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=336.1ms steps=[s0=95.8 s1=76.7 s2=88.5 s3=75.1] n_steps=4 batch_size=1
+2026-09-02 19:50:14+05:30 [SERVE] Batched warmup completed in 892.0ms
+2026-09-02 19:50:14+05:30 2026-09-02 14:20:14,382 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-09-02 19:50:14+05:30 2026-09-02 14:20:14,383 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,033 [INFO] streaming.websocket_server: Registered WebSocket session: d9b5c252-8f12-40ec-991f-ce413c0230b6 provider_profile=none telephony_provider=none
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,035 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=47039462168256 thread_name=modal-aiohttp-server event_loop_id=47039074964672
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,035 [INFO] batched_stream_processor: Connecting to egress type=livekit room=manual-ae785bd9 url=wss://ai-14ksodzi.livekit.cloud session=d9b5c252-8f12-40ec-991f-ce413c0230b6
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,050 [INFO] streaming.idle_video: Downloading idle video asset
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,050 [INFO] batched_stream_processor: Registering session d9b5c252-8f12-40ec-991f-ce413c0230b6 with BatchedStreamingEngine
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,084 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 added (total=1)
+2026-09-02 19:50:15+05:30 Nvidia Decoder is supported.
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,654 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmp0el9lzll.mp4
+2026-09-02 19:50:15+05:30 2026-09-02 14:20:15,868 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-02 19:50:16+05:30 2026-09-02 14:20:16,251 [INFO] aiohttp.access: 172.20.0.219 [02/Sep/2026:14:20:13 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-09-02 19:50:16+05:30    POST /sessions/start -> 202 Accepted  (duration: 16.7 s, execution: 2.88 s)
+2026-09-02 19:50:17+05:30 2026-09-02 14:20:17,068 [INFO] batched_stream_processor: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 registered with engine in 2016.7 ms (avatar prepared)
+2026-09-02 19:50:17+05:30 2026-09-02 14:20:17,209 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-09-02 19:50:17+05:30 2026-09-02 14:20:17,360 [INFO] aiohttp.access: 172.20.0.219 [02/Sep/2026:14:20:17 +0000] "GET /sessions/d9b5c252-8f12-40ec-991f-ce413c0230b6/status HTTP/1.1" 200 252 "-" "node"
+2026-09-02 19:50:17+05:30     GET /sessions/d9b5c252-8f12-40ec-991f-ce413c0230b6/status -> 200 OK  (duration: 527.0 ms, execution: 338.7 ms)
+2026-09-02 19:50:18+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=43.2s CPU_sys=16.6s sessions=1 pool=3/3
+2026-09-02 19:50:20+05:30 2026-09-02 14:20:20,048 [INFO] handler: WS_REQUEST_RECEIVED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 origin= ip=172.20.0.219
+2026-09-02 19:50:20+05:30 2026-09-02 14:20:20,049 [INFO] handler: WS_CONNECT session=d9b5c252-8f12-40ec-991f-ce413c0230b6 origin= ip=172.20.0.219 handlerMs=0.9
+2026-09-02 19:50:20+05:30 2026-09-02 14:20:20,488 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=started ip=172.20.0.219
+2026-09-02 19:50:23+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=47.6s CPU_sys=16.7s sessions=1 pool=3/3
+2026-09-02 19:50:28+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=52.0s CPU_sys=16.7s sessions=1 pool=3/3
+2026-09-02 19:50:32+05:30 2026-09-02 14:20:32,079 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-09-02 19:50:32+05:30 2026-09-02 14:20:32,134 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-02 19:50:33+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=56.8s CPU_sys=17.0s sessions=1 pool=3/3
+2026-09-02 19:50:35+05:30 2026-09-02 14:20:35,927 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:50:38+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=61.3s CPU_sys=17.1s sessions=1 pool=3/3
+2026-09-02 19:50:43+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=66.0s CPU_sys=17.2s sessions=1 pool=3/3
+2026-09-02 19:50:47+05:30 2026-09-02 14:20:47,234 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (2/3)
+2026-09-02 19:50:47+05:30 2026-09-02 14:20:47,286 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-02 19:50:48+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=70.5s CPU_sys=17.2s sessions=1 pool=3/3
+2026-09-02 19:50:50+05:30 2026-09-02 14:20:50,938 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:50:53+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=75.2s CPU_sys=17.3s sessions=1 pool=3/3
+2026-09-02 19:50:58+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=80.0s CPU_sys=17.4s sessions=1 pool=3/3
+2026-09-02 19:51:02+05:30 2026-09-02 14:21:02,935 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (3/3)
+2026-09-02 19:51:02+05:30 2026-09-02 14:21:02,978 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,401 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,404 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,405 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received. Creating track...
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,406 [INFO] VideoPublisher: [VP-DIAG] Creating video track 1024x1024
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,409 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,410 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,410 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,419 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 8.8 ms
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,436 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 room=manual-ae785bd9
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,462 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCyDQ5VwkjvA6r from e2e-test-worker
+2026-09-02 19:51:03+05:30 2026-09-02 14:21:03,471 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-02 19:51:03+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=84.9s CPU_sys=17.7s sessions=1 pool=3/3
+2026-09-02 19:51:05+05:30 2026-09-02 14:21:05,933 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:51:08+05:30 2026-09-02 14:21:08,419 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5021 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=55.0 maxCaptureMs=2.9
+2026-09-02 19:51:09+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=91.3s CPU_sys=17.9s sessions=1 pool=3/3
+2026-09-02 19:51:13+05:30 2026-09-02 14:21:13,462 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5043 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=55.0 maxCaptureMs=1.6
+2026-09-02 19:51:14+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=97.5s CPU_sys=18.1s sessions=1 pool=3/3
+2026-09-02 19:51:18+05:30 2026-09-02 14:21:18,469 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5006 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=54.4 maxCaptureMs=1.6
+2026-09-02 19:51:19+05:30 [METRICS] GPU_util=0% GPU_temp=42C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=103.5s CPU_sys=18.3s sessions=1 pool=3/3
+2026-09-02 19:51:20+05:30 2026-09-02 14:21:20,937 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:51:23+05:30 2026-09-02 14:21:23,499 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5030 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=55.4 maxCaptureMs=1.6
+2026-09-02 19:51:24+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=109.8s CPU_sys=18.5s sessions=1 pool=3/3
+2026-09-02 19:51:28+05:30 2026-09-02 14:21:28,501 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5001 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=55.5 maxCaptureMs=1.3
+2026-09-02 19:51:29+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=115.7s CPU_sys=18.7s sessions=1 pool=3/3
+2026-09-02 19:51:33+05:30 2026-09-02 14:21:33,404 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-09-02 19:51:33+05:30 2026-09-02 14:21:33,541 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5040 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=50.4 maxCaptureMs=1.6
+2026-09-02 19:51:34+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=121.6s CPU_sys=18.9s sessions=1 pool=3/3
+2026-09-02 19:51:35+05:30 2026-09-02 14:21:35,943 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:51:38+05:30 2026-09-02 14:21:38,582 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5040 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=55.4 maxCaptureMs=1.3
+2026-09-02 19:51:39+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=127.9s CPU_sys=19.1s sessions=1 pool=3/3
+2026-09-02 19:51:43+05:30 2026-09-02 14:21:43,611 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5028 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=52.3 maxCaptureMs=2.0
+2026-09-02 19:51:44+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=134.0s CPU_sys=19.2s sessions=1 pool=3/3
+2026-09-02 19:51:48+05:30 2026-09-02 14:21:48,621 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5010 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=54.8 maxCaptureMs=1.4
+2026-09-02 19:51:49+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=139.8s CPU_sys=19.4s sessions=1 pool=3/3
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50.463 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=370.8ms decode=75.7ms color+encode=24.1ms total=471.5ms batch_size=1
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50.463 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=370.8ms steps=[s0=86.8 s1=96.6 s2=102.6 s3=84.9] n_steps=4 batch_size=1
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50,596 [INFO] AudioPublisher: [AP-DIAG] Calling publish_track()...
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50,605 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50,606 [INFO] AudioPublisher: [AP-DIAG] publish_track() completed in 9.0 ms (16000 Hz, 1 ch)
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50,638 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-02 19:51:50+05:30 2026-09-02 14:21:50,925 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-09-02 19:51:51+05:30 2026-09-02 14:21:51,246 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:51:51+05:30 2026-09-02 14:21:51,280 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 keep_alive=True
+2026-09-02 19:51:51+05:30 2026-09-02 14:21:51,280 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 marked for drain (keep_alive=True)
+2026-09-02 19:51:51+05:30 2026-09-02 14:21:51.449 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=724.1ms decode=73.8ms color+encode=25.2ms total=823.5ms batch_size=1
+2026-09-02 19:51:51+05:30 2026-09-02 14:21:51.449 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=724.1ms steps=[s0=266.9 s1=233.5 s2=125.9 s3=97.7] n_steps=4 batch_size=1
+2026-09-02 19:51:52+05:30 2026-09-02 14:21:52.036 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=341.4ms decode=77.3ms color+encode=24.0ms total=443.0ms batch_size=1
+2026-09-02 19:51:52+05:30 2026-09-02 14:21:52.036 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=341.4ms steps=[s0=86.7 s1=86.7 s2=83.8 s3=84.2] n_steps=4 batch_size=1
+2026-09-02 19:51:53+05:30 2026-09-02 14:21:53.009 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=352.3ms decode=74.3ms color+encode=23.7ms total=450.7ms batch_size=1
+2026-09-02 19:51:53+05:30 2026-09-02 14:21:53.010 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=352.3ms steps=[s0=89.4 s1=84.3 s2=86.3 s3=92.3] n_steps=4 batch_size=1
+2026-09-02 19:51:53+05:30 2026-09-02 14:21:53,622 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5000 frames=125 effectiveFps=25.0 liveFrames=68 repeatedLiveFrames=0 idleFrames=57 desyncPct=45.6 maxGapMs=71.2 maxCaptureMs=2.4
+2026-09-02 19:51:53+05:30 2026-09-02 14:21:53.957 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=340.1ms decode=76.8ms color+encode=24.0ms total=441.9ms batch_size=1
+2026-09-02 19:51:53+05:30 2026-09-02 14:21:53.957 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=340.1ms steps=[s0=87.3 s1=88.1 s2=81.4 s3=83.2] n_steps=4 batch_size=1
+2026-09-02 19:51:54+05:30 [METRICS] GPU_util=0% GPU_temp=42C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=147.6s CPU_sys=19.7s sessions=1 pool=3/3
+2026-09-02 19:51:54+05:30 2026-09-02 14:21:54.926 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=347.6ms decode=74.0ms color+encode=24.8ms total=446.7ms batch_size=1
+2026-09-02 19:51:54+05:30 2026-09-02 14:21:54.926 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=347.6ms steps=[s0=87.2 s1=83.4 s2=94.6 s3=82.4] n_steps=4 batch_size=1
+2026-09-02 19:51:55+05:30 2026-09-02 14:21:55.864 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=330.7ms decode=74.6ms color+encode=24.4ms total=430.0ms batch_size=1
+2026-09-02 19:51:55+05:30 2026-09-02 14:21:55.864 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=330.7ms steps=[s0=82.9 s1=84.1 s2=80.0 s3=83.7] n_steps=4 batch_size=1
+2026-09-02 19:51:56+05:30 2026-09-02 14:21:56.829 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=336.0ms decode=76.9ms color+encode=24.0ms total=437.3ms batch_size=1
+2026-09-02 19:51:56+05:30 2026-09-02 14:21:56.829 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=336.0ms steps=[s0=82.7 s1=83.3 s2=83.7 s3=86.4] n_steps=4 batch_size=1
+2026-09-02 19:51:57+05:30 2026-09-02 14:21:57.794 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=341.9ms decode=76.3ms color+encode=24.0ms total=442.5ms batch_size=1
+2026-09-02 19:51:57+05:30 2026-09-02 14:21:57.794 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=341.9ms steps=[s0=86.9 s1=85.1 s2=85.0 s3=84.9] n_steps=4 batch_size=1
+2026-09-02 19:51:57+05:30 2026-09-02 14:21:57,920 [INFO] BatchedStreamingEngine: cycle=10 batch=1 sessions=['d9b5c252-8f12-40ec-991f-ce413c0230b6'] embed=14.4ms infer=443.0ms xfer=125.8ms total=583.3ms
+2026-09-02 19:51:58+05:30 2026-09-02 14:21:58,625 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5002 frames=125 effectiveFps=25.0 liveFrames=125 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=59.1 maxCaptureMs=2.1
+2026-09-02 19:51:58+05:30 2026-09-02 14:21:58.774 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=355.4ms decode=74.6ms color+encode=23.7ms total=454.0ms batch_size=1
+2026-09-02 19:51:58+05:30 2026-09-02 14:21:58.775 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=355.4ms steps=[s0=90.8 s1=88.7 s2=83.8 s3=92.1] n_steps=4 batch_size=1
+2026-09-02 19:51:59+05:30 [METRICS] GPU_util=23% GPU_temp=45C GPU_mem=4.1GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=155.2s CPU_sys=20.0s sessions=1 pool=3/3
+2026-09-02 19:51:59+05:30 2026-09-02 14:21:59.720 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=342.0ms decode=77.6ms color+encode=25.6ms total=445.5ms batch_size=1
+2026-09-02 19:51:59+05:30 2026-09-02 14:21:59.720 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=342.0ms steps=[s0=84.3 s1=87.6 s2=86.2 s3=83.8] n_steps=4 batch_size=1
+2026-09-02 19:52:00+05:30 2026-09-02 14:22:00.693 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=349.2ms decode=74.6ms color+encode=23.8ms total=447.9ms batch_size=1
+2026-09-02 19:52:00+05:30 2026-09-02 14:22:00.693 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=349.2ms steps=[s0=91.6 s1=87.9 s2=85.7 s3=84.0] n_steps=4 batch_size=1
+2026-09-02 19:52:01+05:30 2026-09-02 14:22:01.640 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=345.0ms decode=77.7ms color+encode=25.1ms total=448.2ms batch_size=1
+2026-09-02 19:52:01+05:30 2026-09-02 14:22:01.640 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=345.0ms steps=[s0=87.6 s1=84.6 s2=83.0 s3=89.8] n_steps=4 batch_size=1
+2026-09-02 19:52:02+05:30 2026-09-02 14:22:02.586 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=336.4ms decode=74.3ms color+encode=23.9ms total=435.0ms batch_size=1
+2026-09-02 19:52:02+05:30 2026-09-02 14:22:02.586 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=336.4ms steps=[s0=88.4 s1=81.1 s2=84.2 s3=82.7] n_steps=4 batch_size=1
+2026-09-02 19:52:03+05:30 2026-09-02 14:22:03,444 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=798 buffer=20 peak=44 MAX=57 TARGET=45
+2026-09-02 19:52:03+05:30 2026-09-02 14:22:03.582 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=368.2ms decode=75.2ms color+encode=23.7ms total=467.5ms batch_size=1
+2026-09-02 19:52:03+05:30 2026-09-02 14:22:03.582 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=368.2ms steps=[s0=87.3 s1=107.5 s2=84.7 s3=88.7] n_steps=4 batch_size=1
+2026-09-02 19:52:03+05:30 2026-09-02 14:22:03,659 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5034 frames=126 effectiveFps=25.0 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=55.0 maxCaptureMs=1.8
+2026-09-02 19:52:03+05:30 2026-09-02 14:22:03,712 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 reactivated (keep_alive)
+2026-09-02 19:52:04+05:30 [METRICS] GPU_util=0% GPU_temp=43C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=162.5s CPU_sys=20.3s sessions=1 pool=3/3
+2026-09-02 19:52:05+05:30 2026-09-02 14:22:05,836 [INFO] streaming.idle_video: [idle] best-match frame 0/375
+2026-09-02 19:52:05+05:30 2026-09-02 14:22:05,855 [INFO] streaming.state_manager: [SM] LIVE -> TRANSITION_TO_IDLE (crossfade 8 frames)
+2026-09-02 19:52:05+05:30 2026-09-02 14:22:05,942 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:52:06+05:30 2026-09-02 14:22:06,124 [INFO] streaming.state_manager: [SM] TRANSITION_TO_IDLE -> IDLE
+2026-09-02 19:52:06+05:30 2026-09-02 14:22:06,274 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 cycles=118 elapsed=14994.3ms keep_alive=True
+2026-09-02 19:52:08+05:30 2026-09-02 14:22:08,666 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5006 frames=125 effectiveFps=25.0 liveFrames=41 repeatedLiveFrames=12 idleFrames=72 desyncPct=67.2 maxGapMs=76.1 maxCaptureMs=1.4
+2026-09-02 19:52:09+05:30 [METRICS] GPU_util=0% GPU_temp=42C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=169.1s CPU_sys=20.6s sessions=1 pool=3/3
+2026-09-02 19:52:13+05:30 2026-09-02 14:22:13,670 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5004 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=56.4 maxCaptureMs=2.0
+2026-09-02 19:52:13+05:30 2026-09-02 14:22:13,780 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 keep_alive=True
+2026-09-02 19:52:13+05:30 2026-09-02 14:22:13,780 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 marked for drain (keep_alive=True)
+2026-09-02 19:52:13+05:30 2026-09-02 14:22:13.975 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=767.2ms decode=74.9ms color+encode=23.8ms total=866.7ms batch_size=1
+2026-09-02 19:52:13+05:30 2026-09-02 14:22:13.975 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=767.2ms steps=[s0=93.6 s1=325.0 s2=263.2 s3=85.5] n_steps=4 batch_size=1
+2026-09-02 19:52:14+05:30 2026-09-02 14:22:14,125 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-09-02 19:52:14+05:30 2026-09-02 14:22:14,444 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-09-02 19:52:14+05:30 2026-09-02 14:22:14.575 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=353.8ms decode=74.3ms color+encode=23.9ms total=452.3ms batch_size=1
+2026-09-02 19:52:14+05:30 2026-09-02 14:22:14.575 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=353.8ms steps=[s0=95.5 s1=88.8 s2=85.1 s3=84.4] n_steps=4 batch_size=1
+2026-09-02 19:52:14+05:30 [METRICS] GPU_util=37% GPU_temp=46C GPU_mem=4.1GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=176.2s CPU_sys=20.9s sessions=1 pool=3/3
+2026-09-02 19:52:15+05:30 2026-09-02 14:22:15.528 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=348.2ms decode=74.3ms color+encode=23.7ms total=446.6ms batch_size=1
+2026-09-02 19:52:15+05:30 2026-09-02 14:22:15.528 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=348.2ms steps=[s0=89.8 s1=86.9 s2=88.7 s3=82.8] n_steps=4 batch_size=1
+2026-09-02 19:52:16+05:30 2026-09-02 14:22:16.501 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=360.9ms decode=75.8ms color+encode=24.0ms total=461.0ms batch_size=1
+2026-09-02 19:52:16+05:30 2026-09-02 14:22:16.501 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=360.9ms steps=[s0=89.2 s1=86.9 s2=98.4 s3=86.5] n_steps=4 batch_size=1
+2026-09-02 19:52:16+05:30 2026-09-02 14:22:16,627 [INFO] BatchedStreamingEngine: cycle=20 batch=1 sessions=['d9b5c252-8f12-40ec-991f-ce413c0230b6'] embed=17.2ms infer=461.8ms xfer=125.3ms total=604.5ms
+2026-09-02 19:52:17+05:30 2026-09-02 14:22:17.453 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=356.4ms decode=74.2ms color+encode=24.1ms total=455.0ms batch_size=1
+2026-09-02 19:52:17+05:30 2026-09-02 14:22:17.453 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=356.4ms steps=[s0=88.8 s1=86.7 s2=91.0 s3=89.9] n_steps=4 batch_size=1
+2026-09-02 19:52:18+05:30 2026-09-02 14:22:18.429 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=367.2ms decode=74.5ms color+encode=24.2ms total=466.1ms batch_size=1
+2026-09-02 19:52:18+05:30 2026-09-02 14:22:18.429 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=367.2ms steps=[s0=88.9 s1=84.9 s2=97.7 s3=95.7] n_steps=4 batch_size=1
+2026-09-02 19:52:18+05:30 2026-09-02 14:22:18,705 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5035 frames=126 effectiveFps=25.0 liveFrames=107 repeatedLiveFrames=0 idleFrames=19 desyncPct=15.1 maxGapMs=58.7 maxCaptureMs=2.0
+2026-09-02 19:52:19+05:30 2026-09-02 14:22:19.372 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=355.0ms decode=75.0ms color+encode=23.7ms total=454.1ms batch_size=1
+2026-09-02 19:52:19+05:30 2026-09-02 14:22:19.372 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=355.0ms steps=[s0=91.3 s1=88.0 s2=88.9 s3=86.8] n_steps=4 batch_size=1
+2026-09-02 19:52:19+05:30 [METRICS] GPU_util=25% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=183.6s CPU_sys=21.2s sessions=1 pool=3/3
+2026-09-02 19:52:20+05:30 2026-09-02 14:22:20.324 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=344.0ms decode=74.5ms color+encode=26.3ms total=445.2ms batch_size=1
+2026-09-02 19:52:20+05:30 2026-09-02 14:22:20.324 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=344.0ms steps=[s0=86.8 s1=86.8 s2=83.3 s3=87.1] n_steps=4 batch_size=1
+2026-09-02 19:52:20+05:30 2026-09-02 14:22:20,948 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:52:21+05:30 2026-09-02 14:22:21.293 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=355.9ms decode=74.8ms color+encode=24.3ms total=455.3ms batch_size=1
+2026-09-02 19:52:21+05:30 2026-09-02 14:22:21.293 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=355.9ms steps=[s0=86.2 s1=97.1 s2=84.3 s3=88.3] n_steps=4 batch_size=1
+2026-09-02 19:52:22+05:30 2026-09-02 14:22:22.238 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=338.6ms decode=76.5ms color+encode=24.3ms total=439.8ms batch_size=1
+2026-09-02 19:52:22+05:30 2026-09-02 14:22:22.238 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=338.6ms steps=[s0=84.9 s1=86.1 s2=82.8 s3=84.8] n_steps=4 batch_size=1
+2026-09-02 19:52:23+05:30 2026-09-02 14:22:23.208 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=350.4ms decode=74.6ms color+encode=23.8ms total=449.2ms batch_size=1
+2026-09-02 19:52:23+05:30 2026-09-02 14:22:23.208 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=350.4ms steps=[s0=84.7 s1=83.0 s2=85.6 s3=97.1] n_steps=4 batch_size=1
+2026-09-02 19:52:23+05:30 2026-09-02 14:22:23,748 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5042 frames=126 effectiveFps=25.0 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=54.5 maxCaptureMs=2.2
+2026-09-02 19:52:24+05:30 2026-09-02 14:22:24.175 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=357.2ms decode=75.4ms color+encode=23.7ms total=456.6ms batch_size=1
+2026-09-02 19:52:24+05:30 2026-09-02 14:22:24.175 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=357.2ms steps=[s0=90.8 s1=90.8 s2=86.7 s3=88.8] n_steps=4 batch_size=1
+2026-09-02 19:52:24+05:30 [METRICS] GPU_util=0% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=191.1s CPU_sys=21.4s sessions=1 pool=3/3
+2026-09-02 19:52:25+05:30 2026-09-02 14:22:25.136 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=349.7ms decode=74.8ms color+encode=23.6ms total=448.5ms batch_size=1
+2026-09-02 19:52:25+05:30 2026-09-02 14:22:25.136 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=349.7ms steps=[s0=88.8 s1=86.3 s2=87.5 s3=87.1] n_steps=4 batch_size=1
+2026-09-02 19:52:26+05:30 2026-09-02 14:22:26.079 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=342.8ms decode=73.7ms color+encode=24.2ms total=441.1ms batch_size=1
+2026-09-02 19:52:26+05:30 2026-09-02 14:22:26.079 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=342.8ms steps=[s0=87.2 s1=84.8 s2=83.8 s3=87.0] n_steps=4 batch_size=1
+2026-09-02 19:52:26+05:30 2026-09-02 14:22:26,201 [INFO] BatchedStreamingEngine: cycle=30 batch=1 sessions=['d9b5c252-8f12-40ec-991f-ce413c0230b6'] embed=15.0ms infer=441.9ms xfer=121.2ms total=578.2ms
+2026-09-02 19:52:27+05:30 2026-09-02 14:22:27.049 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=351.7ms decode=74.4ms color+encode=23.7ms total=450.2ms batch_size=1
+2026-09-02 19:52:27+05:30 2026-09-02 14:22:27.049 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=351.7ms steps=[s0=91.4 s1=91.5 s2=86.1 s3=82.8] n_steps=4 batch_size=1
+2026-09-02 19:52:27+05:30 2026-09-02 14:22:27.991 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=330.9ms decode=76.7ms color+encode=24.6ms total=432.6ms batch_size=1
+2026-09-02 19:52:27+05:30 2026-09-02 14:22:27.991 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=330.9ms steps=[s0=84.7 s1=80.1 s2=84.1 s3=82.1] n_steps=4 batch_size=1
+2026-09-02 19:52:28+05:30 2026-09-02 14:22:28,782 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5034 frames=126 effectiveFps=25.0 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=54.8 maxCaptureMs=1.8
+2026-09-02 19:52:28+05:30 2026-09-02 14:22:28.952 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=331.9ms decode=76.4ms color+encode=25.0ms total=433.7ms batch_size=1
+2026-09-02 19:52:28+05:30 2026-09-02 14:22:28.953 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=331.9ms steps=[s0=86.4 s1=80.2 s2=83.0 s3=82.3] n_steps=4 batch_size=1
+2026-09-02 19:52:29+05:30 2026-09-02 14:22:29,075 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 reactivated (keep_alive)
+2026-09-02 19:52:29+05:30 [METRICS] GPU_util=0% GPU_temp=45C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=198.3s CPU_sys=21.6s sessions=1 pool=3/3
+2026-09-02 19:52:31+05:30 2026-09-02 14:22:31,273 [INFO] streaming.idle_video: [idle] best-match frame 0/375
+2026-09-02 19:52:31+05:30 2026-09-02 14:22:31,298 [INFO] streaming.state_manager: [SM] LIVE -> TRANSITION_TO_IDLE (crossfade 8 frames)
+2026-09-02 19:52:31+05:30 2026-09-02 14:22:31,306 [WARNING] VideoPublisher: VIDEO_PUBLISH_GAP gapMs=94.8 targetFps=25 frameSource=transition_to_idle
+2026-09-02 19:52:31+05:30 2026-09-02 14:22:31,564 [INFO] streaming.state_manager: [SM] TRANSITION_TO_IDLE -> IDLE
+2026-09-02 19:52:31+05:30 2026-09-02 14:22:31,709 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 cycles=147 elapsed=17928.9ms keep_alive=True
+2026-09-02 19:52:33+05:30 2026-09-02 14:22:33,445 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=825 buffer=21 peak=45 MAX=58 TARGET=46
+2026-09-02 19:52:33+05:30 2026-09-02 14:22:33,788 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5005 frames=125 effectiveFps=25.0 liveFrames=49 repeatedLiveFrames=12 idleFrames=64 desyncPct=60.8 maxGapMs=94.8 maxCaptureMs=1.8
+2026-09-02 19:52:34+05:30 [METRICS] GPU_util=0% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=204.8s CPU_sys=21.8s sessions=1 pool=3/3
+2026-09-02 19:52:35+05:30 2026-09-02 14:22:35,956 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:52:37+05:30 2026-09-02 14:22:37,439 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 keep_alive=True
+2026-09-02 19:52:37+05:30 2026-09-02 14:22:37,439 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 marked for drain (keep_alive=True)
+2026-09-02 19:52:37+05:30 2026-09-02 14:22:37.470 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=651.7ms decode=76.9ms color+encode=24.1ms total=753.1ms batch_size=1
+2026-09-02 19:52:37+05:30 2026-09-02 14:22:37.470 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=651.7ms steps=[s0=84.7 s1=280.7 s2=85.6 s3=200.6] n_steps=4 batch_size=1
+2026-09-02 19:52:37+05:30 2026-09-02 14:22:37,604 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-09-02 19:52:37+05:30 2026-09-02 14:22:37,924 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-09-02 19:52:38+05:30 2026-09-02 14:22:38.071 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=354.1ms decode=77.0ms color+encode=24.0ms total=455.4ms batch_size=1
+2026-09-02 19:52:38+05:30 2026-09-02 14:22:38.071 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=354.1ms steps=[s0=88.2 s1=88.1 s2=93.0 s3=84.8] n_steps=4 batch_size=1
+2026-09-02 19:52:38+05:30 2026-09-02 14:22:38,790 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5001 frames=125 effectiveFps=25.0 liveFrames=22 repeatedLiveFrames=0 idleFrames=103 desyncPct=82.4 maxGapMs=55.9 maxCaptureMs=1.6
+2026-09-02 19:52:39+05:30 2026-09-02 14:22:39.015 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=345.1ms decode=74.0ms color+encode=24.2ms total=443.6ms batch_size=1
+2026-09-02 19:52:39+05:30 2026-09-02 14:22:39.015 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=345.1ms steps=[s0=90.8 s1=85.0 s2=84.7 s3=84.5] n_steps=4 batch_size=1
+2026-09-02 19:52:39+05:30 [METRICS] GPU_util=37% GPU_temp=48C GPU_mem=4.1GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=212.3s CPU_sys=22.2s sessions=1 pool=3/3
+2026-09-02 19:52:39+05:30 2026-09-02 14:22:39.979 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=348.4ms decode=75.9ms color+encode=23.7ms total=448.4ms batch_size=1
+2026-09-02 19:52:39+05:30 2026-09-02 14:22:39.980 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=348.4ms steps=[s0=87.7 s1=84.2 s2=91.7 s3=84.7] n_steps=4 batch_size=1
+2026-09-02 19:52:40+05:30 2026-09-02 14:22:40.937 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=346.2ms decode=75.6ms color+encode=23.7ms total=445.7ms batch_size=1
+2026-09-02 19:52:40+05:30 2026-09-02 14:22:40.938 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=346.2ms steps=[s0=87.6 s1=87.1 s2=85.4 s3=86.1] n_steps=4 batch_size=1
+2026-09-02 19:52:41+05:30 2026-09-02 14:22:41.897 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=347.2ms decode=75.1ms color+encode=23.7ms total=446.2ms batch_size=1
+2026-09-02 19:52:41+05:30 2026-09-02 14:22:41.898 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=347.2ms steps=[s0=98.7 s1=83.6 s2=83.4 s3=81.4] n_steps=4 batch_size=1
+2026-09-02 19:52:42+05:30 2026-09-02 14:22:42.860 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=349.0ms decode=75.8ms color+encode=23.8ms total=449.0ms batch_size=1
+2026-09-02 19:52:42+05:30 2026-09-02 14:22:42.860 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=349.0ms steps=[s0=84.2 s1=85.3 s2=88.3 s3=91.2] n_steps=4 batch_size=1
+2026-09-02 19:52:42+05:30 2026-09-02 14:22:42,985 [INFO] BatchedStreamingEngine: cycle=40 batch=1 sessions=['d9b5c252-8f12-40ec-991f-ce413c0230b6'] embed=16.2ms infer=449.7ms xfer=124.1ms total=590.1ms
+2026-09-02 19:52:43+05:30 2026-09-02 14:22:43,820 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5030 frames=126 effectiveFps=25.1 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=53.9 maxCaptureMs=2.0
+2026-09-02 19:52:43+05:30 2026-09-02 14:22:43.826 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=352.3ms decode=76.5ms color+encode=25.9ms total=455.1ms batch_size=1
+2026-09-02 19:52:43+05:30 2026-09-02 14:22:43.827 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=352.3ms steps=[s0=91.9 s1=93.6 s2=82.5 s3=84.3] n_steps=4 batch_size=1
+2026-09-02 19:52:44+05:30 2026-09-02 14:22:44.773 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=343.4ms decode=74.5ms color+encode=23.8ms total=442.1ms batch_size=1
+2026-09-02 19:52:44+05:30 2026-09-02 14:22:44.773 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=343.4ms steps=[s0=93.0 s1=83.0 s2=84.5 s3=82.9] n_steps=4 batch_size=1
+2026-09-02 19:52:44+05:30 [METRICS] GPU_util=59% GPU_temp=52C GPU_mem=4.4GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=219.8s CPU_sys=22.4s sessions=1 pool=3/3
+2026-09-02 19:52:45+05:30 2026-09-02 14:22:45.749 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=357.5ms decode=75.2ms color+encode=25.2ms total=458.2ms batch_size=1
+2026-09-02 19:52:45+05:30 2026-09-02 14:22:45.750 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=357.5ms steps=[s0=89.8 s1=88.5 s2=92.7 s3=86.5] n_steps=4 batch_size=1
+2026-09-02 19:52:46+05:30 2026-09-02 14:22:46.708 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=356.6ms decode=74.8ms color+encode=24.5ms total=456.3ms batch_size=1
+2026-09-02 19:52:46+05:30 2026-09-02 14:22:46.708 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=356.6ms steps=[s0=96.5 s1=84.2 s2=87.7 s3=88.2] n_steps=4 batch_size=1
+2026-09-02 19:52:47+05:30 2026-09-02 14:22:47.684 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=373.7ms decode=75.0ms color+encode=24.1ms total=473.2ms batch_size=1
+2026-09-02 19:52:47+05:30 2026-09-02 14:22:47.685 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=373.7ms steps=[s0=92.7 s1=88.8 s2=95.5 s3=96.6] n_steps=4 batch_size=1
+2026-09-02 19:52:48+05:30 2026-09-02 14:22:48.644 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=374.0ms decode=74.4ms color+encode=23.7ms total=472.4ms batch_size=1
+2026-09-02 19:52:48+05:30 2026-09-02 14:22:48.644 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=374.0ms steps=[s0=107.7 s1=91.9 s2=84.8 s3=89.6] n_steps=4 batch_size=1
+2026-09-02 19:52:48+05:30 2026-09-02 14:22:48,866 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5046 frames=126 effectiveFps=25.0 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=54.5 maxCaptureMs=1.9
+2026-09-02 19:52:49+05:30 2026-09-02 14:22:49.583 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=351.1ms decode=75.7ms color+encode=24.6ms total=451.7ms batch_size=1
+2026-09-02 19:52:49+05:30 2026-09-02 14:22:49.583 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=351.1ms steps=[s0=92.7 s1=85.3 s2=89.0 s3=84.2] n_steps=4 batch_size=1
+2026-09-02 19:52:49+05:30 [METRICS] GPU_util=39% GPU_temp=48C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=227.4s CPU_sys=22.6s sessions=1 pool=3/3
+2026-09-02 19:52:50+05:30 2026-09-02 14:22:50.536 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=344.5ms decode=74.9ms color+encode=23.7ms total=443.4ms batch_size=1
+2026-09-02 19:52:50+05:30 2026-09-02 14:22:50.536 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=344.5ms steps=[s0=86.3 s1=87.1 s2=85.0 s3=86.1] n_steps=4 batch_size=1
+2026-09-02 19:52:50+05:30 2026-09-02 14:22:50,660 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 reactivated (keep_alive)
+2026-09-02 19:52:50+05:30 2026-09-02 14:22:50,962 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=pong ip=172.20.0.219
+2026-09-02 19:52:52+05:30 2026-09-02 14:22:52,832 [INFO] streaming.idle_video: [idle] best-match frame 0/375
+2026-09-02 19:52:52+05:30 2026-09-02 14:22:52,853 [INFO] streaming.state_manager: [SM] LIVE -> TRANSITION_TO_IDLE (crossfade 8 frames)
+2026-09-02 19:52:52+05:30 2026-09-02 14:22:52,866 [WARNING] VideoPublisher: VIDEO_PUBLISH_GAP gapMs=86.3 targetFps=25 frameSource=transition_to_idle
+2026-09-02 19:52:53+05:30 2026-09-02 14:22:53,124 [INFO] streaming.state_manager: [SM] TRANSITION_TO_IDLE -> IDLE
+2026-09-02 19:52:53+05:30 2026-09-02 14:22:53,272 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 cycles=128 elapsed=15833.3ms keep_alive=True
+2026-09-02 19:52:53+05:30 2026-09-02 14:22:53,906 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5038 frames=126 effectiveFps=25.0 liveFrames=86 repeatedLiveFrames=12 idleFrames=28 desyncPct=31.7 maxGapMs=86.3 maxCaptureMs=1.6
+2026-09-02 19:52:54+05:30 [METRICS] GPU_util=0% GPU_temp=46C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=233.8s CPU_sys=22.9s sessions=1 pool=3/3
+2026-09-02 19:52:58+05:30 2026-09-02 14:22:58,933 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5027 frames=126 effectiveFps=25.1 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=56.3 maxCaptureMs=1.5
+2026-09-02 19:52:59+05:30 [METRICS] GPU_util=0% GPU_temp=46C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=240.0s CPU_sys=23.1s sessions=1 pool=3/3
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,484 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=833 buffer=21 peak=45 MAX=58 TARGET=46
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,939 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=d9b5c252-8f12-40ec-991f-ce413c0230b6 windowMs=5005 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=55.5 maxCaptureMs=1.8
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,987 [INFO] handler: WS_SEND_RESPONSE session=d9b5c252-8f12-40ec-991f-ce413c0230b6 type=ended ip=172.20.0.219
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,987 [INFO] handler: SESSION_END_RECEIVED session=d9b5c252-8f12-40ec-991f-ce413c0230b6
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,988 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 keep_alive=False
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,988 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 marked for drain (keep_alive=False)
+2026-09-02 19:53:03+05:30 2026-09-02 14:23:03,989 [INFO] BatchedStreamingEngine: Session d9b5c252-8f12-40ec-991f-ce413c0230b6 removed (total=0)
+2026-09-02 19:53:04+05:30 2026-09-02 14:23:04,092 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 cycles=1 elapsed=104.5ms keep_alive=False
+2026-09-02 19:53:04+05:30 2026-09-02 14:23:04,119 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(6000000))
+2026-09-02 19:53:04+05:30 2026-09-02 14:23:04,289 [INFO] streaming.websocket_server: Unregistered WebSocket session: d9b5c252-8f12-40ec-991f-ce413c0230b6
+2026-09-02 19:53:04+05:30 2026-09-02 14:23:04,309 [INFO] handler: [handler] run_batched_streaming_session() completed in 169273.9ms for d9b5c252-8f12-40ec-991f-ce413c0230b6
+2026-09-02 19:53:04+05:30 2026-09-02 14:23:04,310 [INFO] handler: WS_SESSION_ENDED session=d9b5c252-8f12-40ec-991f-ce413c0230b6 ip=172.20.0.219
+2026-09-02 19:53:04+05:30 2026-09-02 14:23:04,316 [INFO] aiohttp.access: 172.20.0.219 [02/Sep/2026:14:20:20 +0000] "GET /ws/d9b5c252-8f12-40ec-991f-ce413c0230b6 HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-09-02 19:53:04+05:30 CONNECT /ws/d9b5c252-8f12-40ec-991f-ce413c0230b6 -> 101 Switching Protocols  (duration: 164.8 s, execution: 164.6 s)
+2026-09-02 19:53:04+05:30 [METRICS] GPU_util=0% GPU_temp=46C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=245.9s CPU_sys=23.4s sessions=0 pool=3/3
+2026-09-02 19:53:07+05:30 2026-09-02 14:23:07,670 [INFO] aiohttp.access: 172.20.0.219 [02/Sep/2026:14:23:07 +0000] "POST /sessions/d9b5c252-8f12-40ec-991f-ce413c0230b6/end HTTP/1.1" 404 261 "-" "node"
+2026-09-02 19:53:07+05:30    POST /sessions/d9b5c252-8f12-40ec-991f-ce413c0230b6/end -> 404 Not Found  (duration: 491.9 ms, execution: 310.9 ms)
+2026-09-02 19:53:10+05:30 [METRICS] GPU_util=0% GPU_temp=46C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=250.0s CPU_sys=23.4s sessions=0 pool=3/3
+2026-09-02 19:53:15+05:30 [METRICS] GPU_util=0% GPU_temp=45C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=253.7s CPU_sys=23.5s sessions=0 pool=3/3
+2026-09-02 19:53:20+05:30 [METRICS] GPU_util=0% GPU_temp=45C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=256.8s CPU_sys=23.6s sessions=0 pool=3/3
+2026-09-02 19:53:25+05:30 [METRICS] GPU_util=0% GPU_temp=45C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=260.3s CPU_sys=23.7s sessions=0 pool=3/3
+2026-09-02 19:53:30+05:30 [METRICS] GPU_util=0% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=264.4s CPU_sys=23.7s sessions=0 pool=3/3
+2026-09-02 19:53:35+05:30 [METRICS] GPU_util=0% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=268.5s CPU_sys=23.8s sessions=0 pool=3/3
+2026-09-02 19:53:40+05:30 [METRICS] GPU_util=0% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=6.7GB) RSS=15027MB CPU_user=272.6s CPU_sys=23.8s sessions=0 pool=3/3
+2026-09-02 19:53:44+05:30 [EXIT] Starting graceful shutdown
+2026-09-02 19:53:44+05:30 [EXIT] Shutting down Modal serve runtime
+2026-09-02 19:53:44+05:30 2026-09-02 14:23:44,149 [INFO] websockets.server: server closing
+2026-09-02 19:53:44+05:30 2026-09-02 14:23:44,149 [INFO] websockets.server: server closed
+2026-09-02 19:53:44+05:30 2026-09-02 14:23:44,149 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-09-02 19:53:44+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-09-02 19:53:44+05:30 2026-09-02 14:23:44,154 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-09-02 19:53:44+05:30 2026-09-02 14:23:44,154 [INFO] BatchedStreamingEngine: Engine drain complete: 48 cycles total
+2026-09-02 19:53:44+05:30 2026-09-02 14:23:44,154 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-09-02 19:53:44+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-09-02 19:53:44+05:30 [EXIT] Graceful shutdown complete

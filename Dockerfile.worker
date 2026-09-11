@@ -10,7 +10,7 @@
 # this overlay needs no GPU and only uploads the changed app layers, so it is
 # laptop-friendly once the base image has been pulled once.
 #
-# Build (linux/amd64 for RunPod):
+# Build (linux/amd64 for Modal container image):
 #   cd aivatar-media-worker
 #   docker build -f Dockerfile.worker -t pk24100/aivatar-worker:flashhead-lite-v3 .
 #   docker push pk24100/aivatar-worker:flashhead-lite-v3
@@ -24,10 +24,12 @@ FROM ${BASE_IMAGE}
 WORKDIR /app
 
 COPY handler.py /app/handler.py
+COPY app_factory.py /app/app_factory.py
 COPY entrypoint.sh /app/entrypoint.sh
+COPY worker /app/worker
 COPY streaming /app/streaming
 COPY utils /app/utils
 
 RUN chmod +x /app/entrypoint.sh
 
-CMD ["python3", "-u", "handler.py"]
+CMD ["python3", "-u", "-c", "import asyncio, handler; asyncio.run(handler.run_worker_app())"]

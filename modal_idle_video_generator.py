@@ -25,10 +25,12 @@ image = (
     .pip_install_from_requirements("requirements.txt")
     .run_commands(
         "huggingface-cli download pkam24100/aivatar-flashhead-model --local-dir /app/models/SoulX-FlashHead-1_3B",
-        secrets=[modal.Secret.from_name("huggingface-secret")],
+    secrets=[modal.Secret.from_name("huggingface-secret"), modal.Secret.from_name("sentry-secret")],
     )
     .add_local_dir("SoulX-FlashHead", "/app/SoulX-FlashHead", copy=True)
     .add_local_dir("models/wav2vec2-base-960h", "/app/models/wav2vec2-base-960h", copy=True)
+    .add_local_dir("streaming", "/app/streaming", copy=True)
+    .add_local_dir("utils", "/app/utils", copy=True)
     .add_local_file("idle_generator.py", "/app/idle_generator.py", copy=True)
 )
 
@@ -91,6 +93,12 @@ class IdleGenerator:
             force=True,
         )
         logger = logging.getLogger("modal_idle_video_generator")
+        try:
+            from utils.errors import init_sentry, install_error_hooks
+            init_sentry()
+            install_error_hooks()
+        except Exception:
+            pass
 
         def _run():
             loop = asyncio.new_event_loop()

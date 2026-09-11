@@ -1,4 +1,3 @@
-runpod>=1.6.2
 # livekit-rtc / livekit-api jumped to 1.x in late 2025; 0.18.x is no longer compatible
 # with current LiveKit Cloud signaling protocol. Pin to >=1.0 to get the current Room API
 # (incl. connection_state property and ConnectionState.CONN_DISCONNECTED enum).
@@ -41,3 +40,5 @@ opencv-python-headless>=4.12.0.88
 scikit-image>=0.22.0
 pyloudnorm>=0.1.1
 PyJWT>=2.8.0
+daily-python==0.31.0
+sentry-sdk>=2.22.0,<3

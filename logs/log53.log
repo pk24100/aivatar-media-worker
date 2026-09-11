@@ -1,0 +1,1163 @@
+﻿2026-08-29 14:03:09+05:30 Creating CPU memory snapshot for Function.
+2026-08-29 14:03:18+05:30 
+2026-08-29 14:03:18+05:30 =============
+2026-08-29 14:03:18+05:30 == PyTorch ==
+2026-08-29 14:03:18+05:30 =============
+2026-08-29 14:03:18+05:30 
+2026-08-29 14:03:18+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-29 14:03:18+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-29 14:03:18+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-29 14:03:18+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-29 14:03:18+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-29 14:03:18+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-29 14:03:18+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-29 14:03:18+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-29 14:03:18+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-29 14:03:18+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-29 14:03:18+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-29 14:03:18+05:30 Copyright (c) 2015      Google Inc.
+2026-08-29 14:03:18+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-29 14:03:18+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-29 14:03:18+05:30 All rights reserved.
+2026-08-29 14:03:18+05:30 
+2026-08-29 14:03:18+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-29 14:03:18+05:30 
+2026-08-29 14:03:18+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-29 14:03:18+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-29 14:03:18+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-29 14:03:18+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-29 14:03:19+05:30 
+2026-08-29 14:03:19+05:30 ERROR: The NVIDIA Driver is present, but CUDA failed to initialize.  GPU functionality will not be available.
+2026-08-29 14:03:19+05:30    [[ No CUDA-capable device is detected (error 100) ]]
+2026-08-29 14:03:20+05:30 
+2026-08-29 14:03:21+05:30 [SNAP_CREATE] CPU snapshot load with WORKER_CONCURRENCY=3 TARGET_GPU=L40S
+2026-08-29 14:03:36+05:30 W0829 08:33:36.012000 2 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-29 14:03:36+05:30 W0829 08:33:36.077000 2 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-29 14:03:36+05:30 Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+2026-08-29 14:03:44+05:30 Matplotlib is building the font cache; this may take a moment.
+2026-08-29 14:03:50+05:30 [SNAP_CREATE] Loading FlashHead pipeline on CPU...
+2026-08-29 14:03:50+05:30 2026-08-29 08:33:50.094 | INFO     | flash_head.src.distributed.usp_device:get_device:20 - FLASHHEAD_LOAD_DEVICE=cpu, returning CPU device for snapshot
+2026-08-29 14:03:50+05:30 2026-08-29 08:33:50.094 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cpu
+2026-08-29 14:03:53+05:30 There are modules in CausalVideoAutoencoder that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-29 14:03:55+05:30 There are modules in WanModelAudioProject that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-29 14:03:58+05:30 Some weights of Wav2Vec2Model were not initialized from the model checkpoint at /app/models/wav2vec2-base-960h and are newly initialized: ['masked_spec_embed']
+2026-08-29 14:03:58+05:30 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-29 14:03:58+05:30 2026-08-29 08:33:58.530 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:102 - Cached Lite model components for reuse
+2026-08-29 14:03:58+05:30 [SNAP_CREATE] Pipeline loaded to CPU in 8436.3ms
+2026-08-29 14:03:58+05:30 [modal] Default avatar manifest not found at /app/config/default_avatars.manifest.json - falling back to per-session URL fetch
+2026-08-29 14:03:58+05:30 [modal] Default idle cache: cachedIdleVideoCount=0 failed=0
+2026-08-29 14:03:58+05:30 [SNAP_PRE_RESET] SIGSEGV handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_PRE_RESET] SIGABRT handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_PRE_RESET] SIGBUS handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_PRE_RESET] SIGFPE handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_POST_RESET] SIGSEGV handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_POST_RESET] SIGABRT handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_POST_RESET] SIGBUS handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_POST_RESET] SIGFPE handler: 0
+2026-08-29 14:03:58+05:30 [SNAP_CREATE] Pipeline loaded to CPU for snapshot
+2026-08-29 14:04:16+05:30 Snapshot created. Restoring Function from memory snapshot.
+2026-08-29 14:04:17+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:04:20+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:04:20+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:04:22+05:30 2026-08-29 08:34:22.064 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:04:22+05:30 [RESTORE] Pipeline moved to cuda in 1135.7ms
+2026-08-29 14:04:22+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:04:22+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:04:25+05:30 2026-08-29 08:34:25.685 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2692.6ms decode=79.5ms color=9.4ms encode=30.9ms total=2812.7ms
+2026-08-29 14:04:25+05:30 2026-08-29 08:34:25.686 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2692.6ms steps=[s0=2485.0 s1=68.1 s2=67.5 s3=72.0] n_steps=4
+2026-08-29 14:04:25+05:30 2026-08-29 08:34:25.686 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2813.3ms post=0.3ms
+2026-08-29 14:04:25+05:30 [RESTORE] Warmup completed in 3571.5ms
+2026-08-29 14:04:25+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:04:25+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:04:25+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,715 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,716 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,717 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:04:26+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:04:26+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,719 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,742 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,742 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:04:26+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:04:26+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:04:26+05:30 2026-08-29 08:34:26,745 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244550635488
+2026-08-29 14:04:26+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=29.9s CPU_sys=11.0s sessions=0 pool=3/3
+2026-08-29 14:04:27+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:04:27+05:30 
+2026-08-29 14:04:27+05:30 2026-08-29 08:34:27,267 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:04:27+05:30 2026-08-29 08:34:27,690 [INFO] aiohttp.access: 172.20.1.139 [29/Aug/2026:08:34:27 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:04:27+05:30 2026-08-29 08:34:27,692 [INFO] aiohttp.access: 172.20.1.139 [29/Aug/2026:08:34:27 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:04:27+05:30 Nvidia Decoder is supported.
+2026-08-29 14:04:28+05:30 2026-08-29 08:34:28,152 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:04:28+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 24.8 s, execution: 950.6 ms)
+2026-08-29 14:04:28+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 84.8 s, execution: 1.02 s)
+2026-08-29 14:04:28+05:30 2026-08-29 08:34:28.327 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=661.6ms decode=88.8ms color+encode=51.1ms total=801.7ms batch_size=1
+2026-08-29 14:04:28+05:30 2026-08-29 08:34:28.327 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=661.6ms steps=[s0=74.0 s1=73.1 s2=98.5 s3=416.0] n_steps=4 batch_size=1
+2026-08-29 14:04:28+05:30 2026-08-29 08:34:28,374 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:04:28+05:30 2026-08-29 08:34:28,376 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:04:28+05:30 [SERVE] Batched warmup completed in 1233.9ms
+2026-08-29 14:04:29+05:30 2026-08-29 08:34:29,756 [INFO] aiohttp.access: 172.20.1.139 [29/Aug/2026:08:34:29 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:04:30+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:04:30+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 793.5 ms, execution: 573.6 ms)
+2026-08-29 14:04:30+05:30 2026-08-29 08:34:30,321 [INFO] aiohttp.access: 172.20.1.139 [29/Aug/2026:08:34:30 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:04:30+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 593.7 ms, execution: 379.1 ms)
+2026-08-29 14:04:31+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=34.2s CPU_sys=11.7s sessions=0 pool=3/3
+2026-08-29 14:04:36+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=37.8s CPU_sys=11.8s sessions=0 pool=3/3
+2026-08-29 14:04:41+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=41.3s CPU_sys=11.9s sessions=0 pool=3/3
+2026-08-29 14:04:47+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=45.1s CPU_sys=11.9s sessions=0 pool=3/3
+2026-08-29 14:04:52+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=49.0s CPU_sys=12.0s sessions=0 pool=3/3
+2026-08-29 14:04:55+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:04:55+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:04:55+05:30 2026-08-29 08:34:55,766 [INFO] websockets.server: server closing
+2026-08-29 14:04:55+05:30 2026-08-29 08:34:55,766 [INFO] websockets.server: server closed
+2026-08-29 14:04:55+05:30 2026-08-29 08:34:55,766 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:04:55+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:04:55+05:30 2026-08-29 08:34:55,768 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:04:55+05:30 2026-08-29 08:34:55,768 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:04:55+05:30 2026-08-29 08:34:55,768 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:04:55+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:04:55+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:05:06+05:30 [AUTOSCALER] WorkerLow max_containers=2
+2026-08-29 14:05:06+05:30    POST / -> 200 OK  (duration: 4.02 s, execution: 170.7 ms)
+2026-08-29 14:05:06+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:05:09+05:30 [AUTOSCALER] WorkerHigh max_containers=8
+2026-08-29 14:05:09+05:30    POST / -> 200 OK  (duration: 193.5 ms, execution: 157.7 ms)
+2026-08-29 14:05:19+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:05:19+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:05:20+05:30 2026-08-29 08:35:20.925 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:05:22+05:30 [RESTORE] Pipeline moved to cuda in 3185.7ms
+2026-08-29 14:05:22+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:05:22+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:05:26+05:30 2026-08-29 08:35:26.263 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2896.6ms decode=80.1ms color=9.7ms encode=33.4ms total=3020.0ms
+2026-08-29 14:05:26+05:30 2026-08-29 08:35:26.263 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2896.6ms steps=[s0=2664.7 s1=81.7 s2=72.9 s3=77.3] n_steps=4
+2026-08-29 14:05:26+05:30 2026-08-29 08:35:26.263 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=3020.4ms post=0.2ms
+2026-08-29 14:05:26+05:30 [RESTORE] Warmup completed in 3803.8ms
+2026-08-29 14:05:26+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:05:26+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:05:26+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,496 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,497 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,498 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:05:27+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:05:27+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,500 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,526 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,527 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:05:27+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:05:27+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:05:27+05:30 2026-08-29 08:35:27,531 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244551187696
+2026-08-29 14:05:27+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=32.5s CPU_sys=11.0s sessions=0 pool=3/3
+2026-08-29 14:05:28+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:05:28+05:30 
+2026-08-29 14:05:28+05:30 2026-08-29 08:35:28,060 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:05:28+05:30 Nvidia Decoder is supported.
+2026-08-29 14:05:28+05:30 2026-08-29 08:35:28,867 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:05:28+05:30 2026-08-29 08:35:28.991 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=526.4ms decode=100.4ms color+encode=43.3ms total=670.7ms batch_size=1
+2026-08-29 14:05:28+05:30 2026-08-29 08:35:28.991 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=526.4ms steps=[s0=74.7 s1=73.4 s2=73.4 s3=304.9] n_steps=4 batch_size=1
+2026-08-29 14:05:29+05:30 2026-08-29 08:35:29,091 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:05:29+05:30 2026-08-29 08:35:29,092 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:05:29+05:30 [SERVE] Batched warmup completed in 1165.3ms
+2026-08-29 14:05:30+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 500 Internal Server Error  (duration: 26.9 s)
+2026-08-29 14:05:32+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=36.9s CPU_sys=11.6s sessions=0 pool=3/3
+2026-08-29 14:05:37+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=41.0s CPU_sys=11.7s sessions=0 pool=3/3
+2026-08-29 14:05:42+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=45.0s CPU_sys=11.8s sessions=0 pool=3/3
+2026-08-29 14:05:44+05:30 2026-08-29 08:35:44,241 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:05:44+05:30 2026-08-29 08:35:44,278 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:05:44+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:05:44+05:30 2026-08-29 08:35:44,687 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "warmup-94434202fb3f" with reason: ClientInitiated
+2026-08-29 14:05:47+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=49.1s CPU_sys=12.0s sessions=0 pool=3/3
+2026-08-29 14:05:52+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=53.1s CPU_sys=12.1s sessions=0 pool=3/3
+2026-08-29 14:05:57+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=57.0s CPU_sys=12.3s sessions=0 pool=3/3
+2026-08-29 14:06:02+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=60.9s CPU_sys=12.4s sessions=0 pool=3/3
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,445 [INFO] aiohttp.access: 172.20.1.174 [29/Aug/2026:08:36:03 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:06:03+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:06:03+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,467 [INFO] websockets.server: server closing
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,468 [INFO] websockets.server: server closed
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,468 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:06:03+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,470 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,470 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:06:03+05:30 2026-08-29 08:36:03,470 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:06:03+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:06:03+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:06:03+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 82.8 ms, execution: 37.6 ms)
+2026-08-29 14:06:05+05:30 Creating CPU memory snapshot for Function.
+2026-08-29 14:06:08+05:30 
+2026-08-29 14:06:08+05:30 =============
+2026-08-29 14:06:08+05:30 == PyTorch ==
+2026-08-29 14:06:08+05:30 =============
+2026-08-29 14:06:08+05:30 
+2026-08-29 14:06:08+05:30 NVIDIA Release 26.05 (build 313520559)
+2026-08-29 14:06:08+05:30 PyTorch Version 2.12.0a0+5aff392
+2026-08-29 14:06:08+05:30 Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+2026-08-29 14:06:08+05:30 Copyright (c) 2014-2024 Facebook Inc.
+2026-08-29 14:06:08+05:30 Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+2026-08-29 14:06:08+05:30 Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+2026-08-29 14:06:08+05:30 Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+2026-08-29 14:06:08+05:30 Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+2026-08-29 14:06:08+05:30 Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+2026-08-29 14:06:08+05:30 Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+2026-08-29 14:06:08+05:30 Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+2026-08-29 14:06:08+05:30 Copyright (c) 2015      Google Inc.
+2026-08-29 14:06:08+05:30 Copyright (c) 2015      Yangqing Jia
+2026-08-29 14:06:08+05:30 Copyright (c) 2013-2016 The Caffe contributors
+2026-08-29 14:06:08+05:30 All rights reserved.
+2026-08-29 14:06:08+05:30 
+2026-08-29 14:06:08+05:30 Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+2026-08-29 14:06:08+05:30 
+2026-08-29 14:06:08+05:30 GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+2026-08-29 14:06:08+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+2026-08-29 14:06:08+05:30 and the Product-Specific Terms for NVIDIA AI Products
+2026-08-29 14:06:08+05:30 (found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+2026-08-29 14:06:08+05:30 
+2026-08-29 14:06:08+05:30 ERROR: The NVIDIA Driver is present, but CUDA failed to initialize.  GPU functionality will not be available.
+2026-08-29 14:06:08+05:30    [[ No CUDA-capable device is detected (error 100) ]]
+2026-08-29 14:06:08+05:30 
+2026-08-29 14:06:09+05:30 [SNAP_CREATE] CPU snapshot load with WORKER_CONCURRENCY=3 TARGET_GPU=L40S
+2026-08-29 14:06:17+05:30 W0829 08:36:17.730000 2 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-29 14:06:17+05:30 W0829 08:36:17.770000 2 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+2026-08-29 14:06:17+05:30 Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+2026-08-29 14:06:23+05:30 [SNAP_CREATE] Loading FlashHead pipeline on CPU...
+2026-08-29 14:06:23+05:30 2026-08-29 08:36:23.261 | INFO     | flash_head.src.distributed.usp_device:get_device:20 - FLASHHEAD_LOAD_DEVICE=cpu, returning CPU device for snapshot
+2026-08-29 14:06:23+05:30 2026-08-29 08:36:23.261 | INFO     | flash_head.inference:get_pipeline:21 - ulysses_degree: 1, ring_degree: 1, device: cpu
+2026-08-29 14:06:25+05:30 There are modules in CausalVideoAutoencoder that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-29 14:06:26+05:30 There are modules in WanModelAudioProject that should be kept in float32: []. Casting directly with `to()` can lead to inconsistent results; set `torch_dtype` in `from_pretrained()` instead to keep these modules in float32.
+2026-08-29 14:06:28+05:30 Some weights of Wav2Vec2Model were not initialized from the model checkpoint at /app/models/wav2vec2-base-960h and are newly initialized: ['masked_spec_embed']
+2026-08-29 14:06:28+05:30 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-29 14:06:28+05:30 2026-08-29 08:36:28.153 | INFO     | flash_head.src.pipeline.flash_head_pipeline:get_cached_lite_components:102 - Cached Lite model components for reuse
+2026-08-29 14:06:28+05:30 [SNAP_CREATE] Pipeline loaded to CPU in 4892.1ms
+2026-08-29 14:06:28+05:30 [modal] Default avatar manifest not found at /app/config/default_avatars.manifest.json - falling back to per-session URL fetch
+2026-08-29 14:06:28+05:30 [modal] Default idle cache: cachedIdleVideoCount=0 failed=0
+2026-08-29 14:06:28+05:30 [SNAP_PRE_RESET] SIGSEGV handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_PRE_RESET] SIGABRT handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_PRE_RESET] SIGBUS handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_PRE_RESET] SIGFPE handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_POST_RESET] SIGSEGV handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_POST_RESET] SIGABRT handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_POST_RESET] SIGBUS handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_POST_RESET] SIGFPE handler: 0
+2026-08-29 14:06:28+05:30 [SNAP_CREATE] Pipeline loaded to CPU for snapshot
+2026-08-29 14:06:38+05:30 Snapshot created. Restoring Function from memory snapshot.
+2026-08-29 14:06:39+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:06:40+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:06:40+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:06:41+05:30 2026-08-29 08:36:41.733 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:06:41+05:30 [RESTORE] Pipeline moved to cuda in 1048.7ms
+2026-08-29 14:06:41+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:06:41+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:06:44+05:30 2026-08-29 08:36:44.420 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2129.4ms decode=77.7ms color=10.2ms encode=26.9ms total=2244.4ms
+2026-08-29 14:06:44+05:30 2026-08-29 08:36:44.420 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2129.4ms steps=[s0=1983.5 s1=48.9 s2=48.4 s3=48.6] n_steps=4
+2026-08-29 14:06:44+05:30 2026-08-29 08:36:44.421 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2244.8ms post=0.1ms
+2026-08-29 14:06:44+05:30 [RESTORE] Warmup completed in 2688.2ms
+2026-08-29 14:06:44+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:06:44+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:06:44+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,201 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,202 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,202 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:06:45+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:06:45+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,203 [INFO] modal_app: aiohttp background thread started ident=48016232732352
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,218 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,218 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:06:45+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:06:45+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,220 [INFO] modal_app: aiohttp site started thread=48016232732352 event_loop=48016055241856
+2026-08-29 14:06:45+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=17.7s CPU_sys=4.7s sessions=0 pool=3/3
+2026-08-29 14:06:45+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:06:45+05:30 
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,547 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,554 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:36:45 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,554 [INFO] handler: [pod_session_start] Received session=f6838b11-65f1-499f-90d1-ca8e9b603561 room=e2e-18 hasIdleAsset=True
+2026-08-29 14:06:45+05:30 2026-08-29 08:36:45,559 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:36:45 +0000] "GET /sessions/f6838b11-65f1-499f-90d1-ca8e9b603561/status HTTP/1.1" 200 254 "-" "node"
+2026-08-29 14:06:45+05:30     GET /sessions/f6838b11-65f1-499f-90d1-ca8e9b603561/status -> 200 OK  (duration: 4.31 s, execution: 209.9 ms)
+2026-08-29 14:06:45+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 41.3 s, execution: 271.6 ms)
+2026-08-29 14:06:45+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46.058 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=200.6ms decode=80.6ms color+encode=34.4ms total=315.8ms batch_size=1
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46.059 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=200.6ms steps=[s0=52.6 s1=49.1 s2=49.4 s3=49.5] n_steps=4 batch_size=1
+2026-08-29 14:06:46+05:30 Nvidia Decoder is supported.
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,117 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,118 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:06:46+05:30 [SERVE] Batched warmup completed in 688.3ms
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,246 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:06:46+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,540 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "warmup-75d3ca7aeca2" with reason: ClientInitiated
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,820 [INFO] streaming.websocket_server: Registered WebSocket session: f6838b11-65f1-499f-90d1-ca8e9b603561 provider_profile=none telephony_provider=none
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,822 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=48016232732352 thread_name=modal-aiohttp-server event_loop_id=48016055241856
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,823 [INFO] batched_stream_processor: Connecting to egress type=livekit room=e2e-18 url=wss://ai-14ksodzi.livekit.cloud session=f6838b11-65f1-499f-90d1-ca8e9b603561
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,825 [INFO] batched_stream_processor: Registering session f6838b11-65f1-499f-90d1-ca8e9b603561 with BatchedStreamingEngine
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,825 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,838 [INFO] BatchedStreamingEngine: Session f6838b11-65f1-499f-90d1-ca8e9b603561 added (total=1)
+2026-08-29 14:06:46+05:30 2026-08-29 08:36:46,868 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:06:47+05:30 2026-08-29 08:36:47,865 [INFO] batched_stream_processor: Session f6838b11-65f1-499f-90d1-ca8e9b603561 registered with engine in 1040.0 ms (avatar prepared)
+2026-08-29 14:06:48+05:30 2026-08-29 08:36:48,063 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmpgczm6o3l.mp4
+2026-08-29 14:06:48+05:30 2026-08-29 08:36:48,085 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:36:45 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-29 14:06:48+05:30    POST /sessions/start -> 202 Accepted  (duration: 7.69 s, execution: 2.77 s)
+2026-08-29 14:06:48+05:30 2026-08-29 08:36:48,513 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-08-29 14:06:48+05:30 2026-08-29 08:36:48,906 [INFO] handler: WS_REQUEST_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 origin= ip=172.20.35.124
+2026-08-29 14:06:48+05:30 2026-08-29 08:36:48,907 [INFO] handler: WS_CONNECT session=f6838b11-65f1-499f-90d1-ca8e9b603561 origin= ip=172.20.35.124 handlerMs=0.6
+2026-08-29 14:06:49+05:30 2026-08-29 08:36:49,231 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=1 size=223 ip=172.20.35.124
+2026-08-29 14:06:49+05:30 2026-08-29 08:36:49,232 [INFO] handler: WS_SEND_RESPONSE session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=started ip=172.20.35.124
+2026-08-29 14:06:50+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=23.3s CPU_sys=6.2s sessions=1 pool=3/3
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,416 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=1 size=34 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,426 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,535 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,537 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,539 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,540 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,737 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,848 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,849 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,851 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,852 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,853 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,855 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:52+05:30 2026-08-29 08:36:52,856 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,068 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,070 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,071 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,073 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,074 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,152 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,178 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,179 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,180 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,181 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,186 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,221 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,222 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,223 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,224 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,226 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,234 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=3200 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,235 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=2 size=596 ip=172.20.35.124
+2026-08-29 14:06:53+05:30 2026-08-29 08:36:53,236 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=1 size=32 ip=172.20.35.124
+2026-08-29 14:06:54+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:06:54+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:06:55+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=27.2s CPU_sys=6.3s sessions=1 pool=3/3
+2026-08-29 14:07:00+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=31.3s CPU_sys=6.3s sessions=1 pool=3/3
+2026-08-29 14:07:00+05:30 2026-08-29 08:37:00.405 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:07:00+05:30 [RESTORE] Pipeline moved to cuda in 6037.9ms
+2026-08-29 14:07:00+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:07:00+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:07:01+05:30 2026-08-29 08:37:01,935 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:07:01+05:30 2026-08-29 08:37:01,965 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:07:03+05:30 2026-08-29 08:37:03.348 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2382.2ms decode=80.4ms color=10.1ms encode=32.6ms total=2505.6ms
+2026-08-29 14:07:03+05:30 2026-08-29 08:37:03.349 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2382.2ms steps=[s0=2166.2 s1=71.3 s2=70.9 s3=73.8] n_steps=4
+2026-08-29 14:07:03+05:30 2026-08-29 08:37:03.349 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2506.3ms post=0.3ms
+2026-08-29 14:07:03+05:30 [RESTORE] Warmup completed in 2942.8ms
+2026-08-29 14:07:03+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:07:03+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:07:03+05:30 2026-08-29 08:37:03,417 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:37:03 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:07:03+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 50.6 ms, execution: 19.1 ms)
+2026-08-29 14:07:03+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,231 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=1 size=34 ip=172.20.35.124
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,231 [INFO] handler: WS_SEND_RESPONSE session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=pong ip=172.20.35.124
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,236 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:37:04 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:07:04+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 52.4 ms, execution: 22.0 ms)
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,381 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,381 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,381 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,382 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,382 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,382 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,382 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,382 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,382 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:07:04+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:07:04+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,384 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,413 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,413 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:07:04+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:07:04+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,417 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244550369504
+2026-08-29 14:07:04+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=29.4s CPU_sys=20.9s sessions=0 pool=3/3
+2026-08-29 14:07:04+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:07:04+05:30 
+2026-08-29 14:07:04+05:30 2026-08-29 08:37:04,871 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:07:05+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=35.5s CPU_sys=6.5s sessions=1 pool=3/3
+2026-08-29 14:07:05+05:30 2026-08-29 08:37:05.710 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=303.8ms decode=86.5ms color+encode=44.0ms total=434.6ms batch_size=1
+2026-08-29 14:07:05+05:30 2026-08-29 08:37:05.710 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=303.8ms steps=[s0=79.3 s1=74.2 s2=75.9 s3=74.5] n_steps=4 batch_size=1
+2026-08-29 14:07:05+05:30 2026-08-29 08:37:05,746 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:07:05+05:30 2026-08-29 08:37:05,746 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:07:05+05:30 Nvidia Decoder is supported.
+2026-08-29 14:07:05+05:30 [SERVE] Batched warmup completed in 1003.5ms
+2026-08-29 14:07:06+05:30 2026-08-29 08:37:06,009 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:07:07+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:07:07+05:30 2026-08-29 08:37:07,283 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "warmup-34c872f916fe" with reason: ClientInitiated
+2026-08-29 14:07:09+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=33.6s CPU_sys=21.9s sessions=0 pool=3/3
+2026-08-29 14:07:10+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=39.4s CPU_sys=6.6s sessions=1 pool=3/3
+2026-08-29 14:07:14+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=37.6s CPU_sys=21.9s sessions=0 pool=3/3
+2026-08-29 14:07:15+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=43.3s CPU_sys=6.7s sessions=1 pool=3/3
+2026-08-29 14:07:16+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:07:16+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:07:16+05:30 2026-08-29 08:37:16,805 [INFO] websockets.server: server closing
+2026-08-29 14:07:16+05:30 2026-08-29 08:37:16,805 [INFO] websockets.server: server closed
+2026-08-29 14:07:16+05:30 2026-08-29 08:37:16,806 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:07:16+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:07:16+05:30 2026-08-29 08:37:16,807 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:07:16+05:30 2026-08-29 08:37:16,808 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:07:16+05:30 2026-08-29 08:37:16,808 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:07:16+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:07:16+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:07:17+05:30 2026-08-29 08:37:17,055 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (2/3)
+2026-08-29 14:07:17+05:30 2026-08-29 08:37:17,079 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:07:19+05:30 2026-08-29 08:37:19,246 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=1 size=34 ip=172.20.35.124
+2026-08-29 14:07:19+05:30 2026-08-29 08:37:19,247 [INFO] handler: WS_SEND_RESPONSE session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=pong ip=172.20.35.124
+2026-08-29 14:07:20+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=47.0s CPU_sys=6.9s sessions=1 pool=3/3
+2026-08-29 14:07:25+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=50.7s CPU_sys=7.0s sessions=1 pool=3/3
+2026-08-29 14:07:30+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=54.6s CPU_sys=7.1s sessions=1 pool=3/3
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,157 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (3/3)
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,181 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,342 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,344 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,345 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,345 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,347 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,347 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,347 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,354 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 6.3 ms
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,359 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=f6838b11-65f1-499f-90d1-ca8e9b603561 room=e2e-18
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,367 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCet7rBFia2L4c from facemode-avatar
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,373 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,421 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=f6838b11-65f1-499f-90d1-ca8e9b603561 keep_alive=True
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,422 [INFO] BatchedStreamingEngine: Session f6838b11-65f1-499f-90d1-ca8e9b603561 marked for drain (keep_alive=True)
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32.854 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=226.5ms decode=72.2ms color+encode=23.2ms total=322.2ms batch_size=1
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32.854 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=226.5ms steps=[s0=57.0 s1=58.8 s2=52.1 s3=58.6] n_steps=4 batch_size=1
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,898 [INFO] AudioPublisher: [AP-DIAG] Calling publish_track()...
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,904 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,914 [INFO] AudioPublisher: [AP-DIAG] publish_track() completed in 15.1 ms (16000 Hz, 1 ch)
+2026-08-29 14:07:32+05:30 2026-08-29 08:37:32,928 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-29 14:07:33+05:30 2026-08-29 08:37:33,226 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-08-29 14:07:33+05:30 2026-08-29 08:37:33.288 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=224.0ms decode=72.3ms color+encode=23.7ms total=321.2ms batch_size=1
+2026-08-29 14:07:33+05:30 2026-08-29 08:37:33.288 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=224.0ms steps=[s0=65.9 s1=52.2 s2=50.9 s3=55.0] n_steps=4 batch_size=1
+2026-08-29 14:07:33+05:30 2026-08-29 08:37:33,344 [INFO] streaming.state_manager: [SM] Dropped 11 stale frames to protect A/V sync (qsize now 33)
+2026-08-29 14:07:34+05:30 2026-08-29 08:37:34.176 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=217.6ms decode=72.1ms color+encode=23.6ms total=313.6ms batch_size=1
+2026-08-29 14:07:34+05:30 2026-08-29 08:37:34.177 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=217.6ms steps=[s0=57.1 s1=53.3 s2=52.8 s3=54.4] n_steps=4 batch_size=1
+2026-08-29 14:07:34+05:30 2026-08-29 08:37:34,241 [INFO] handler: WS_FRAME_RECEIVED session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=1 size=34 ip=172.20.35.124
+2026-08-29 14:07:34+05:30 2026-08-29 08:37:34,241 [INFO] handler: WS_SEND_RESPONSE session=f6838b11-65f1-499f-90d1-ca8e9b603561 type=pong ip=172.20.35.124
+2026-08-29 14:07:35+05:30 2026-08-29 08:37:35.134 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=216.0ms decode=72.2ms color+encode=23.3ms total=311.7ms batch_size=1
+2026-08-29 14:07:35+05:30 2026-08-29 08:37:35.134 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=216.0ms steps=[s0=57.1 s1=50.9 s2=53.3 s3=54.8] n_steps=4 batch_size=1
+2026-08-29 14:07:35+05:30 2026-08-29 08:37:35,170 [INFO] BatchedStreamingEngine: Session f6838b11-65f1-499f-90d1-ca8e9b603561 reactivated (keep_alive)
+2026-08-29 14:07:35+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=59.7s CPU_sys=7.4s sessions=1 pool=3/3
+2026-08-29 14:07:37+05:30 2026-08-29 08:37:37,132 [INFO] streaming.idle_video: [idle] best-match frame 0/375
+2026-08-29 14:07:37+05:30 2026-08-29 08:37:37,137 [INFO] streaming.state_manager: [SM] LIVE -> TRANSITION_TO_IDLE (crossfade 8 frames)
+2026-08-29 14:07:37+05:30 2026-08-29 08:37:37,346 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f6838b11-65f1-499f-90d1-ca8e9b603561 windowMs=5006 frames=126 effectiveFps=25.2 liveFrames=85 repeatedLiveFrames=12 idleFrames=29 desyncPct=32.5 maxGapMs=72.8 maxCaptureMs=1.3
+2026-08-29 14:07:37+05:30 2026-08-29 08:37:37,425 [INFO] streaming.state_manager: [SM] TRANSITION_TO_IDLE -> IDLE
+2026-08-29 14:07:37+05:30 2026-08-29 08:37:37,552 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=f6838b11-65f1-499f-90d1-ca8e9b603561 cycles=28 elapsed=5130.3ms keep_alive=True
+2026-08-29 14:07:40+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=64.6s CPU_sys=7.7s sessions=1 pool=3/3
+2026-08-29 14:07:42+05:30 2026-08-29 08:37:42,347 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f6838b11-65f1-499f-90d1-ca8e9b603561 windowMs=5000 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=41.8 maxCaptureMs=1.6
+2026-08-29 14:07:44+05:30 CONNECT /ws/f6838b11-65f1-499f-90d1-ca8e9b603561 -> 101 Switching Protocols  (duration: 55.2 s, execution: 55.2 s)
+2026-08-29 14:07:45+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=69.2s CPU_sys=8.0s sessions=1 pool=3/3
+2026-08-29 14:07:45+05:30 2026-08-29 08:37:45,869 [INFO] handler: WS_CONNECTION_LOST session=f6838b11-65f1-499f-90d1-ca8e9b603561 closed=True close_code=1000 exception=None ip=172.20.35.124
+2026-08-29 14:07:45+05:30 2026-08-29 08:37:45,869 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:36:48 +0000] "GET /ws/f6838b11-65f1-499f-90d1-ca8e9b603561 HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-08-29 14:07:47+05:30 2026-08-29 08:37:47,386 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f6838b11-65f1-499f-90d1-ca8e9b603561 windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=41.2 maxCaptureMs=1.4
+2026-08-29 14:07:50+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=73.8s CPU_sys=8.2s sessions=1 pool=3/3
+2026-08-29 14:07:52+05:30 2026-08-29 08:37:52,427 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f6838b11-65f1-499f-90d1-ca8e9b603561 windowMs=5041 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=45.8 maxCaptureMs=0.6
+2026-08-29 14:07:55+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=78.4s CPU_sys=8.5s sessions=1 pool=3/3
+2026-08-29 14:07:57+05:30 2026-08-29 08:37:57,467 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f6838b11-65f1-499f-90d1-ca8e9b603561 windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=41.2 maxCaptureMs=0.6
+2026-08-29 14:08:00+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=82.9s CPU_sys=8.6s sessions=1 pool=3/3
+2026-08-29 14:08:02+05:30 2026-08-29 08:38:02,345 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:08:02+05:30 2026-08-29 08:38:02,508 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=f6838b11-65f1-499f-90d1-ca8e9b603561 windowMs=5041 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=41.6 maxCaptureMs=0.7
+2026-08-29 14:08:04+05:30 2026-08-29 08:38:04,331 [INFO] BatchedStreamingEngine: Session f6838b11-65f1-499f-90d1-ca8e9b603561 marked for drain (keep_alive=False)
+2026-08-29 14:08:04+05:30 2026-08-29 08:38:04,331 [INFO] streaming.websocket_server: Unregistered WebSocket session: f6838b11-65f1-499f-90d1-ca8e9b603561
+2026-08-29 14:08:04+05:30 2026-08-29 08:38:04,333 [INFO] BatchedStreamingEngine: Session f6838b11-65f1-499f-90d1-ca8e9b603561 removed (total=0)
+2026-08-29 14:08:04+05:30 2026-08-29 08:38:04,333 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:38:04 +0000] "POST /sessions/f6838b11-65f1-499f-90d1-ca8e9b603561/end HTTP/1.1" 200 250 "-" "node"
+2026-08-29 14:08:04+05:30    POST /sessions/f6838b11-65f1-499f-90d1-ca8e9b603561/end -> 200 OK  (duration: 81.1 ms, execution: 43.7 ms)
+2026-08-29 14:08:05+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=87.3s CPU_sys=8.8s sessions=0 pool=3/3
+2026-08-29 14:08:06+05:30 2026-08-29 08:38:06,686 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:38:06 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:08:06+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 53.9 ms, execution: 17.9 ms)
+2026-08-29 14:08:07+05:30 2026-08-29 08:38:07,613 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:38:07 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:08:07+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 48.7 ms, execution: 13.6 ms)
+2026-08-29 14:08:10+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=91.0s CPU_sys=8.9s sessions=0 pool=3/3
+2026-08-29 14:08:15+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=94.8s CPU_sys=9.0s sessions=0 pool=3/3
+2026-08-29 14:08:17+05:30 2026-08-29 08:38:17,863 [INFO] handler: [pod_session_start] Received session=ba49ac82-1819-44df-be0a-c186a46db17d room=e2e-18b hasIdleAsset=True
+2026-08-29 14:08:18+05:30 2026-08-29 08:38:18,788 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:38:18 +0000] "GET /sessions/ba49ac82-1819-44df-be0a-c186a46db17d/status HTTP/1.1" 200 254 "-" "node"
+2026-08-29 14:08:18+05:30     GET /sessions/ba49ac82-1819-44df-be0a-c186a46db17d/status -> 200 OK  (duration: 46.8 ms, execution: 11.0 ms)
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,091 [INFO] streaming.websocket_server: Registered WebSocket session: ba49ac82-1819-44df-be0a-c186a46db17d provider_profile=none telephony_provider=none
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,093 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=48016232732352 thread_name=modal-aiohttp-server event_loop_id=48016055241856
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,093 [INFO] batched_stream_processor: Connecting to egress type=livekit room=e2e-18b url=wss://ai-14ksodzi.livekit.cloud session=ba49ac82-1819-44df-be0a-c186a46db17d
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,095 [INFO] batched_stream_processor: Registering session ba49ac82-1819-44df-be0a-c186a46db17d with BatchedStreamingEngine
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,095 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,096 [INFO] BatchedStreamingEngine: Session ba49ac82-1819-44df-be0a-c186a46db17d added (total=1)
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,124 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,348 [INFO] batched_stream_processor: Session ba49ac82-1819-44df-be0a-c186a46db17d registered with engine in 253.1 ms (avatar prepared)
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,407 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmpomag8sez.mp4
+2026-08-29 14:08:19+05:30 2026-08-29 08:38:19,641 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-08-29 14:08:20+05:30 2026-08-29 08:38:20,311 [INFO] aiohttp.access: 172.20.35.124 [29/Aug/2026:08:38:17 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-29 14:08:20+05:30    POST /sessions/start -> 202 Accepted  (duration: 2.51 s, execution: 2.47 s)
+2026-08-29 14:08:20+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=99.5s CPU_sys=9.6s sessions=1 pool=3/3
+2026-08-29 14:08:25+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=103.7s CPU_sys=9.8s sessions=1 pool=3/3
+2026-08-29 14:08:30+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=107.6s CPU_sys=9.8s sessions=1 pool=3/3
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,207 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,236 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,425 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,427 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,428 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,429 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,430 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,430 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,430 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,437 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 6.3 ms
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,440 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=ba49ac82-1819-44df-be0a-c186a46db17d room=e2e-18b
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,446 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCoFY7AgmX45bp from facemode-avatar
+2026-08-29 14:08:34+05:30 2026-08-29 08:38:34,457 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-29 14:08:35+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=111.7s CPU_sys=10.0s sessions=1 pool=3/3
+2026-08-29 14:08:39+05:30 2026-08-29 08:38:39,430 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=ba49ac82-1819-44df-be0a-c186a46db17d windowMs=5008 frames=126 effectiveFps=25.2 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=41.0 maxCaptureMs=0.8
+2026-08-29 14:08:40+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=116.1s CPU_sys=10.1s sessions=1 pool=3/3
+2026-08-29 14:08:42+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:08:42+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:08:42+05:30 2026-08-29 08:38:42,812 [INFO] websockets.server: server closing
+2026-08-29 14:08:42+05:30 2026-08-29 08:38:42,812 [INFO] websockets.server: server closed
+2026-08-29 14:08:42+05:30 2026-08-29 08:38:42,812 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:08:42+05:30 [EXIT] Cancelling 1 active session task(s)
+2026-08-29 14:08:42+05:30 2026-08-29 08:38:42,812 [INFO] BatchedStreamingEngine: Session ba49ac82-1819-44df-be0a-c186a46db17d marked for drain (keep_alive=False)
+2026-08-29 14:08:42+05:30 2026-08-29 08:38:42,812 [INFO] streaming.websocket_server: Unregistered WebSocket session: ba49ac82-1819-44df-be0a-c186a46db17d
+2026-08-29 14:08:42+05:30 [EXIT] Modal serve runtime shutdown complete2026-08-29 08:38:42,814 [INFO] BatchedStreamingEngine: Session ba49ac82-1819-44df-be0a-c186a46db17d removed (total=0)
+2026-08-29 14:08:42+05:30 
+2026-08-29 14:08:43+05:30 2026-08-29 08:38:43,007 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:08:43+05:30 2026-08-29 08:38:43,008 [INFO] BatchedStreamingEngine: Engine drain complete: 5 cycles total
+2026-08-29 14:08:43+05:30 2026-08-29 08:38:43,008 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:08:43+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:08:43+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:08:43+05:30 2026-08-29 08:38:43,017 [ERROR] asyncio: Task was destroyed but it is pending!
+2026-08-29 14:08:43+05:30 task: <Task cancelling name='Task-915' coro=<staggered_race.<locals>.run_one_coro() running at /usr/local/lib/python3.12/dist-packages/aiohappyeyeballs/_staggered.py:132> wait_for=<Future cancelled>>
+2026-08-29 14:08:43+05:30 Exception ignored in: <coroutine object _finalize_session_task at 0x2baba6bde320>
+2026-08-29 14:08:43+05:30 Traceback (most recent call last):
+2026-08-29 14:08:43+05:30   File "/app/handler.py", line 533, in _finalize_session_task
+2026-08-29 14:08:43+05:30     await lifecycle.send_terminal(
+2026-08-29 14:08:43+05:30   File "/app/streaming/worker_lifecycle.py", line 186, in send_terminal
+2026-08-29 14:08:43+05:30     await self.send_event(
+2026-08-29 14:08:43+05:30   File "/app/streaming/worker_lifecycle.py", line 169, in send_event
+2026-08-29 14:08:43+05:30     return await self._request(
+2026-08-29 14:08:43+05:30            ^^^^^^^^^^^^^^^^^^^^
+2026-08-29 14:08:43+05:30 RuntimeError: coroutine ignored GeneratorExit
+2026-08-29 14:08:43+05:30 2026-08-29 08:38:43,031 [ERROR] asyncio: Task was destroyed but it is pending!
+2026-08-29 14:08:43+05:30 task: <Task pending name='lifecycle-finalize-ba49ac82-1819-44df-be0a-c186a46db17d' coro=<_finalize_session_task() done, defined at /app/handler.py:509> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+2026-08-29 14:09:32+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:09:36+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:09:36+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:09:39+05:30 2026-08-29 08:39:39.636 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:09:39+05:30 [RESTORE] Pipeline moved to cuda in 3069.7ms
+2026-08-29 14:09:39+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:09:39+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:09:42+05:30 2026-08-29 08:39:42.274 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2080.5ms decode=70.8ms color=9.8ms encode=26.8ms total=2188.1ms
+2026-08-29 14:09:42+05:30 2026-08-29 08:39:42.275 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2080.5ms steps=[s0=1937.5 s1=47.8 s2=47.6 s3=47.7] n_steps=4
+2026-08-29 14:09:42+05:30 2026-08-29 08:39:42.275 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2188.4ms post=0.1ms
+2026-08-29 14:09:42+05:30 [RESTORE] Warmup completed in 2638.4ms
+2026-08-29 14:09:42+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:09:42+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:09:42+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,039 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,040 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,041 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:09:43+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:09:43+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,042 [INFO] modal_app: aiohttp background thread started ident=48016232732352
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,056 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,056 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:09:43+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:09:43+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,058 [INFO] modal_app: aiohttp site started thread=48016232732352 event_loop=48016033873408
+2026-08-29 14:09:43+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=17.6s CPU_sys=6.9s sessions=0 pool=3/3
+2026-08-29 14:09:43+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:09:43+05:30 
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,353 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,363 [INFO] aiohttp.access: 172.20.33.50 [29/Aug/2026:08:39:43 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:09:43+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 40.1 s, execution: 223.1 ms)
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43.824 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=190.3ms decode=70.9ms color+encode=31.9ms total=293.3ms batch_size=1
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43.824 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=190.3ms steps=[s0=51.1 s1=46.7 s2=46.4 s3=46.1] n_steps=4 batch_size=1
+2026-08-29 14:09:43+05:30 Nvidia Decoder is supported.
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,916 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:09:43+05:30 2026-08-29 08:39:43,918 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:09:44+05:30 [SERVE] Batched warmup completed in 677.7ms
+2026-08-29 14:09:44+05:30 2026-08-29 08:39:44,022 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:09:44+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:09:44+05:30 2026-08-29 08:39:44,919 [INFO] aiohttp.access: 172.20.33.50 [29/Aug/2026:08:39:44 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:09:44+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 55.0 ms, execution: 18.6 ms)
+2026-08-29 14:09:48+05:30 [METRICS] GPU_util=0% GPU_temp=31C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=22.0s CPU_sys=7.3s sessions=0 pool=3/3
+2026-08-29 14:09:53+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=25.9s CPU_sys=7.5s sessions=0 pool=3/3
+2026-08-29 14:09:58+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=29.6s CPU_sys=7.5s sessions=0 pool=3/3
+2026-08-29 14:10:03+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=33.5s CPU_sys=7.6s sessions=0 pool=3/3
+2026-08-29 14:10:03+05:30 2026-08-29 08:40:03,818 [INFO] aiohttp.access: 172.20.33.50 [29/Aug/2026:08:40:03 +0000] "POST /sessions/ba49ac82-1819-44df-be0a-c186a46db17d/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:10:03+05:30    POST /sessions/ba49ac82-1819-44df-be0a-c186a46db17d/end -> 404 Not Found  (duration: 48.0 ms, execution: 17.0 ms)
+2026-08-29 14:10:06+05:30 2026-08-29 08:40:06,116 [INFO] aiohttp.access: 172.20.33.50 [29/Aug/2026:08:40:06 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:10:06+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 51.7 ms, execution: 19.1 ms)
+2026-08-29 14:10:06+05:30 2026-08-29 08:40:06,970 [INFO] aiohttp.access: 172.20.33.50 [29/Aug/2026:08:40:06 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:10:06+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 54.5 ms, execution: 21.4 ms)
+2026-08-29 14:10:07+05:30 [AUTOSCALER] WorkerLow max_containers=2
+2026-08-29 14:10:07+05:30    POST / -> 200 OK  (duration: 4.88 s, execution: 554.3 ms)
+2026-08-29 14:10:08+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=37.5s CPU_sys=7.8s sessions=0 pool=3/3
+2026-08-29 14:10:10+05:30 [AUTOSCALER] WorkerHigh max_containers=8
+2026-08-29 14:10:10+05:30    POST / -> 200 OK  (duration: 654.3 ms, execution: 542.3 ms)
+2026-08-29 14:10:13+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=41.1s CPU_sys=7.9s sessions=0 pool=3/3
+2026-08-29 14:10:18+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=45.0s CPU_sys=8.0s sessions=0 pool=3/3
+2026-08-29 14:10:23+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=48.9s CPU_sys=8.2s sessions=0 pool=3/3
+2026-08-29 14:10:28+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=52.6s CPU_sys=8.3s sessions=0 pool=3/3
+2026-08-29 14:10:33+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=56.3s CPU_sys=8.3s sessions=0 pool=3/3
+2026-08-29 14:10:38+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=60.4s CPU_sys=8.5s sessions=0 pool=3/3
+2026-08-29 14:10:42+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:10:42+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:10:42+05:30 2026-08-29 08:40:42,980 [INFO] websockets.server: server closing
+2026-08-29 14:10:42+05:30 2026-08-29 08:40:42,980 [INFO] websockets.server: server closed
+2026-08-29 14:10:42+05:30 2026-08-29 08:40:42,980 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:10:42+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:10:42+05:30 2026-08-29 08:40:42,983 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:10:42+05:30 2026-08-29 08:40:42,983 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:10:42+05:30 2026-08-29 08:40:42,983 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:10:42+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:10:42+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:11:06+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:11:07+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:11:07+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:11:08+05:30 2026-08-29 08:41:08.676 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:11:08+05:30 [RESTORE] Pipeline moved to cuda in 1002.0ms
+2026-08-29 14:11:08+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:11:08+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:11:11+05:30 2026-08-29 08:41:11.273 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2051.2ms decode=76.0ms color=10.2ms encode=25.0ms total=2162.6ms
+2026-08-29 14:11:11+05:30 2026-08-29 08:41:11.273 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2051.2ms steps=[s0=1919.7 s1=44.3 s2=43.0 s3=44.1] n_steps=4
+2026-08-29 14:11:11+05:30 2026-08-29 08:41:11.274 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2163.0ms post=0.1ms
+2026-08-29 14:11:11+05:30 [RESTORE] Warmup completed in 2598.0ms
+2026-08-29 14:11:11+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:11:11+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:11:11+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,035 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,036 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:11:12+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:11:12+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,037 [INFO] modal_app: aiohttp background thread started ident=48016232732352
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,050 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,050 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:11:12+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:11:12+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,052 [INFO] modal_app: aiohttp site started thread=48016232732352 event_loop=48016031675888
+2026-08-29 14:11:12+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=17.5s CPU_sys=4.7s sessions=0 pool=3/3
+2026-08-29 14:11:12+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:11:12+05:30 
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,342 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,353 [INFO] aiohttp.access: 172.20.36.74 [29/Aug/2026:08:41:12 +0000] "POST /sessions/ba49ac82-1819-44df-be0a-c186a46db17d/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:11:12+05:30    POST /sessions/ba49ac82-1819-44df-be0a-c186a46db17d/end -> 404 Not Found  (duration: 8.47 s, execution: 232.5 ms)
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12.837 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=193.0ms decode=80.3ms color+encode=32.7ms total=306.2ms batch_size=1
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12.837 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=193.0ms steps=[s0=51.4 s1=48.4 s2=47.0 s3=46.3] n_steps=4 batch_size=1
+2026-08-29 14:11:12+05:30 Nvidia Decoder is supported.
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,912 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:11:12+05:30 2026-08-29 08:41:12,914 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:11:13+05:30 [SERVE] Batched warmup completed in 684.0ms
+2026-08-29 14:11:13+05:30 2026-08-29 08:41:13,022 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:11:13+05:30 2026-08-29 08:41:13,288 [INFO] aiohttp.access: 172.20.36.74 [29/Aug/2026:08:41:13 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:11:13+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 49.2 ms, execution: 16.2 ms)
+2026-08-29 14:11:14+05:30 2026-08-29 08:41:14,130 [INFO] aiohttp.access: 172.20.36.74 [29/Aug/2026:08:41:14 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:11:14+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 54.6 ms, execution: 19.2 ms)
+2026-08-29 14:11:16+05:30 2026-08-29 08:41:16,746 [INFO] handler: [pod_session_start] Received session=deff8ae2-0142-4033-be7f-7df30ca8bc9e room=e2e-18c hasIdleAsset=True
+2026-08-29 14:11:17+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=21.8s CPU_sys=5.3s sessions=0 pool=3/3
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,155 [INFO] streaming.websocket_server: Registered WebSocket session: deff8ae2-0142-4033-be7f-7df30ca8bc9e provider_profile=none telephony_provider=none
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,158 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=48016232732352 thread_name=modal-aiohttp-server event_loop_id=48016031675888
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,158 [INFO] batched_stream_processor: Connecting to egress type=livekit room=e2e-18c url=wss://ai-14ksodzi.livekit.cloud session=deff8ae2-0142-4033-be7f-7df30ca8bc9e
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,160 [INFO] batched_stream_processor: Registering session deff8ae2-0142-4033-be7f-7df30ca8bc9e with BatchedStreamingEngine
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,160 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,172 [INFO] BatchedStreamingEngine: Session deff8ae2-0142-4033-be7f-7df30ca8bc9e added (total=1)
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,196 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,486 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmpgczm6o3l.mp4
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,540 [INFO] batched_stream_processor: Session deff8ae2-0142-4033-be7f-7df30ca8bc9e registered with engine in 380.0 ms (avatar prepared)
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,970 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,971 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,972 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,972 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,972 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,974 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,974 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,974 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,982 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 8.1 ms
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,985 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCQA8UcvgA5QT9 from facemode-avatar
+2026-08-29 14:11:18+05:30 2026-08-29 08:41:18,988 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=deff8ae2-0142-4033-be7f-7df30ca8bc9e room=e2e-18c
+2026-08-29 14:11:19+05:30 2026-08-29 08:41:19,004 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-29 14:11:19+05:30 2026-08-29 08:41:19,581 [INFO] aiohttp.access: 172.20.36.74 [29/Aug/2026:08:41:19 +0000] "GET /sessions/deff8ae2-0142-4033-be7f-7df30ca8bc9e/status HTTP/1.1" 200 252 "-" "node"
+2026-08-29 14:11:19+05:30 2026-08-29 08:41:19,586 [INFO] aiohttp.access: 172.20.36.74 [29/Aug/2026:08:41:16 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-29 14:11:19+05:30    POST /sessions/start -> 202 Accepted  (duration: 2.91 s, execution: 2.86 s)
+2026-08-29 14:11:19+05:30     GET /sessions/deff8ae2-0142-4033-be7f-7df30ca8bc9e/status -> 200 OK  (duration: 54.3 ms, execution: 18.4 ms)
+2026-08-29 14:11:20+05:30 2026-08-29 08:41:20,537 [ERROR] livekit: livekit::rtc_engine::rtc_session:679:livekit::rtc_engine::rtc_session - publisher data channel '_reliable' closed unexpectedly
+2026-08-29 14:11:20+05:30 2026-08-29 08:41:20,538 [ERROR] livekit: livekit::rtc_engine::rtc_session:679:livekit::rtc_engine::rtc_session - publisher data channel '_lossy' closed unexpectedly
+2026-08-29 14:11:20+05:30 2026-08-29 08:41:20,538 [ERROR] livekit: livekit::rtc_engine::rtc_session:679:livekit::rtc_engine::rtc_session - publisher data channel '_data_track' closed unexpectedly
+2026-08-29 14:11:20+05:30 2026-08-29 08:41:20,543 [WARNING] livekit: livekit_api::signal_client:652:livekit_api::signal_client - dropping pass-through signal ù no stream available
+2026-08-29 14:11:20+05:30 2026-08-29 08:41:20,685 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "e2e-18c" with reason: ParticipantRemoved
+2026-08-29 14:11:20+05:30 2026-08-29 08:41:20,692 [WARNING] VideoPublisher: VideoPublisher stopping: LiveKit room is disconnected for session=deff8ae2-0142-4033-be7f-7df30ca8bc9e
+2026-08-29 14:11:22+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=28.2s CPU_sys=6.4s sessions=1 pool=3/3
+2026-08-29 14:11:27+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=31.9s CPU_sys=6.6s sessions=1 pool=3/3
+2026-08-29 14:11:28+05:30 2026-08-29 08:41:28,144 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:11:28+05:30 2026-08-29 08:41:28,168 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:11:32+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=35.6s CPU_sys=6.7s sessions=1 pool=3/3
+2026-08-29 14:11:32+05:30 [WARMUP] LiveKit RTC dummy connection failed (non-fatal): 
+2026-08-29 14:11:37+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=39.1s CPU_sys=6.8s sessions=1 pool=3/3
+2026-08-29 14:11:42+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=43.0s CPU_sys=6.9s sessions=1 pool=3/3
+2026-08-29 14:11:43+05:30 2026-08-29 08:41:43,253 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (2/3)
+2026-08-29 14:11:43+05:30 2026-08-29 08:41:43,277 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:11:47+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=47.3s CPU_sys=7.0s sessions=1 pool=3/3
+2026-08-29 14:11:52+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=51.3s CPU_sys=7.0s sessions=1 pool=3/3
+2026-08-29 14:11:55+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:11:55+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,616 [INFO] websockets.server: server closing
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,616 [INFO] websockets.server: server closed
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,616 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:11:55+05:30 [EXIT] Cancelling 1 active session task(s)
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,617 [INFO] BatchedStreamingEngine: Session deff8ae2-0142-4033-be7f-7df30ca8bc9e marked for drain (keep_alive=False)
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,617 [INFO] streaming.websocket_server: Unregistered WebSocket session: deff8ae2-0142-4033-be7f-7df30ca8bc9e
+2026-08-29 14:11:55+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,618 [INFO] BatchedStreamingEngine: Session deff8ae2-0142-4033-be7f-7df30ca8bc9e removed (total=0)
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,620 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,620 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,621 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:11:55+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:11:55+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,629 [WARNING] streaming.worker_lifecycle: WORKER_LIFECYCLE_TERMINAL_FAILED session=deff8ae2-0142-4033-be7f-7df30ca8bc9e event=session_ended code=BACKEND_REQUEST_FAILED status=None
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,629 [ERROR] asyncio: Task was destroyed but it is pending!
+2026-08-29 14:11:55+05:30 task: <Task pending name='Task-402' coro=<_wait_for_close() running at /usr/local/lib/python3.12/dist-packages/aiohttp/connector.py:121>>
+2026-08-29 14:11:55+05:30 /app/streaming/worker_lifecycle.py:192: RuntimeWarning: coroutine '_wait_for_close' was never awaited
+2026-08-29 14:11:55+05:30   logger.warning(
+2026-08-29 14:11:55+05:30 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+2026-08-29 14:11:55+05:30 2026-08-29 08:41:55,643 [ERROR] asyncio: Task was destroyed but it is pending!
+2026-08-29 14:11:55+05:30 task: <Task pending name='lifecycle-finalize-deff8ae2-0142-4033-be7f-7df30ca8bc9e' coro=<_finalize_session_task() done, defined at /app/handler.py:509> wait_for=<Future pending cb=[shield.<locals>._outer_done_callback() at /usr/lib/python3.12/asyncio/tasks.py:922, Task.task_wakeup()]>>
+2026-08-29 14:12:11+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:13:25+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:13:25+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:13:34+05:30 2026-08-29 08:43:34.427 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:13:34+05:30 [RESTORE] Pipeline moved to cuda in 9089.1ms
+2026-08-29 14:13:34+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:13:34+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:13:38+05:30 2026-08-29 08:43:38.140 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2905.2ms decode=80.7ms color=9.5ms encode=32.2ms total=3027.8ms
+2026-08-29 14:13:38+05:30 2026-08-29 08:43:38.141 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2905.2ms steps=[s0=2687.4 s1=72.0 s2=71.9 s3=74.0] n_steps=4
+2026-08-29 14:13:38+05:30 2026-08-29 08:43:38.141 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=3028.5ms post=0.3ms
+2026-08-29 14:13:38+05:30 [RESTORE] Warmup completed in 3714.1ms
+2026-08-29 14:13:38+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:13:38+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:13:38+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,874 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,874 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,875 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:13:39+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:13:39+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,876 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,890 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,890 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:13:39+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:13:39+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:13:39+05:30 2026-08-29 08:43:39,892 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244551205856
+2026-08-29 14:13:39+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=37.8s CPU_sys=23.2s sessions=0 pool=3/3
+2026-08-29 14:13:40+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:13:40+05:30 
+2026-08-29 14:13:40+05:30 2026-08-29 08:43:40,283 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:13:40+05:30 2026-08-29 08:43:40,823 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:43:40 +0000] "POST /sessions/deff8ae2-0142-4033-be7f-7df30ca8bc9e/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:13:40+05:30 2026-08-29 08:43:40,825 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:43:40 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:13:40+05:30 Nvidia Decoder is supported.
+2026-08-29 14:13:40+05:30 2026-08-29 08:43:40,936 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:43:40 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:13:40+05:30 2026-08-29 08:43:40,998 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:13:41+05:30 2026-08-29 08:43:41.162 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=549.8ms decode=85.4ms color+encode=44.7ms total=680.1ms batch_size=1
+2026-08-29 14:13:41+05:30 2026-08-29 08:43:41.162 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=549.8ms steps=[s0=78.8 s1=70.7 s2=71.3 s3=329.0] n_steps=4 batch_size=1
+2026-08-29 14:13:41+05:30 2026-08-29 08:43:41,239 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:13:41+05:30 2026-08-29 08:43:41,240 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:13:41+05:30    POST /sessions/deff8ae2-0142-4033-be7f-7df30ca8bc9e/end -> 404 Not Found  (duration: 37.5 s, execution: 1.01 s)
+2026-08-29 14:13:41+05:30 [SERVE] Batched warmup completed in 1082.6ms
+2026-08-29 14:13:41+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:13:41+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 6.85 s, execution: 582.9 ms)
+2026-08-29 14:13:43+05:30 2026-08-29 08:43:43,653 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:43:43 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:13:44+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 817.4 ms, execution: 585.9 ms)
+2026-08-29 14:13:45+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=41.7s CPU_sys=23.8s sessions=0 pool=3/3
+2026-08-29 14:13:45+05:30 2026-08-29 08:43:45,163 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:43:45 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:13:45+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 791.7 ms, execution: 571.5 ms)
+2026-08-29 14:13:50+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=45.8s CPU_sys=24.0s sessions=0 pool=3/3
+2026-08-29 14:13:55+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=49.5s CPU_sys=24.1s sessions=0 pool=3/3
+2026-08-29 14:13:56+05:30 2026-08-29 08:43:56,442 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:13:56+05:30 2026-08-29 08:43:56,479 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:13:57+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:14:00+05:30 [METRICS] GPU_util=0% GPU_temp=34C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=53.7s CPU_sys=24.3s sessions=0 pool=3/3
+2026-08-29 14:14:03+05:30 2026-08-29 08:44:03,837 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:44:03 +0000] "POST /sessions/deff8ae2-0142-4033-be7f-7df30ca8bc9e/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:14:04+05:30    POST /sessions/deff8ae2-0142-4033-be7f-7df30ca8bc9e/end -> 404 Not Found  (duration: 576.0 ms, execution: 368.8 ms)
+2026-08-29 14:14:05+05:30 [METRICS] GPU_util=0% GPU_temp=34C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=57.3s CPU_sys=24.4s sessions=0 pool=3/3
+2026-08-29 14:14:05+05:30 2026-08-29 08:44:05,220 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:44:05 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:14:05+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 574.1 ms, execution: 369.6 ms)
+2026-08-29 14:14:06+05:30 2026-08-29 08:44:06,598 [INFO] aiohttp.access: 172.20.0.210 [29/Aug/2026:08:44:06 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:14:06+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 576.7 ms, execution: 369.0 ms)
+2026-08-29 14:14:10+05:30 [METRICS] GPU_util=0% GPU_temp=34C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=61.0s CPU_sys=24.4s sessions=0 pool=3/3
+2026-08-29 14:14:10+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:14:10+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:14:15+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=64.9s CPU_sys=24.6s sessions=0 pool=3/3
+2026-08-29 14:14:18+05:30 2026-08-29 08:44:18.672 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:14:18+05:30 [RESTORE] Pipeline moved to cuda in 7937.9ms
+2026-08-29 14:14:18+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:14:18+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:14:20+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=69.0s CPU_sys=24.6s sessions=0 pool=3/3
+2026-08-29 14:14:21+05:30 2026-08-29 08:44:21.559 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2374.9ms decode=79.8ms color=9.4ms encode=30.6ms total=2495.0ms
+2026-08-29 14:14:21+05:30 2026-08-29 08:44:21.559 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2374.9ms steps=[s0=2156.4 s1=72.6 s2=74.2 s3=71.7] n_steps=4
+2026-08-29 14:14:21+05:30 2026-08-29 08:44:21.559 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2495.6ms post=0.2ms
+2026-08-29 14:14:21+05:30 [RESTORE] Warmup completed in 2886.8ms
+2026-08-29 14:14:21+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:14:21+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:14:21+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,606 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,607 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,608 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:14:22+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:14:22+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,610 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,629 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,629 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:14:22+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:14:22+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:14:22+05:30 2026-08-29 08:44:22,631 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244550635488
+2026-08-29 14:14:22+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=35.2s CPU_sys=11.7s sessions=0 pool=3/3
+2026-08-29 14:14:23+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:14:23+05:30 
+2026-08-29 14:14:23+05:30 2026-08-29 08:44:23,073 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:14:23+05:30 Nvidia Decoder is supported.
+2026-08-29 14:14:23+05:30 2026-08-29 08:44:23,950 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:14:24+05:30 2026-08-29 08:44:24.055 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=557.0ms decode=147.6ms color+encode=55.9ms total=761.0ms batch_size=1
+2026-08-29 14:14:24+05:30 2026-08-29 08:44:24.055 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=557.0ms steps=[s0=78.6 s1=76.2 s2=74.3 s3=327.8] n_steps=4 batch_size=1
+2026-08-29 14:14:24+05:30 2026-08-29 08:44:24,132 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:14:24+05:30 2026-08-29 08:44:24,133 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:14:24+05:30 [SERVE] Batched warmup completed in 1191.0ms
+2026-08-29 14:14:25+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=72.7s CPU_sys=24.8s sessions=0 pool=3/3
+2026-08-29 14:14:27+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=39.4s CPU_sys=12.4s sessions=0 pool=3/3
+2026-08-29 14:14:30+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=76.5s CPU_sys=24.9s sessions=0 pool=3/3
+2026-08-29 14:14:32+05:30 [METRICS] GPU_util=0% GPU_temp=35C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=43.4s CPU_sys=12.6s sessions=0 pool=3/3
+2026-08-29 14:14:35+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:14:35+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:14:35+05:30 2026-08-29 08:44:35,026 [INFO] websockets.server: server closing
+2026-08-29 14:14:35+05:30 2026-08-29 08:44:35,026 [INFO] websockets.server: server closed
+2026-08-29 14:14:35+05:30 2026-08-29 08:44:35,026 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:14:35+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:14:35+05:30 2026-08-29 08:44:35,029 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:14:35+05:30 2026-08-29 08:44:35,030 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:14:35+05:30 2026-08-29 08:44:35,030 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:14:35+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:14:35+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:14:35+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=80.2s CPU_sys=25.0s sessions=0 pool=3/3
+2026-08-29 14:14:40+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=84.1s CPU_sys=25.1s sessions=0 pool=3/3
+2026-08-29 14:14:43+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:14:43+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:14:43+05:30 2026-08-29 08:44:43,136 [INFO] websockets.server: server closing
+2026-08-29 14:14:43+05:30 2026-08-29 08:44:43,136 [INFO] websockets.server: server closed
+2026-08-29 14:14:43+05:30 2026-08-29 08:44:43,136 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:14:43+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:14:43+05:30 2026-08-29 08:44:43,138 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:14:43+05:30 2026-08-29 08:44:43,138 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:14:43+05:30 2026-08-29 08:44:43,139 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:14:43+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:14:43+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:15:07+05:30 [AUTOSCALER] WorkerLow max_containers=2
+2026-08-29 14:15:07+05:30    POST / -> 200 OK  (duration: 4.98 s, execution: 620.4 ms)
+2026-08-29 14:15:09+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:15:10+05:30 [AUTOSCALER] WorkerHigh max_containers=8
+2026-08-29 14:15:10+05:30    POST / -> 200 OK  (duration: 746.2 ms, execution: 607.9 ms)
+2026-08-29 14:15:21+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:15:21+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:15:25+05:30 2026-08-29 08:45:25.544 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:15:25+05:30 [RESTORE] Pipeline moved to cuda in 4541.0ms
+2026-08-29 14:15:25+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:15:25+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:15:28+05:30 2026-08-29 08:45:28.371 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2321.6ms decode=81.5ms color=10.1ms encode=35.1ms total=2448.6ms
+2026-08-29 14:15:28+05:30 2026-08-29 08:45:28.372 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2321.6ms steps=[s0=2099.5 s1=74.8 s2=72.6 s3=74.7] n_steps=4
+2026-08-29 14:15:28+05:30 2026-08-29 08:45:28.372 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2449.6ms post=0.3ms
+2026-08-29 14:15:28+05:30 [RESTORE] Warmup completed in 2827.5ms
+2026-08-29 14:15:28+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:15:28+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:15:28+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,880 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,881 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,882 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:15:29+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:15:29+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,884 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,910 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,910 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:15:29+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:15:29+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:15:29+05:30 2026-08-29 08:45:29,913 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244551177616
+2026-08-29 14:15:29+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=32.7s CPU_sys=11.5s sessions=0 pool=3/3
+2026-08-29 14:15:30+05:30 
+2026-08-29 14:15:30+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:15:30+05:30 
+2026-08-29 14:15:30+05:30 2026-08-29 08:45:30,418 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:15:30+05:30 2026-08-29 08:45:30,431 [INFO] aiohttp.access: 172.20.2.77 [29/Aug/2026:08:45:30 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:15:30+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 27.4 s, execution: 652.3 ms)
+2026-08-29 14:15:31+05:30 Nvidia Decoder is supported.
+2026-08-29 14:15:31+05:30 2026-08-29 08:45:31,213 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:15:31+05:30 2026-08-29 08:45:31.379 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=569.1ms decode=88.7ms color+encode=57.4ms total=715.6ms batch_size=1
+2026-08-29 14:15:31+05:30 2026-08-29 08:45:31.379 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=569.1ms steps=[s0=79.6 s1=82.1 s2=74.8 s3=332.6] n_steps=4 batch_size=1
+2026-08-29 14:15:31+05:30 2026-08-29 08:45:31,445 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:15:31+05:30 2026-08-29 08:45:31,446 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:15:31+05:30 [SERVE] Batched warmup completed in 1152.7ms
+2026-08-29 14:15:32+05:30 2026-08-29 08:45:32,398 [INFO] aiohttp.access: 172.20.2.77 [29/Aug/2026:08:45:32 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:15:32+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 776.1 ms, execution: 550.3 ms)
+2026-08-29 14:15:35+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=37.1s CPU_sys=12.3s sessions=0 pool=3/3
+2026-08-29 14:15:40+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=41.1s CPU_sys=12.3s sessions=0 pool=3/3
+2026-08-29 14:15:45+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=45.1s CPU_sys=12.5s sessions=0 pool=3/3
+2026-08-29 14:15:46+05:30 2026-08-29 08:45:46,593 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:15:46+05:30 2026-08-29 08:45:46,645 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:15:47+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:15:50+05:30 [METRICS] GPU_util=0% GPU_temp=34C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=49.3s CPU_sys=12.7s sessions=0 pool=3/3
+2026-08-29 14:15:55+05:30 [METRICS] GPU_util=0% GPU_temp=34C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=53.1s CPU_sys=12.8s sessions=0 pool=3/3
+2026-08-29 14:16:00+05:30 [METRICS] GPU_util=0% GPU_temp=34C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=57.0s CPU_sys=12.9s sessions=0 pool=3/3
+2026-08-29 14:16:03+05:30 2026-08-29 08:46:03,668 [INFO] aiohttp.access: 172.20.2.77 [29/Aug/2026:08:46:03 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:16:04+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:16:04+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:16:04+05:30 2026-08-29 08:46:04,041 [INFO] websockets.server: server closing
+2026-08-29 14:16:04+05:30 2026-08-29 08:46:04,041 [INFO] websockets.server: server closed
+2026-08-29 14:16:04+05:30 2026-08-29 08:46:04,041 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:16:04+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:16:04+05:30 2026-08-29 08:46:04,044 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:16:04+05:30 2026-08-29 08:46:04,044 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:16:04+05:30 2026-08-29 08:46:04,045 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:16:04+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:16:04+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:16:04+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 777.3 ms, execution: 555.0 ms)
+2026-08-29 14:16:10+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:16:12+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:16:12+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:16:13+05:30 2026-08-29 08:46:13.437 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:16:13+05:30 [RESTORE] Pipeline moved to cuda in 844.6ms
+2026-08-29 14:16:13+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:16:13+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16.039 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2074.3ms decode=68.4ms color=9.4ms encode=26.6ms total=2179.0ms
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16.039 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2074.3ms steps=[s0=1939.6 s1=46.5 s2=44.4 s3=43.8] n_steps=4
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16.040 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2179.3ms post=0.1ms
+2026-08-29 14:16:16+05:30 [RESTORE] Warmup completed in 2602.4ms
+2026-08-29 14:16:16+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:16:16+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:16:16+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,758 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,759 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:16:16+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:16:16+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,760 [INFO] modal_app: aiohttp background thread started ident=48016232732352
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,774 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,774 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:16:16+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:16:16+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:16:16+05:30 2026-08-29 08:46:16,776 [INFO] modal_app: aiohttp site started thread=48016232732352 event_loop=48016054827344
+2026-08-29 14:16:16+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=17.4s CPU_sys=4.7s sessions=0 pool=3/3
+2026-08-29 14:16:17+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:16:17+05:30 
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17,082 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17,087 [INFO] aiohttp.access: 172.20.40.128 [29/Aug/2026:08:46:17 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:16:17+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 12.4 s, execution: 225.6 ms)
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17.556 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=204.4ms decode=70.8ms color+encode=32.5ms total=307.8ms batch_size=1
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17.556 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=204.4ms steps=[s0=54.4 s1=50.3 s2=49.6 s3=50.1] n_steps=4 batch_size=1
+2026-08-29 14:16:17+05:30 Nvidia Decoder is supported.
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17,640 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17,642 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:16:17+05:30 [SERVE] Batched warmup completed in 675.8ms
+2026-08-29 14:16:17+05:30 2026-08-29 08:46:17,762 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:16:21+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=21.5s CPU_sys=5.2s sessions=0 pool=3/3
+2026-08-29 14:16:26+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=25.5s CPU_sys=5.3s sessions=0 pool=3/3
+2026-08-29 14:16:31+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=29.5s CPU_sys=5.4s sessions=0 pool=3/3
+2026-08-29 14:16:32+05:30 2026-08-29 08:46:32,872 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-29 14:16:32+05:30 2026-08-29 08:46:32,898 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:16:33+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:16:36+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=33.4s CPU_sys=5.6s sessions=0 pool=3/3
+2026-08-29 14:16:41+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=37.3s CPU_sys=5.8s sessions=0 pool=3/3
+2026-08-29 14:16:46+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=41.2s CPU_sys=5.9s sessions=0 pool=3/3
+2026-08-29 14:16:52+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/47.4GB (reserved=5.5GB) RSS=15027MB CPU_user=45.0s CPU_sys=6.0s sessions=0 pool=3/3
+2026-08-29 14:16:52+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:16:52+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:16:52+05:30 2026-08-29 08:46:52,901 [INFO] websockets.server: server closing
+2026-08-29 14:16:52+05:30 2026-08-29 08:46:52,901 [INFO] websockets.server: server closed
+2026-08-29 14:16:52+05:30 2026-08-29 08:46:52,901 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:16:52+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:16:52+05:30 2026-08-29 08:46:52,903 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:16:52+05:30 2026-08-29 08:46:52,904 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:16:52+05:30 2026-08-29 08:46:52,904 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:16:52+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:16:52+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:17:10+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:17:18+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:17:18+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:17:25+05:30 2026-08-29 08:47:25.821 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:17:25+05:30 [RESTORE] Pipeline moved to cuda in 7191.2ms
+2026-08-29 14:17:25+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:17:25+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:17:37+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:17:39+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:17:39+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:17:40+05:30 2026-08-29 08:47:40.565 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:17:40+05:30 [RESTORE] Pipeline moved to cuda in 965.0ms
+2026-08-29 14:17:40+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:17:40+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43.151 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2038.6ms decode=77.8ms color=10.1ms encode=26.9ms total=2153.6ms
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43.151 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2038.6ms steps=[s0=1896.1 s1=47.9 s2=47.5 s3=47.1] n_steps=4
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43.151 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2153.9ms post=0.1ms
+2026-08-29 14:17:43+05:30 [RESTORE] Warmup completed in 2586.6ms
+2026-08-29 14:17:43+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:17:43+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:17:43+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,935 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,936 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:17:43+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:17:43+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,937 [INFO] modal_app: aiohttp background thread started ident=48016232732352
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,953 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,953 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:17:43+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:17:43+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:17:43+05:30 2026-08-29 08:47:43,955 [INFO] modal_app: aiohttp site started thread=48016232732352 event_loop=48016054244976
+2026-08-29 14:17:44+05:30 [METRICS] GPU_util=0% GPU_temp=58C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=17.6s CPU_sys=4.7s sessions=0 pool=3/3
+2026-08-29 14:17:44+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:17:44+05:30 
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44,255 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44,266 [INFO] aiohttp.access: 172.20.33.147 [29/Aug/2026:08:47:44 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:17:44+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 40.9 s, execution: 238.6 ms)
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44.758 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=201.8ms decode=81.3ms color+encode=34.9ms total=318.3ms batch_size=1
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44.758 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=201.8ms steps=[s0=53.6 s1=50.0 s2=49.6 s3=48.6] n_steps=4 batch_size=1
+2026-08-29 14:17:44+05:30 Nvidia Decoder is supported.
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44,824 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44,825 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:17:44+05:30 [SERVE] Batched warmup completed in 682.3ms
+2026-08-29 14:17:44+05:30 2026-08-29 08:47:44,943 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:17:45+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:17:45+05:30 2026-08-29 08:47:45,255 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "warmup-42f9a6106641" with reason: ClientInitiated
+2026-08-29 14:17:45+05:30 2026-08-29 08:47:45,765 [INFO] aiohttp.access: 172.20.33.147 [29/Aug/2026:08:47:45 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:17:45+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 57.2 ms, execution: 19.6 ms)
+2026-08-29 14:17:49+05:30 [METRICS] GPU_util=0% GPU_temp=57C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=22.0s CPU_sys=5.3s sessions=0 pool=3/3
+2026-08-29 14:17:54+05:30 [METRICS] GPU_util=0% GPU_temp=55C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=25.8s CPU_sys=5.5s sessions=0 pool=3/3
+2026-08-29 14:17:59+05:30 [METRICS] GPU_util=0% GPU_temp=53C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=29.8s CPU_sys=5.5s sessions=0 pool=3/3
+2026-08-29 14:18:03+05:30 2026-08-29 08:48:03,372 [INFO] aiohttp.access: 172.20.33.147 [29/Aug/2026:08:48:03 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:18:03+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 53.1 ms, execution: 17.4 ms)
+2026-08-29 14:18:04+05:30 [METRICS] GPU_util=0% GPU_temp=52C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=33.6s CPU_sys=5.6s sessions=0 pool=3/3
+2026-08-29 14:18:04+05:30 2026-08-29 08:48:04,230 [INFO] aiohttp.access: 172.20.33.147 [29/Aug/2026:08:48:04 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:18:04+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 46.1 ms, execution: 14.7 ms)
+2026-08-29 14:18:09+05:30 [METRICS] GPU_util=0% GPU_temp=51C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=37.4s CPU_sys=5.7s sessions=0 pool=3/3
+2026-08-29 14:18:14+05:30 [METRICS] GPU_util=0% GPU_temp=50C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=41.2s CPU_sys=5.8s sessions=0 pool=3/3
+2026-08-29 14:18:19+05:30 [METRICS] GPU_util=0% GPU_temp=49C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=45.0s CPU_sys=5.8s sessions=0 pool=3/3
+2026-08-29 14:18:24+05:30 [METRICS] GPU_util=0% GPU_temp=48C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=49.0s CPU_sys=5.9s sessions=0 pool=3/3
+2026-08-29 14:18:29+05:30 [METRICS] GPU_util=0% GPU_temp=47C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=53.0s CPU_sys=6.0s sessions=0 pool=3/3
+2026-08-29 14:18:34+05:30 [METRICS] GPU_util=0% GPU_temp=46C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=56.6s CPU_sys=6.1s sessions=0 pool=3/3
+2026-08-29 14:18:39+05:30 [METRICS] GPU_util=0% GPU_temp=45C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=60.6s CPU_sys=6.2s sessions=0 pool=3/3
+2026-08-29 14:18:40+05:30 [EXIT] Starting graceful shutdown
+2026-08-29 14:18:40+05:30 [EXIT] Shutting down Modal serve runtime
+2026-08-29 14:18:40+05:30 2026-08-29 08:48:40,248 [INFO] websockets.server: server closing
+2026-08-29 14:18:40+05:30 2026-08-29 08:48:40,249 [INFO] websockets.server: server closed
+2026-08-29 14:18:40+05:30 2026-08-29 08:48:40,249 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-29 14:18:40+05:30 [EXIT] Modal serve runtime shutdown complete
+2026-08-29 14:18:40+05:30 2026-08-29 08:48:40,251 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-29 14:18:40+05:30 2026-08-29 08:48:40,251 [INFO] BatchedStreamingEngine: Engine drain complete: 1 cycles total
+2026-08-29 14:18:40+05:30 2026-08-29 08:48:40,252 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-29 14:18:40+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-29 14:18:40+05:30 [EXIT] Graceful shutdown complete
+2026-08-29 14:19:06+05:30 Restoring Function from memory snapshot.
+2026-08-29 14:19:09+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-29 14:19:09+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-29 14:19:10+05:30 2026-08-29 08:49:10.538 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-29 14:19:10+05:30 [RESTORE] Pipeline moved to cuda in 851.9ms
+2026-08-29 14:19:10+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-29 14:19:10+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-29 14:19:13+05:30 2026-08-29 08:49:13.853 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2848.1ms decode=81.0ms color=9.6ms encode=31.9ms total=2971.0ms
+2026-08-29 14:19:13+05:30 2026-08-29 08:49:13.853 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2848.1ms steps=[s0=2611.5 s1=78.1 s2=76.9 s3=81.7] n_steps=4
+2026-08-29 14:19:13+05:30 2026-08-29 08:49:13.854 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2971.6ms post=0.2ms
+2026-08-29 14:19:13+05:30 [RESTORE] Warmup completed in 3316.0ms
+2026-08-29 14:19:13+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:19:13+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-29 14:19:14+05:30 [SERVE] Starting serve() post-restore
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,883 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,884 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,885 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-29 14:19:14+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-29 14:19:14+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,887 [INFO] modal_app: aiohttp background thread started ident=47244557342400
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,914 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,914 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-29 14:19:14+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-29 14:19:14+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-29 14:19:14+05:30 2026-08-29 08:49:14,917 [INFO] modal_app: aiohttp site started thread=47244557342400 event_loop=47244551187648
+2026-08-29 14:19:15+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=29.6s CPU_sys=11.1s sessions=0 pool=3/3
+2026-08-29 14:19:15+05:30 [SERVE] Running batched warmup cycle (background)...
+2026-08-29 14:19:15+05:30 [modal] Pool status: current_size=3 available=3/3
+2026-08-29 14:19:15+05:30 2026-08-29 08:49:15,320 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-29 14:19:15+05:30 2026-08-29 08:49:15,326 [INFO] aiohttp.access: 172.20.0.33 [29/Aug/2026:08:49:15 +0000] "POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:19:15+05:30    POST /sessions/baf8d4a6-a4c0-4902-a011-299a7cfa90a2/end -> 404 Not Found  (duration: 11.8 s, execution: 341.1 ms)
+2026-08-29 14:19:15+05:30 Nvidia Decoder is supported.
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16,047 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16.169 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=517.8ms decode=83.7ms color+encode=39.0ms total=641.3ms batch_size=1
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16.169 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=517.8ms steps=[s0=73.0 s1=70.9 s2=71.6 s3=302.3] n_steps=4 batch_size=1
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16,287 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16,289 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-29 14:19:16+05:30 [SERVE] Batched warmup completed in 1088.9ms
+2026-08-29 14:19:16+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16,661 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "warmup-c90ae98a2fbc" with reason: ClientInitiated
+2026-08-29 14:19:16+05:30 2026-08-29 08:49:16,974 [INFO] aiohttp.access: 172.20.0.33 [29/Aug/2026:08:49:16 +0000] "POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end HTTP/1.1" 404 261 "-" "node"
+2026-08-29 14:19:17+05:30    POST /sessions/cb228ed9-156b-4a6c-8e2f-e5e688197ce9/end -> 404 Not Found  (duration: 80.9 ms, execution: 35.9 ms)
+2026-08-29 14:19:20+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=33.8s CPU_sys=11.6s sessions=0 pool=3/3
+2026-08-29 14:19:25+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=37.8s CPU_sys=11.8s sessions=0 pool=3/3
+2026-08-29 14:19:30+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=41.8s CPU_sys=11.9s sessions=0 pool=3/3
+2026-08-29 14:19:35+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=45.9s CPU_sys=12.1s sessions=0 pool=3/3
+2026-08-29 14:19:40+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=49.8s CPU_sys=12.2s sessions=0 pool=3/3
+2026-08-29 14:19:45+05:30 [METRICS] GPU_util=0% GPU_temp=32C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=54.0s CPU_sys=12.2s sessions=0 pool=3/3
+2026-08-29 14:19:50+05:30 [METRICS] GPU_util=0% GPU_temp=33C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15026MB CPU_user=58.1s CPU_sys=12.3s sessions=0 pool=3/3

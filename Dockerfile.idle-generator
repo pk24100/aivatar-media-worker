@@ -1,9 +1,0 @@
-# Build this image from a worker base image that already contains FlashHead
-# weights. Vast Serverless runs one /generate request per GPU worker.
-ARG BASE_IMAGE=pk24100/aivatar-worker:flashhead-lite-v3
-FROM ${BASE_IMAGE}
-
-WORKDIR /app
-COPY idle_generator.py /app/idle_generator.py
-
-CMD ["python3", "-u", "idle_generator.py"]

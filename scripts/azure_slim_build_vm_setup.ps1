@@ -1,6 +1,6 @@
 # Azure Slim Docker Builder Setup Script
 # This script automates the Azure VM setup and remote Linux preparation steps for building
-# the slim AiVatar media worker image (wav2vec2 baked, FlashHead loaded from RunPod cached HF model).
+# the slim AiVatar media worker image (wav2vec2 baked, FlashHead loaded from the Modal baked image).
 # Usage: Fill in the configuration values below and run: .\azure_slim_build_vm_setup.ps1
 
 # ===============================

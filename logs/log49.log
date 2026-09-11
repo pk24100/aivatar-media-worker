@@ -1,0 +1,259 @@
+﻿2026-08-22 20:35:40+05:30 Restoring Function from memory snapshot.
+2026-08-22 20:35:43+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-22 20:35:43+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-22 20:35:44+05:30 2026-08-22 15:05:44.815 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-22 20:35:44+05:30 [RESTORE] Pipeline moved to cuda in 899.7ms
+2026-08-22 20:35:44+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-22 20:35:44+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-22 20:35:47+05:30 2026-08-22 15:05:47.981 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2700.2ms decode=80.1ms color=9.6ms encode=31.4ms total=2821.6ms
+2026-08-22 20:35:47+05:30 2026-08-22 15:05:47.982 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2700.2ms steps=[s0=2472.5 s1=80.1 s2=74.7 s3=73.0] n_steps=4
+2026-08-22 20:35:47+05:30 2026-08-22 15:05:47.982 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2822.6ms post=0.2ms
+2026-08-22 20:35:47+05:30 [RESTORE] Warmup completed in 3167.3ms
+2026-08-22 20:35:47+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-22 20:35:47+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-22 20:35:48+05:30 [SERVE] Starting serve() post-restore
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,878 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,879 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-22 20:35:48+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-22 20:35:48+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,880 [INFO] modal_app: aiohttp background thread started ident=46915313915584
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,897 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,897 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-22 20:35:48+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-22 20:35:48+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-22 20:35:48+05:30 2026-08-22 15:05:48,899 [INFO] modal_app: aiohttp site started thread=46915313915584 event_loop=46915114381776
+2026-08-22 20:35:48+05:30 [METRICS] GPU_util=0% GPU_temp=39C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15028MB CPU_user=26.8s CPU_sys=10.3s sessions=0 pool=3/3
+2026-08-22 20:35:49+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-22 20:35:49+05:30 
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,308 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,318 [INFO] handler: [pod_session_start] Received session=33aa3c56-a24d-4b26-8a39-297fc96368c4 room=room_1787411135275 hasIdleAsset=True
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,318 [INFO] streaming.websocket_server: Registered WebSocket session: 33aa3c56-a24d-4b26-8a39-297fc96368c4 provider_profile=none telephony_provider=none
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,319 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:05:49 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,319 [INFO] handler: WS_REQUEST_RECEIVED session=33aa3c56-a24d-4b26-8a39-297fc96368c4 origin= ip=172.20.3.27
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,320 [ERROR] aiohttp.server: Error handling request from 172.20.3.27
+2026-08-22 20:35:49+05:30 Traceback (most recent call last):
+2026-08-22 20:35:49+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/web_protocol.py", line 575, in _handle_request
+2026-08-22 20:35:49+05:30     resp = await request_handler(request)
+2026-08-22 20:35:49+05:30            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-22 20:35:49+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/web_app.py", line 559, in _handle
+2026-08-22 20:35:49+05:30     return await handler(request)
+2026-08-22 20:35:49+05:30            ^^^^^^^^^^^^^^^^^^^^^^
+2026-08-22 20:35:49+05:30   File "/app/handler.py", line 756, in app_websocket_ingest
+2026-08-22 20:35:49+05:30     websocket = web.WebSocketResponse(protocols=[f"aivatar.{auth_token}"] if from_subprotocol else ())
+2026-08-22 20:35:49+05:30                                                                              ^^^^^^^^^^^^^^^^
+2026-08-22 20:35:49+05:30 NameError: name 'from_subprotocol' is not defined
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,655 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:05:49 +0000] "GET /ws/33aa3c56-a24d-4b26-8a39-297fc96368c4 HTTP/1.1" 500 246 "-" "Python/3.12 aiohttp/3.14.3"
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,656 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46915313915584 thread_name=modal-aiohttp-server event_loop_id=46915114381776
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,656 [INFO] batched_stream_processor: Connecting to egress type=livekit room=room_1787411135275 url=wss://ai-14ksodzi.livekit.cloud session=33aa3c56-a24d-4b26-8a39-297fc96368c4
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,658 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,658 [INFO] batched_stream_processor: Registering session 33aa3c56-a24d-4b26-8a39-297fc96368c4 with BatchedStreamingEngine
+2026-08-22 20:35:49+05:30 Traceback (most recent call last):
+2026-08-22 20:35:49+05:30   File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+2026-08-22 20:35:49+05:30     yield
+2026-08-22 20:35:49+05:30   File "/pkg/modal/_container_entrypoint.py", line 143, in run_input_async
+2026-08-22 20:35:49+05:30     async for value in gen:
+2026-08-22 20:35:49+05:30   File "/pkg/modal/_runtime/container_io_manager.py", line 268, in call_generator_async
+2026-08-22 20:35:49+05:30     async for result in gen:
+2026-08-22 20:35:49+05:30   File "/pkg/modal/_runtime/asgi.py", line 227, in fn
+2026-08-22 20:35:49+05:30     app_task.result()  # consume/raise exceptions if there are any!
+2026-08-22 20:35:49+05:30     ^^^^^^^^^^^^^^^^^
+2026-08-22 20:35:49+05:30   File "/pkg/modal/_runtime/asgi.py", line 519, in web_server_proxy_app
+2026-08-22 20:35:49+05:30     await _proxy_websocket_request(scope["state"]["session"], scope, receive, send)
+2026-08-22 20:35:49+05:30   File "/pkg/modal/_runtime/asgi.py", line 414, in _proxy_websocket_request
+2026-08-22 20:35:49+05:30     async with session.ws_connect(
+2026-08-22 20:35:49+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/client.py", line 1693, in __aenter__
+2026-08-22 20:35:49+05:30     self._resp: _RetType_co = await self._coro
+2026-08-22 20:35:49+05:30                               ^^^^^^^^^^^^^^^^
+2026-08-22 20:35:49+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/client.py", line 1266, in _ws_connect
+2026-08-22 20:35:49+05:30     raise WSServerHandshakeError(
+2026-08-22 20:35:49+05:30 aiohttp.client_exceptions.WSServerHandshakeError: 500, message='Invalid response status', url='http://172.20.3.27:8000/ws/33aa3c56-a24d-4b26-8a39-297fc96368c4'
+2026-08-22 20:35:49+05:30    POST /sessions/start -> 202 Accepted  (duration: 12.1 s, execution: 716.3 ms)
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,715 [INFO] BatchedStreamingEngine: Session 33aa3c56-a24d-4b26-8a39-297fc96368c4 added (total=2)
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,767 [WARNING] BatchedStreamingEngine: Avatar download attempt 1/3 failed: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer')). Retrying in 1.0s
+2026-08-22 20:35:49+05:30 Nvidia Decoder is supported.
+2026-08-22 20:35:49+05:30 2026-08-22 15:05:49,979 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmpij3hzhap.mp4
+2026-08-22 20:35:50+05:30 2026-08-22 15:05:50,055 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-22 20:35:50+05:30 2026-08-22 15:05:50,056 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-22 20:35:50+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-22 20:35:50+05:30 2026-08-22 15:05:50,728 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51,078 [INFO] BatchedStreamingEngine: Session 33aa3c56-a24d-4b26-8a39-297fc96368c4 marked for drain (keep_alive=False)
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51,079 [INFO] streaming.websocket_server: Unregistered WebSocket session: 33aa3c56-a24d-4b26-8a39-297fc96368c4
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51,080 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:05:51 +0000] "POST /sessions/33aa3c56-a24d-4b26-8a39-297fc96368c4/end HTTP/1.1" 200 250 "-" "node"
+2026-08-22 20:35:51+05:30    POST /sessions/33aa3c56-a24d-4b26-8a39-297fc96368c4/end -> 200 OK  (duration: 164.2 ms, execution: 120.6 ms)
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51.557 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=295.7ms decode=81.7ms color+encode=43.0ms total=420.7ms batch_size=1
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51.557 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=295.7ms steps=[s0=74.7 s1=73.7 s2=72.5 s3=74.8] n_steps=4 batch_size=1
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51,586 [INFO] BatchedStreamingEngine: Session 33aa3c56-a24d-4b26-8a39-297fc96368c4 removed (total=1)
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51,684 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-22 20:35:51+05:30 2026-08-22 15:05:51,685 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=0)
+2026-08-22 20:35:51+05:30 [SERVE] Batched warmup completed in 2496.9ms
+2026-08-22 20:35:54+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15028MB CPU_user=33.5s CPU_sys=13.1s sessions=0 pool=3/3
+2026-08-22 20:35:59+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15028MB CPU_user=37.8s CPU_sys=13.2s sessions=0 pool=3/3
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,688 [INFO] handler: WS_REQUEST_RECEIVED session=1deccfed-79b7-4e2f-af20-b5acefae9f9e origin= ip=172.20.3.27
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,703 [INFO] handler: [pod_session_start] Received session=1deccfed-79b7-4e2f-af20-b5acefae9f9e room=room_1787411157263 hasIdleAsset=True
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,704 [INFO] streaming.websocket_server: Registered WebSocket session: 1deccfed-79b7-4e2f-af20-b5acefae9f9e provider_profile=none telephony_provider=none
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,704 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:05:59 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,704 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46915313915584 thread_name=modal-aiohttp-server event_loop_id=46915114381776
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,705 [INFO] batched_stream_processor: Connecting to egress type=livekit room=room_1787411157263 url=wss://ai-14ksodzi.livekit.cloud session=1deccfed-79b7-4e2f-af20-b5acefae9f9e
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,706 [INFO] batched_stream_processor: Registering session 1deccfed-79b7-4e2f-af20-b5acefae9f9e with BatchedStreamingEngine
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,706 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,707 [INFO] BatchedStreamingEngine: Session 1deccfed-79b7-4e2f-af20-b5acefae9f9e added (total=1)
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,746 [WARNING] BatchedStreamingEngine: Avatar download attempt 1/3 failed: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer')). Retrying in 1.0s
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,750 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-22 20:35:59+05:30    POST /sessions/start -> 202 Accepted  (duration: 125.4 ms, execution: 67.9 ms)
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,789 [ERROR] aiohttp.server: Error handling request from 172.20.3.27
+2026-08-22 20:35:59+05:30 Traceback (most recent call last):
+2026-08-22 20:35:59+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/web_protocol.py", line 575, in _handle_request
+2026-08-22 20:35:59+05:30     resp = await request_handler(request)
+2026-08-22 20:35:59+05:30            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-22 20:35:59+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/web_app.py", line 559, in _handle
+2026-08-22 20:35:59+05:30     return await handler(request)
+2026-08-22 20:35:59+05:30            ^^^^^^^^^^^^^^^^^^^^^^
+2026-08-22 20:35:59+05:30   File "/app/handler.py", line 756, in app_websocket_ingest
+2026-08-22 20:35:59+05:30     websocket = web.WebSocketResponse(protocols=[f"aivatar.{auth_token}"] if from_subprotocol else ())
+2026-08-22 20:35:59+05:30                                                                              ^^^^^^^^^^^^^^^^
+2026-08-22 20:35:59+05:30 NameError: name 'from_subprotocol' is not defined
+2026-08-22 20:35:59+05:30 2026-08-22 15:05:59,795 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:05:59 +0000] "GET /ws/1deccfed-79b7-4e2f-af20-b5acefae9f9e HTTP/1.1" 500 246 "-" "Python/3.12 aiohttp/3.14.3"
+2026-08-22 20:35:59+05:30 Traceback (most recent call last):
+2026-08-22 20:35:59+05:30   File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+2026-08-22 20:35:59+05:30     yield
+2026-08-22 20:35:59+05:30   File "/pkg/modal/_container_entrypoint.py", line 143, in run_input_async
+2026-08-22 20:35:59+05:30     async for value in gen:
+2026-08-22 20:35:59+05:30   File "/pkg/modal/_runtime/container_io_manager.py", line 268, in call_generator_async
+2026-08-22 20:35:59+05:30     async for result in gen:
+2026-08-22 20:35:59+05:30   File "/pkg/modal/_runtime/asgi.py", line 227, in fn
+2026-08-22 20:35:59+05:30     app_task.result()  # consume/raise exceptions if there are any!
+2026-08-22 20:35:59+05:30     ^^^^^^^^^^^^^^^^^
+2026-08-22 20:35:59+05:30   File "/pkg/modal/_runtime/asgi.py", line 519, in web_server_proxy_app
+2026-08-22 20:35:59+05:30     await _proxy_websocket_request(scope["state"]["session"], scope, receive, send)
+2026-08-22 20:35:59+05:30   File "/pkg/modal/_runtime/asgi.py", line 414, in _proxy_websocket_request
+2026-08-22 20:35:59+05:30     async with session.ws_connect(
+2026-08-22 20:35:59+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/client.py", line 1693, in __aenter__
+2026-08-22 20:35:59+05:30     self._resp: _RetType_co = await self._coro
+2026-08-22 20:35:59+05:30                               ^^^^^^^^^^^^^^^^
+2026-08-22 20:35:59+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/client.py", line 1266, in _ws_connect
+2026-08-22 20:35:59+05:30     raise WSServerHandshakeError(
+2026-08-22 20:35:59+05:30 aiohttp.client_exceptions.WSServerHandshakeError: 500, message='Invalid response status', url='http://172.20.3.27:8000/ws/1deccfed-79b7-4e2f-af20-b5acefae9f9e'
+2026-08-22 20:36:00+05:30 2026-08-22 15:06:00,030 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmp7w936tm_.mp4
+2026-08-22 20:36:00+05:30 2026-08-22 15:06:00,344 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-08-22 20:36:00+05:30 2026-08-22 15:06:00,906 [INFO] BatchedStreamingEngine: Session 1deccfed-79b7-4e2f-af20-b5acefae9f9e marked for drain (keep_alive=False)
+2026-08-22 20:36:00+05:30 2026-08-22 15:06:00,906 [INFO] streaming.websocket_server: Unregistered WebSocket session: 1deccfed-79b7-4e2f-af20-b5acefae9f9e
+2026-08-22 20:36:00+05:30 2026-08-22 15:06:00,906 [INFO] BatchedStreamingEngine: Session 1deccfed-79b7-4e2f-af20-b5acefae9f9e removed (total=0)
+2026-08-22 20:36:00+05:30 2026-08-22 15:06:00,907 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:06:00 +0000] "POST /sessions/1deccfed-79b7-4e2f-af20-b5acefae9f9e/end HTTP/1.1" 200 250 "-" "node"
+2026-08-22 20:36:00+05:30    POST /sessions/1deccfed-79b7-4e2f-af20-b5acefae9f9e/end -> 200 OK  (duration: 401.6 ms, execution: 356.1 ms)
+2026-08-22 20:36:04+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15028MB CPU_user=43.0s CPU_sys=14.0s sessions=0 pool=3/3
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,706 [INFO] handler: [pod_session_start] Received session=a1db3c07-a7e1-453c-9e6b-9a75d068a1de room=room_1787411164230 hasIdleAsset=True
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,707 [INFO] streaming.websocket_server: Registered WebSocket session: a1db3c07-a7e1-453c-9e6b-9a75d068a1de provider_profile=none telephony_provider=none
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,707 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:06:04 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,708 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46915313915584 thread_name=modal-aiohttp-server event_loop_id=46915114381776
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,708 [INFO] batched_stream_processor: Connecting to egress type=daily room=room_1787411164230 url=https://aivatar-team.daily.co/e2e-7b-e5ec20 session=a1db3c07-a7e1-453c-9e6b-9a75d068a1de
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,712 [INFO] batched_stream_processor: Registering session a1db3c07-a7e1-453c-9e6b-9a75d068a1de with BatchedStreamingEngine
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,712 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-22 20:36:04+05:30 2026-08-22 15:06:04,713 [INFO] BatchedStreamingEngine: Session a1db3c07-a7e1-453c-9e6b-9a75d068a1de added (total=1)
+2026-08-22 20:36:04+05:30    POST /sessions/start -> 202 Accepted  (duration: 117.4 ms, execution: 72.3 ms)
+2026-08-22 20:36:05+05:30 2026-08-22 15:06:05,025 [INFO] batched_stream_processor: Session a1db3c07-a7e1-453c-9e6b-9a75d068a1de registered with engine in 313.3 ms (avatar prepared)
+2026-08-22 20:36:05+05:30 2026-08-22 15:06:05,217 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-22 20:36:05+05:30 2026-08-22 15:06:05,249 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-22 20:36:06+05:30 2026-08-22 15:06:06,619 [INFO] handler: WS_REQUEST_RECEIVED session=a1db3c07-a7e1-453c-9e6b-9a75d068a1de origin= ip=172.20.3.27
+2026-08-22 20:36:06+05:30 2026-08-22 15:06:06,620 [ERROR] aiohttp.server: Error handling request from 172.20.3.27
+2026-08-22 20:36:06+05:30 Traceback (most recent call last):
+2026-08-22 20:36:06+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/web_protocol.py", line 575, in _handle_request
+2026-08-22 20:36:06+05:30     resp = await request_handler(request)
+2026-08-22 20:36:06+05:30            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-08-22 20:36:06+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/web_app.py", line 559, in _handle
+2026-08-22 20:36:06+05:30     return await handler(request)
+2026-08-22 20:36:06+05:30            ^^^^^^^^^^^^^^^^^^^^^^
+2026-08-22 20:36:06+05:30   File "/app/handler.py", line 756, in app_websocket_ingest
+2026-08-22 20:36:06+05:30     websocket = web.WebSocketResponse(protocols=[f"aivatar.{auth_token}"] if from_subprotocol else ())
+2026-08-22 20:36:06+05:30                                                                              ^^^^^^^^^^^^^^^^
+2026-08-22 20:36:06+05:30 NameError: name 'from_subprotocol' is not defined
+2026-08-22 20:36:06+05:30 2026-08-22 15:06:06,626 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:06:06 +0000] "GET /ws/a1db3c07-a7e1-453c-9e6b-9a75d068a1de HTTP/1.1" 500 246 "-" "Python/3.12 aiohttp/3.14.3"
+2026-08-22 20:36:06+05:30 Traceback (most recent call last):
+2026-08-22 20:36:06+05:30   File "/pkg/modal/_runtime/container_io_manager.py", line 915, in handle_input_exception
+2026-08-22 20:36:06+05:30     yield
+2026-08-22 20:36:06+05:30   File "/pkg/modal/_container_entrypoint.py", line 143, in run_input_async
+2026-08-22 20:36:06+05:30     async for value in gen:
+2026-08-22 20:36:06+05:30   File "/pkg/modal/_runtime/container_io_manager.py", line 268, in call_generator_async
+2026-08-22 20:36:06+05:30     async for result in gen:
+2026-08-22 20:36:06+05:30   File "/pkg/modal/_runtime/asgi.py", line 227, in fn
+2026-08-22 20:36:06+05:30     app_task.result()  # consume/raise exceptions if there are any!
+2026-08-22 20:36:06+05:30     ^^^^^^^^^^^^^^^^^
+2026-08-22 20:36:06+05:30   File "/pkg/modal/_runtime/asgi.py", line 519, in web_server_proxy_app
+2026-08-22 20:36:06+05:30     await _proxy_websocket_request(scope["state"]["session"], scope, receive, send)
+2026-08-22 20:36:06+05:30   File "/pkg/modal/_runtime/asgi.py", line 414, in _proxy_websocket_request
+2026-08-22 20:36:06+05:30     async with session.ws_connect(
+2026-08-22 20:36:06+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/client.py", line 1693, in __aenter__
+2026-08-22 20:36:06+05:30     self._resp: _RetType_co = await self._coro
+2026-08-22 20:36:06+05:30                               ^^^^^^^^^^^^^^^^
+2026-08-22 20:36:06+05:30   File "/usr/local/lib/python3.12/dist-packages/aiohttp/client.py", line 1266, in _ws_connect
+2026-08-22 20:36:06+05:30     raise WSServerHandshakeError(
+2026-08-22 20:36:06+05:30 aiohttp.client_exceptions.WSServerHandshakeError: 500, message='Invalid response status', url='http://172.20.3.27:8000/ws/a1db3c07-a7e1-453c-9e6b-9a75d068a1de'
+2026-08-22 20:36:07+05:30 2026-08-22 15:06:07,340 [INFO] BatchedStreamingEngine: Session a1db3c07-a7e1-453c-9e6b-9a75d068a1de marked for drain (keep_alive=False)
+2026-08-22 20:36:07+05:30 2026-08-22 15:06:07,342 [INFO] BatchedStreamingEngine: Session a1db3c07-a7e1-453c-9e6b-9a75d068a1de removed (total=0)
+2026-08-22 20:36:07+05:30 2026-08-22 15:06:07,351 [WARNING] DailyEgressAdapter: Daily call state changed to 'left' - call has ended
+2026-08-22 20:36:07+05:30 2026-08-22 15:06:07,351 [INFO] streaming.websocket_server: Unregistered WebSocket session: a1db3c07-a7e1-453c-9e6b-9a75d068a1de
+2026-08-22 20:36:07+05:30 2026-08-22 15:06:07,352 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:06:07 +0000] "POST /sessions/a1db3c07-a7e1-453c-9e6b-9a75d068a1de/end HTTP/1.1" 200 250 "-" "node"
+2026-08-22 20:36:07+05:30    POST /sessions/a1db3c07-a7e1-453c-9e6b-9a75d068a1de/end -> 200 OK  (duration: 115.4 ms, execution: 73.5 ms)
+2026-08-22 20:36:09+05:30 [METRICS] GPU_util=0% GPU_temp=42C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15028MB CPU_user=47.4s CPU_sys=14.3s sessions=0 pool=3/3
+2026-08-22 20:36:09+05:30 2026-08-22 15:06:09,751 [ERROR] streaming.idle_video: Failed to download idle video: HTTPSConnectionPool(host='c8794c0f5cddb07733d3fdcafe917439.r2.cloudflarestorage.com', port=443): Read timed out. (read timeout=5)
+2026-08-22 20:36:14+05:30 [METRICS] GPU_util=0% GPU_temp=42C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15028MB CPU_user=51.6s CPU_sys=14.4s sessions=0 pool=3/3
+2026-08-22 20:36:14+05:30 2026-08-22 15:06:14,855 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-22 20:36:14+05:30 2026-08-22 15:06:14,885 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,027 [ERROR] livekit: livekit::rtc_engine::rtc_session:679:livekit::rtc_engine::rtc_session - publisher data channel '_reliable' closed unexpectedly
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,028 [ERROR] livekit: livekit::rtc_engine::rtc_session:679:livekit::rtc_engine::rtc_session - publisher data channel '_lossy' closed unexpectedly
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,028 [ERROR] livekit: livekit::rtc_engine::rtc_session:679:livekit::rtc_engine::rtc_session - publisher data channel '_data_track' closed unexpectedly
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,036 [WARNING] livekit: livekit_api::signal_client:652:livekit_api::signal_client - dropping pass-through signal ù no stream available
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,051 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "e2e-11" with reason: DuplicateIdentity
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,725 [INFO] handler: [pod_session_start] Received session=b2117e8c-0322-4e3e-96aa-b46099f390d8 room=room_1787411173337 hasIdleAsset=True
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,725 [INFO] streaming.websocket_server: Registered WebSocket session: b2117e8c-0322-4e3e-96aa-b46099f390d8 provider_profile=none telephony_provider=none
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,726 [INFO] aiohttp.access: 172.20.3.27 [22/Aug/2026:15:06:15 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,726 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46915313915584 thread_name=modal-aiohttp-server event_loop_id=46915114381776
+2026-08-22 20:36:15+05:30 2026-08-22 15:06:15,727 [INFO] batched_stream_processor: Connecting to egress type=daily room=room_1787411173337 url=https://aivatar-team.daily.co/e2e-7b-e5ec20 session=b2117e8c-0322-4e3e-96aa-b46099f390d8
+2026-08-22 20:36:15+05:30 
+2026-08-22 20:36:15+05:30 thread '<unnamed>' (162) panicked at /__w/daily-x/daily-x/daily-core/src/native/ffi/context.rs:149:5:
+2026-08-22 20:36:15+05:30 Execution context already exists!
+2026-08-22 20:36:15+05:30 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+2026-08-22 20:36:15+05:30 
+2026-08-22 20:36:15+05:30 thread '<unnamed>' (162) panicked at /rustc/2d8144b7880597b6e6d3dfd63a9a9efae3f533d3/library/core/src/panicking.rs:225:5:
+2026-08-22 20:36:15+05:30 panic in a function that cannot unwind
+2026-08-22 20:36:15+05:30 stack backtrace:
+2026-08-22 20:36:15+05:30    0:     0x2aab82aa5738 - <<std[bcb96dfbba0ab899]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[940e698046960fd5]::fmt::Display>::fmt
+2026-08-22 20:36:15+05:30    1:     0x2aab82abd45a - core[940e698046960fd5]::fmt::write
+2026-08-22 20:36:15+05:30    2:     0x2aab82aaa432 - <std[bcb96dfbba0ab899]::sys::stdio::unix::Stderr as std[bcb96dfbba0ab899]::io::Write>::write_fmt
+2026-08-22 20:36:15+05:30    3:     0x2aab82a8be46 - std[bcb96dfbba0ab899]::panicking::default_hook::{closure#0}
+2026-08-22 20:36:15+05:30    4:     0x2aab82a9e0f1 - std[bcb96dfbba0ab899]::panicking::default_hook
+2026-08-22 20:36:15+05:30    5:     0x2aab82a9e36b - std[bcb96dfbba0ab899]::panicking::panic_with_hook
+2026-08-22 20:36:15+05:30    6:     0x2aab82a8bf34 - std[bcb96dfbba0ab899]::panicking::panic_handler::{closure#0}
+2026-08-22 20:36:15+05:30    7:     0x2aab82a83bd9 - std[bcb96dfbba0ab899]::sys::backtrace::__rust_end_short_backtrace::<std[bcb96dfbba0ab899]::panicking::panic_handler::{closure#0}, !>
+2026-08-22 20:36:15+05:30    8:     0x2aab82a8ccdd - __rustc[6c289b9f9c454d21]::rust_begin_unwind
+2026-08-22 20:36:15+05:30    9:     0x2aab82abda7d - core[940e698046960fd5]::panicking::panic_nounwind_fmt
+2026-08-22 20:36:15+05:30   10:     0x2aab82abd9fb - core[940e698046960fd5]::panicking::panic_nounwind
+2026-08-22 20:36:15+05:30   11:     0x2aab82abdb87 - core[940e698046960fd5]::panicking::panic_cannot_unwind
+2026-08-22 20:36:15+05:30   12:     0x2aab81996c22 - daily_core_context_create_with_threads
+2026-08-22 20:36:15+05:30   13:     0x2aab814d6200 - <daily[f821eba5b5e2f5e9]::PyDaily>::__pymethod_init__
+2026-08-22 20:36:15+05:30   14:     0x2aab814a8d6b - pyo3[c37c9c079a1d2bab]::impl_::trampoline::trampoline::<pyo3[c37c9c079a1d2bab]::impl_::trampoline::cfunction_with_keywords::inner::{closure#0}, *mut pyo3_ffi[9a1e329932adc672]::object::PyObject>
+2026-08-22 20:36:15+05:30   15:     0x2aab814aafa1 - pyo3[c37c9c079a1d2bab]::impl_::trampoline::cfunction_with_keywords::<<pyo3[c37c9c079a1d2bab]::impl_::pyclass::PyClassImplCollector<daily[f821eba5b5e2f5e9]::PyDaily> as pyo3[c37c9c079a1d2bab]::impl_::pyclass::PyMethods<daily[f821eba5b5e2f5e9]::PyDaily>>::py_methods::ITEMS::Def>
+2026-08-22 20:36:15+05:30   16:           0x5821ef - <unknown>
+2026-08-22 20:36:15+05:30   17:           0x5492b5 - _PyObject_MakeTpCall
+2026-08-22 20:36:15+05:30   18:           0x5d7389 - _PyEval_EvalFrameDefault
+2026-08-22 20:36:15+05:30   19:           0x66c239 - <unknown>
+2026-08-22 20:36:15+05:30   20:     0x2aa9d8bdad44 - <unknown>
+2026-08-22 20:36:15+05:30   21:     0x2aa9d8bdab5b - <unknown>
+2026-08-22 20:36:15+05:30   22:           0x5492b5 - _PyObject_MakeTpCall
+2026-08-22 20:36:15+05:30   23:           0x6a4cec - <unknown>
+2026-08-22 20:36:15+05:30   24:           0x58206d - <unknown>
+2026-08-22 20:36:15+05:30   25:           0x5db532 - _PyEval_EvalFrameDefault
+2026-08-22 20:36:15+05:30   26:           0x54ce52 - <unknown>
+2026-08-22 20:36:15+05:30   27:           0x6f858c - <unknown>
+2026-08-22 20:36:15+05:30   28:           0x6b954c - <unknown>
+2026-08-22 20:36:15+05:30   29:     0x2aa9d8c9caa4 - <unknown>
+2026-08-22 20:36:15+05:30   30:     0x2aa9d8d29c6c - <unknown>
+2026-08-22 20:36:15+05:30   31:                0x0 - <unknown>
+2026-08-22 20:36:15+05:30 thread caused non-unwinding panic. aborting.
+2026-08-22 20:36:17+05:30 Runner aborted (SIGABRT), exit code: 134

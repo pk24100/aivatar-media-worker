@@ -23,7 +23,9 @@ RUN pip3 install --upgrade pip && \
     pip3 install --no-cache-dir -r /app/requirements.txt
 
 COPY handler.py /app/handler.py
+COPY app_factory.py /app/app_factory.py
 COPY entrypoint.sh /app/entrypoint.sh
+COPY worker /app/worker
 COPY streaming /app/streaming
 COPY utils /app/utils
 COPY SoulX-FlashHead /app/SoulX-FlashHead
@@ -32,4 +34,4 @@ COPY models/wav2vec2-base-960h /app/models/wav2vec2-base-960h
 
 RUN chmod +x /app/entrypoint.sh
 
-CMD ["python3", "-u", "handler.py"]
+CMD ["python3", "-u", "-c", "import asyncio, handler; asyncio.run(handler.run_worker_app())"]

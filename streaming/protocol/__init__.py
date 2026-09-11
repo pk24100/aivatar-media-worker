@@ -1,0 +1,2 @@
+﻿# Canonical WebSocket media protocol.
+

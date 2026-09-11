@@ -1,0 +1,747 @@
+﻿2026-08-21 17:18:36+05:30 Restoring Function from memory snapshot.
+2026-08-21 17:18:40+05:30 [RESTORE] CPU snapshot restore - moving pipeline to cuda
+2026-08-21 17:18:40+05:30 [RESTORE_START] pid=2 cuda_available=True allocated=0 reserved=0 memory_snapshot_segments=0
+2026-08-21 17:18:42+05:30 2026-08-21 11:48:42.087 | INFO     | flash_head.src.pipeline.flash_head_pipeline:move_to_device:199 - Moved FlashHeadPipeline components from cpu to cuda
+2026-08-21 17:18:43+05:30 [RESTORE] Pipeline moved to cuda in 2426.8ms
+2026-08-21 17:18:43+05:30 [RESTORE_POST_MOVE] pid=2 cuda_available=True allocated=4296190464 reserved=4580179968 memory_snapshot_segments=0
+2026-08-21 17:18:43+05:30 [RESTORE] Running warmup inference on GPU...
+2026-08-21 17:18:46+05:30 2026-08-21 11:48:46.850 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:377 - [generate] GPU_BREAKDOWN noise=0.1ms denoise=2775.1ms decode=78.6ms color=9.0ms encode=29.3ms total=2892.2ms
+2026-08-21 17:18:46+05:30 2026-08-21 11:48:46.850 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate:384 - [generate] DENOISE_STEPS total=2775.1ms steps=[s0=2573.5 s1=67.1 s2=66.6 s3=67.8] n_steps=4
+2026-08-21 17:18:46+05:30 2026-08-21 11:48:46.850 | INFO     | flash_head.inference:run_pipeline:93 - [run_pipeline] gen=2892.7ms post=0.2ms
+2026-08-21 17:18:46+05:30 [RESTORE] Warmup completed in 3798.4ms
+2026-08-21 17:18:46+05:30 [RESTORE_POST_WARMUP] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-21 17:18:46+05:30 [RESTORE] CPU snapshot restore complete
+2026-08-21 17:18:47+05:30 [SERVE] Starting serve() post-restore
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,047 [INFO] handler: Using baked FlashHead checkpoint directory: /app/models/SoulX-FlashHead-1_3B
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Initializing FlashHead pool: initial_size=3 max_size=3
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Loading pipeline 1/3...
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Pipeline 1/3 loaded successfully.
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Loading pipeline 2/3...
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Pipeline 2/3 loaded successfully.
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Loading pipeline 3/3...
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] utils.model_pool: Pipeline 3/3 loaded successfully.
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,048 [INFO] BatchedStreamingEngine: BatchedStreamingEngine background thread started
+2026-08-21 17:18:48+05:30 [SERVE] BatchedStreamingEngine started (wait_window=20ms)
+2026-08-21 17:18:48+05:30 [SERVE] Pipeline in model_pool: current_size=3 available=3
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,050 [INFO] modal_app: aiohttp background thread started ident=46627237701312
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,066 [INFO] websockets.server: server listening on 0.0.0.0:8765
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,067 [INFO] streaming.websocket_server: Started WebSocket ingestion server on ws://0.0.0.0:8765
+2026-08-21 17:18:48+05:30 [SERVE] Models on GPU after CPU snapshot restore - marking ready
+2026-08-21 17:18:48+05:30 [SERVE_START] pid=2 cuda_available=True allocated=4308055040 reserved=5943328768 memory_snapshot_segments=0
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,069 [INFO] modal_app: aiohttp site started thread=46627237701312 event_loop=46627231457904
+2026-08-21 17:18:48+05:30 [METRICS] GPU_util=0% GPU_temp=36C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=27.8s CPU_sys=11.3s sessions=0 pool=3/3
+2026-08-21 17:18:48+05:30 [SERVE] Running batched warmup cycle (background)...[modal] Pool status: current_size=3 available=3/3
+2026-08-21 17:18:48+05:30 
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,623 [INFO] BatchedStreamingEngine: Session _warmup_ added (total=1)
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,632 [INFO] handler: [pod_session_start] Received session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 room=room_1787312911157 ingestion=websocket hasIdleAsset=True
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,633 [INFO] streaming.websocket_server: Registered WebSocket session: e161102a-6998-4cbc-a5d1-2dc14c4f5643 provider_profile=deepgram telephony_provider=none
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,633 [INFO] aiohttp.access: 172.20.7.9 [21/Aug/2026:11:48:48 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,634 [INFO] handler: WS_REQUEST_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 origin= ip=172.20.7.9
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,635 [INFO] handler: WS_CONNECT session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 origin= ip=172.20.7.9 handlerMs=0.9
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,636 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46627237701312 thread_name=modal-aiohttp-server event_loop_id=46627231457904
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,636 [INFO] batched_stream_processor: Connecting to egress type=livekit room=room_1787312911157 url=wss://ai-14ksodzi.livekit.cloud session=e161102a-6998-4cbc-a5d1-2dc14c4f5643
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,639 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,639 [INFO] batched_stream_processor: Registering session e161102a-6998-4cbc-a5d1-2dc14c4f5643 with BatchedStreamingEngine
+2026-08-21 17:18:48+05:30    POST /sessions/start -> 202 Accepted  (duration: 15.1 s, execution: 529.3 ms)
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,710 [INFO] BatchedStreamingEngine: Session e161102a-6998-4cbc-a5d1-2dc14c4f5643 added (total=2)
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,918 [INFO] batched_stream_processor: Session e161102a-6998-4cbc-a5d1-2dc14c4f5643 registered with engine in 278.2 ms (avatar prepared)
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,957 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=1 size=249 ip=172.20.7.9
+2026-08-21 17:18:48+05:30 2026-08-21 11:48:48,957 [INFO] handler: WS_SEND_RESPONSE session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=started ip=172.20.7.9
+2026-08-21 17:18:49+05:30 Nvidia Decoder is supported.
+2026-08-21 17:18:49+05:30 2026-08-21 11:48:49,375 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:18:49+05:30 2026-08-21 11:48:49,375 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:18:49+05:30 2026-08-21 11:48:49,557 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=1 size=34 ip=172.20.7.9
+2026-08-21 17:18:49+05:30 2026-08-21 11:48:49,642 [INFO] streaming.idle_video: Loading idle video frames from /tmp/tmp8497f1c4.mp4
+2026-08-21 17:18:49+05:30 [WARMUP] LiveKit RTC dummy connection succeeded
+2026-08-21 17:18:49+05:30 2026-08-21 11:48:49.947 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=541.1ms decode=83.7ms color+encode=349.2ms total=974.6ms batch_size=1
+2026-08-21 17:18:49+05:30 2026-08-21 11:48:49.947 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=541.1ms steps=[s0=72.5 s1=238.2 s2=143.5 s3=86.9] n_steps=4 batch_size=1
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,074 [INFO] BatchedStreamingEngine: Session _warmup_ marked for drain (keep_alive=False)
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,075 [INFO] BatchedStreamingEngine: Session _warmup_ removed (total=1)
+2026-08-21 17:18:50+05:30 [SERVE] Batched warmup completed in 1579.5ms
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,385 [INFO] streaming.idle_video: Loaded 375 frames for idle loop
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,386 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,387 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=350 buffer=9 peak=33 MAX=42 TARGET=33
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,387 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,387 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,390 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,390 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,390 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,408 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 18.2 ms
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,414 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VCNzxkXi4gdTE5 from e2e-test-worker
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,415 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 room=room_1787312911157
+2026-08-21 17:18:50+05:30 2026-08-21 11:48:50,423 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,583 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,601 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,622 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,641 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,661 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,687 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,705 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,721 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,917 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,942 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,943 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,945 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,946 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,952 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,952 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,952 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,953 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,953 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,953 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,956 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,957 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,966 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:51+05:30 2026-08-21 11:48:51,969 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,007 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,014 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,048 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,062 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,193 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,195 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,223 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,237 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,240 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,242 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,244 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,245 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,247 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,249 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,250 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,267 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,272 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,317 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,327 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,330 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,363 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,365 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,373 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,403 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,421 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,433 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,442 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,463 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52.475 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=352.1ms decode=73.2ms color+encode=25.1ms total=450.7ms batch_size=1
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52.475 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=352.1ms steps=[s0=80.8 s1=73.8 s2=105.1 s3=92.3] n_steps=4 batch_size=1
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,482 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,491 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,507 [INFO] AudioPublisher: [AP-DIAG] Calling publish_track()...
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,508 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,524 [INFO] AudioPublisher: [AP-DIAG] publish_track() completed in 16.2 ms (16000 Hz, 1 ch)
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,528 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,533 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,540 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,569 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,575 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,604 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,609 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,616 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,646 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,653 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,682 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,704 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,725 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,782 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,794 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,823 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,828 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,844 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,862 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,882 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,884 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,903 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,913 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,948 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,963 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:52+05:30 2026-08-21 11:48:52,983 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,002 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,011 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,042 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,044 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,084 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,085 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53.087 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=434.8ms decode=74.5ms color+encode=24.1ms total=535.4ms batch_size=1
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53.087 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=434.8ms steps=[s0=181.3 s1=79.3 s2=85.5 s3=88.7] n_steps=4 batch_size=1
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,101 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,127 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,146 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,148 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 [METRICS] GPU_util=83% GPU_temp=43C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=35.8s CPU_sys=13.7s sessions=1 pool=3/3
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,183 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,184 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,203 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,222 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,246 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,261 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,282 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,292 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,322 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,324 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,342 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,382 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,383 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,407 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,442 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,443 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,452 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,484 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,504 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,522 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,524 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,543 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,562 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,565 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,604 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,612 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,643 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,645 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,667 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,673 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,703 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,705 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,722 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,732 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,763 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,783 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,805 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,807 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,822 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,862 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,864 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,881 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,906 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,921 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,924 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53.947 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=363.6ms decode=73.2ms color+encode=26.7ms total=464.4ms batch_size=1
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53.947 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=363.6ms steps=[s0=92.7 s1=93.4 s2=88.5 s3=89.1] n_steps=4 batch_size=1
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,961 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:53+05:30 2026-08-21 11:48:53,981 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,001 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,016 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,017 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,046 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,061 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,081 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,091 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,121 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,123 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,141 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,162 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,181 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,206 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,222 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,232 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,252 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,273 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,292 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,312 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,331 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,347 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,353 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,367 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,401 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,436 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,437 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,458 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,479 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,487 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,503 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,524 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=2 size=1280 ip=172.20.7.9
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,874 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 windowMs=5029 frames=113 effectiveFps=22.5 liveFrames=52 repeatedLiveFrames=0 idleFrames=61 desyncPct=54.0 maxGapMs=46.4 maxCaptureMs=1.3
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54.878 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=335.4ms decode=73.7ms color+encode=24.1ms total=433.6ms batch_size=1
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54.878 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=335.4ms steps=[s0=94.7 s1=89.3 s2=74.3 s3=77.0] n_steps=4 batch_size=1
+2026-08-21 17:18:54+05:30 2026-08-21 11:48:54,907 [INFO] streaming.state_manager: [SM] Dropped 10 stale frames to protect A/V sync (qsize now 33)
+2026-08-21 17:18:55+05:30 2026-08-21 11:48:55.791 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=299.1ms decode=73.0ms color+encode=23.6ms total=396.0ms batch_size=1
+2026-08-21 17:18:55+05:30 2026-08-21 11:48:55.791 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=299.1ms steps=[s0=71.6 s1=76.7 s2=78.3 s3=72.5] n_steps=4 batch_size=1
+2026-08-21 17:18:57+05:30 2026-08-21 11:48:57.000 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=536.6ms decode=73.5ms color+encode=31.4ms total=641.8ms batch_size=1
+2026-08-21 17:18:57+05:30 2026-08-21 11:48:57.000 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=536.6ms steps=[s0=147.4 s1=158.4 s2=145.8 s3=85.0] n_steps=4 batch_size=1
+2026-08-21 17:18:57+05:30 2026-08-21 11:48:57,697 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=1 size=32 ip=172.20.7.9
+2026-08-21 17:18:57+05:30 2026-08-21 11:48:57,698 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 keep_alive=True
+2026-08-21 17:18:57+05:30 2026-08-21 11:48:57,698 [INFO] BatchedStreamingEngine: Session e161102a-6998-4cbc-a5d1-2dc14c4f5643 marked for drain (keep_alive=True)
+2026-08-21 17:18:58+05:30 2026-08-21 11:48:58.136 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=322.7ms decode=72.8ms color+encode=23.9ms total=419.8ms batch_size=1
+2026-08-21 17:18:58+05:30 2026-08-21 11:48:58.136 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=322.7ms steps=[s0=81.5 s1=79.1 s2=80.3 s3=81.9] n_steps=4 batch_size=1
+2026-08-21 17:18:58+05:30 2026-08-21 11:48:58,162 [INFO] BatchedStreamingEngine: Session e161102a-6998-4cbc-a5d1-2dc14c4f5643 reactivated (keep_alive)
+2026-08-21 17:18:58+05:30 [METRICS] GPU_util=53% GPU_temp=44C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=41.7s CPU_sys=14.0s sessions=1 pool=3/3
+2026-08-21 17:18:59+05:30 2026-08-21 11:48:59,657 [INFO] streaming.idle_video: [idle] best-match frame 101/375
+2026-08-21 17:18:59+05:30 2026-08-21 11:48:59,660 [INFO] streaming.state_manager: [SM] LIVE -> TRANSITION_TO_IDLE (crossfade 8 frames)
+2026-08-21 17:18:59+05:30 2026-08-21 11:48:59,911 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 windowMs=5037 frames=126 effectiveFps=25.0 liveFrames=106 repeatedLiveFrames=12 idleFrames=8 desyncPct=15.9 maxGapMs=72.6 maxCaptureMs=2.8
+2026-08-21 17:18:59+05:30 2026-08-21 11:48:59,948 [INFO] streaming.state_manager: [SM] TRANSITION_TO_IDLE -> IDLE
+2026-08-21 17:19:00+05:30 2026-08-21 11:49:00,087 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 cycles=5 elapsed=2389.6ms keep_alive=True
+2026-08-21 17:19:03+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=46.8s CPU_sys=14.2s sessions=1 pool=3/3
+2026-08-21 17:19:04+05:30 2026-08-21 11:49:04,287 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=1 size=34 ip=172.20.7.9
+2026-08-21 17:19:04+05:30 2026-08-21 11:49:04,287 [INFO] handler: WS_SEND_RESPONSE session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=pong ip=172.20.7.9
+2026-08-21 17:19:04+05:30 2026-08-21 11:49:04,913 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 windowMs=5001 frames=125 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=125 desyncPct=100.0 maxGapMs=43.2 maxCaptureMs=0.9
+2026-08-21 17:19:08+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=52.0s CPU_sys=14.4s sessions=1 pool=3/3
+2026-08-21 17:19:09+05:30 2026-08-21 11:49:09,951 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 windowMs=5037 frames=126 effectiveFps=25.0 liveFrames=0 repeatedLiveFrames=0 idleFrames=126 desyncPct=100.0 maxGapMs=43.4 maxCaptureMs=0.6
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,867 [INFO] handler: WS_FRAME_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=1 size=30 ip=172.20.7.9
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,867 [INFO] handler: WS_SEND_RESPONSE session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 type=ended ip=172.20.7.9
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,867 [INFO] handler: SESSION_END_RECEIVED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,868 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 keep_alive=False
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,868 [INFO] BatchedStreamingEngine: Session e161102a-6998-4cbc-a5d1-2dc14c4f5643 marked for drain (keep_alive=False)
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,870 [INFO] BatchedStreamingEngine: Session e161102a-6998-4cbc-a5d1-2dc14c4f5643 removed (total=0)
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,970 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 cycles=1 elapsed=102.1ms keep_alive=False
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,970 [INFO] streaming.websocket_server: Unregistered WebSocket session: e161102a-6998-4cbc-a5d1-2dc14c4f5643
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,970 [INFO] handler: [handler] run_batched_streaming_session() completed in 23334.8ms for e161102a-6998-4cbc-a5d1-2dc14c4f5643
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,985 [INFO] handler: WS_SESSION_ENDED session=e161102a-6998-4cbc-a5d1-2dc14c4f5643 ip=172.20.7.9
+2026-08-21 17:19:11+05:30 2026-08-21 11:49:11,990 [INFO] aiohttp.access: 172.20.7.9 [21/Aug/2026:11:48:48 +0000] "GET /ws/e161102a-6998-4cbc-a5d1-2dc14c4f5643 HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-08-21 17:19:12+05:30 CONNECT /ws/e161102a-6998-4cbc-a5d1-2dc14c4f5643 -> 101 Switching Protocols  (duration: 38.4 s, execution: 23.9 s)
+2026-08-21 17:19:13+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=56.8s CPU_sys=14.6s sessions=0 pool=3/3
+2026-08-21 17:19:15+05:30 2026-08-21 11:49:15,024 [INFO] aiohttp.access: 172.20.7.9 [21/Aug/2026:11:49:15 +0000] "POST /sessions/e161102a-6998-4cbc-a5d1-2dc14c4f5643/end HTTP/1.1" 404 261 "-" "node"
+2026-08-21 17:19:15+05:30    POST /sessions/e161102a-6998-4cbc-a5d1-2dc14c4f5643/end -> 404 Not Found  (duration: 91.1 ms, execution: 42.3 ms)
+2026-08-21 17:19:18+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=60.5s CPU_sys=14.7s sessions=0 pool=3/3
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,781 [INFO] handler: WS_REQUEST_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a origin= ip=172.20.7.9
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,803 [INFO] handler: [pod_session_start] Received session=26ebd304-59b4-447f-bb01-14c69a519b8a room=room_1787312959296 ingestion=websocket hasIdleAsset=True
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,803 [INFO] streaming.websocket_server: Registered WebSocket session: 26ebd304-59b4-447f-bb01-14c69a519b8a provider_profile=gemini telephony_provider=none
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,803 [INFO] aiohttp.access: 172.20.7.9 [21/Aug/2026:11:49:21 +0000] "POST /sessions/start HTTP/1.1" 202 308 "-" "node"
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,804 [INFO] batched_stream_processor: [BATCHED-DIAG] threading context: thread_id=46627237701312 thread_name=modal-aiohttp-server event_loop_id=46627231457904
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,804 [INFO] batched_stream_processor: Connecting to egress type=livekit room=room_1787312959296 url=wss://ai-14ksodzi.livekit.cloud session=26ebd304-59b4-447f-bb01-14c69a519b8a
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,805 [INFO] batched_stream_processor: Registering session 26ebd304-59b4-447f-bb01-14c69a519b8a with BatchedStreamingEngine
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,805 [INFO] streaming.idle_video: Downloading idle video asset
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,806 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a added (total=1)
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,852 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,882 [INFO] handler: WS_CONNECT session=26ebd304-59b4-447f-bb01-14c69a519b8a origin= ip=172.20.7.9 handlerMs=101.2
+2026-08-21 17:19:21+05:30    POST /sessions/start -> 202 Accepted  (duration: 140.5 ms, execution: 70.1 ms)
+2026-08-21 17:19:21+05:30 2026-08-21 11:49:21,964 [INFO] batched_stream_processor: Session 26ebd304-59b4-447f-bb01-14c69a519b8a registered with engine in 158.5 ms (avatar prepared)
+2026-08-21 17:19:22+05:30 2026-08-21 11:49:22,191 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=247 ip=172.20.7.9
+2026-08-21 17:19:22+05:30 2026-08-21 11:49:22,192 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=started ip=172.20.7.9
+2026-08-21 17:19:22+05:30 2026-08-21 11:49:22,495 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:19:23+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=64.9s CPU_sys=14.8s sessions=1 pool=3/3
+2026-08-21 17:19:26+05:30 2026-08-21 11:49:26,847 [ERROR] streaming.idle_video: Failed to download idle video: HTTPSConnectionPool(host='c8794c0f5cddb07733d3fdcafe917439.r2.cloudflarestorage.com', port=443): Read timed out. (read timeout=5)
+2026-08-21 17:19:26+05:30 2026-08-21 11:49:26,934 [INFO] batched_stream_processor: IDLE_FALLBACK_PUBLISHED session=26ebd304-59b4-447f-bb01-14c69a519b8a
+2026-08-21 17:19:28+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=69.5s CPU_sys=14.9s sessions=1 pool=3/3
+2026-08-21 17:19:33+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=73.8s CPU_sys=15.0s sessions=1 pool=3/3
+2026-08-21 17:19:37+05:30 2026-08-21 11:49:36,999 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (1/3)
+2026-08-21 17:19:37+05:30 2026-08-21 11:49:37,032 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:19:37+05:30 2026-08-21 11:49:37,511 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:19:37+05:30 2026-08-21 11:49:37,511 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=pong ip=172.20.7.9
+2026-08-21 17:19:38+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=78.3s CPU_sys=15.2s sessions=1 pool=3/3
+2026-08-21 17:19:42+05:30 2026-08-21 11:49:42,741 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,026 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,027 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,029 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,272 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,273 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,274 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,275 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,296 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,297 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,298 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,299 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=82.9s CPU_sys=15.3s sessions=1 pool=3/3
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,612 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,613 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,614 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,616 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,617 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,618 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,619 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,625 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,626 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,627 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,628 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,629 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,630 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,631 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,633 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,634 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,635 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,637 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,638 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,924 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,926 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,929 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,930 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,931 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,933 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,934 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,935 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,936 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,937 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,938 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,960 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,961 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,962 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,964 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,964 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,966 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,967 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,968 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,969 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,969 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,971 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,972 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,973 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,974 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,976 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,977 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,978 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,979 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:43+05:30 2026-08-21 11:49:43,980 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,212 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,214 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,216 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,217 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,219 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,219 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,224 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,243 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,244 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,246 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,247 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,275 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,277 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,278 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,279 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,283 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,284 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,286 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,287 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,288 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,289 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,290 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,292 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,293 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,294 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,295 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,296 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,297 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,298 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,299 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,300 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,301 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,302 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,303 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,304 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,305 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,306 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,307 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,308 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,309 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,310 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,311 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,312 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,313 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,314 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,315 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,316 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,317 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,318 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,320 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,321 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,322 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,323 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,324 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,325 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,326 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,327 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,328 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,329 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,329 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,330 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,331 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,332 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,333 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,481 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,482 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,483 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,484 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,487 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,488 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,489 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,491 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,492 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,493 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,494 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,496 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,497 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,498 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,499 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,507 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,508 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,509 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,510 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,561 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,564 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,565 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,566 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,594 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,595 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,596 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,625 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,626 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,627 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,628 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,633 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,636 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,637 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,639 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,639 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,641 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,642 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,643 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,644 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,645 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,646 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,647 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,649 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,650 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,651 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,652 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,653 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,654 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,655 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,656 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,657 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,658 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,660 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,662 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,663 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,664 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,665 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,666 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,666 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,667 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,668 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,669 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,670 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,671 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,672 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,673 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,674 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,675 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,676 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,677 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,678 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,679 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,681 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,682 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,683 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,684 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,685 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,686 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,687 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,688 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,689 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,690 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,691 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,692 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,693 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,694 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,696 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,696 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,697 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,699 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,700 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,701 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,702 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,703 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,704 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,705 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,706 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,707 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,709 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,710 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,711 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,712 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,713 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,714 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,715 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,716 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,717 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,718 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,719 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,720 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,720 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,721 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,722 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,723 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,724 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,725 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,726 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,747 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,748 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,749 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,750 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,757 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,759 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,760 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,761 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,762 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,763 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,764 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,765 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,767 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,768 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,769 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,770 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,771 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,772 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,773 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,774 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,775 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,776 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,778 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,779 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,780 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,781 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,782 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,783 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,785 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,786 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,803 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,805 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,807 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4338 ip=172.20.7.9
+2026-08-21 17:19:44+05:30 2026-08-21 11:49:44,808 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=4358 ip=172.20.7.9
+2026-08-21 17:19:46+05:30 2026-08-21 11:49:46,071 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=32 ip=172.20.7.9
+2026-08-21 17:19:48+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=87.4s CPU_sys=15.5s sessions=1 pool=3/3
+2026-08-21 17:19:52+05:30 2026-08-21 11:49:52,176 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (2/3)
+2026-08-21 17:19:52+05:30 2026-08-21 11:49:52,208 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:19:52+05:30 2026-08-21 11:49:52,515 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:19:52+05:30 2026-08-21 11:49:52,516 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=pong ip=172.20.7.9
+2026-08-21 17:19:53+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=91.7s CPU_sys=15.6s sessions=1 pool=3/3
+2026-08-21 17:19:58+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=96.2s CPU_sys=15.7s sessions=1 pool=3/3
+2026-08-21 17:20:03+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=100.5s CPU_sys=15.7s sessions=1 pool=3/3
+2026-08-21 17:20:07+05:30 2026-08-21 11:50:07,352 [WARNING] livekit: livekit::rtc_engine:529:livekit::rtc_engine - failed to connect: Connection("wait_pc_connection timed out"), retrying... (3/3)
+2026-08-21 17:20:07+05:30 2026-08-21 11:50:07,390 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:20:07+05:30 2026-08-21 11:50:07,529 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:20:07+05:30 2026-08-21 11:50:07,529 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=pong ip=172.20.7.9
+2026-08-21 17:20:08+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=105.1s CPU_sys=15.8s sessions=1 pool=3/3
+2026-08-21 17:20:13+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=109.7s CPU_sys=15.8s sessions=1 pool=3/3
+2026-08-21 17:20:18+05:30 [METRICS] GPU_util=0% GPU_temp=38C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=114.1s CPU_sys=15.9s sessions=1 pool=3/3
+2026-08-21 17:20:22+05:30 2026-08-21 11:50:22,499 [ERROR] livekit: livekit_ffi::server::room:338:livekit_ffi::server::room - error while connecting to a room: engine: connection error: wait_pc_connection timed out
+2026-08-21 17:20:22+05:30 2026-08-21 11:50:22,513 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:20:22+05:30 2026-08-21 11:50:22,513 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=pong ip=172.20.7.9
+2026-08-21 17:20:23+05:30 [METRICS] GPU_util=0% GPU_temp=37C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=118.5s CPU_sys=16.0s sessions=1 pool=3/3
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,531 [INFO] livekit: livekit_api::signal_client::signal_stream:53:livekit_api::signal_client::signal_stream - connecting to wss://ai-14ksodzi.livekit.cloud/rtc/v1
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,778 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=940 buffer=24 peak=48 MAX=62 TARGET=49
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,781 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=940 buffer=24 peak=48 MAX=62 TARGET=49
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,782 [INFO] VideoPublisher: [VP-DIAG] First non-None frame received after 0 None ticks (~0.0s). Creating track...
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,782 [INFO] VideoPublisher: [VP-DIAG] Creating video track 512x512
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,784 [WARNING] VideoPublisher: VideoEncoderBackend not available in installed livekit-rtc version; AIVATAR_VIDEO_CODEC encoder backend selection will be ignored.
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,784 [INFO] VideoPublisher: [VP-DIAG] Codec=H264 encoder=auto (AIVATAR_VIDEO_CODEC=h264_hw)
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,785 [INFO] VideoPublisher: [VP-DIAG] Calling publish_track()...
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,801 [INFO] VideoPublisher: [VP-DIAG] publish_track() completed in 15.7 ms
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,807 [INFO] batched_stream_processor: IDLE_TRACK_PUBLISHED session=26ebd304-59b4-447f-bb01-14c69a519b8a room=room_1787312959296
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,848 [INFO] livekit: livekit::room::e2ee::manager:179:livekit::room::e2ee::manager - packet_trailer not enabled for published track TR_VC4r9ubKbUzFxu from e2e-test-worker
+2026-08-21 17:20:24+05:30 2026-08-21 11:50:24,860 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,117 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=26ebd304-59b4-447f-bb01-14c69a519b8a keep_alive=True
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,117 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a marked for drain (keep_alive=True)
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25.496 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=427.2ms decode=73.3ms color+encode=23.6ms total=524.9ms batch_size=1
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25.496 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=427.2ms steps=[s0=193.4 s1=76.7 s2=84.0 s3=73.1] n_steps=4 batch_size=1
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,530 [INFO] AudioPublisher: [AP-DIAG] Calling publish_track()...
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,540 [INFO] streaming.state_manager: [SM] IDLE -> TRANSITION_TO_LIVE (crossfade 8 frames, queue=24)
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,545 [INFO] AudioPublisher: [AP-DIAG] publish_track() completed in 15.3 ms (16000 Hz, 1 ch)
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,571 [INFO] livekit: livekit::rtc_engine::peer_transport:518:livekit::rtc_engine::peer_transport - Applying x-google-start-bitrate=1000 kbps (target_bps=Some(3000000))
+2026-08-21 17:20:25+05:30 2026-08-21 11:50:25,861 [INFO] streaming.state_manager: [SM] TRANSITION_TO_LIVE -> LIVE
+2026-08-21 17:20:26+05:30 2026-08-21 11:50:26.020 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=382.5ms decode=73.3ms color+encode=23.9ms total=480.0ms batch_size=1
+2026-08-21 17:20:26+05:30 2026-08-21 11:50:26.020 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=382.5ms steps=[s0=153.5 s1=74.4 s2=75.4 s3=79.2] n_steps=4 batch_size=1
+2026-08-21 17:20:26+05:30 2026-08-21 11:50:26,048 [INFO] BatchedStreamingEngine: cycle=10 batch=1 sessions=['26ebd304-59b4-447f-bb01-14c69a519b8a'] embed=17.2ms infer=482.5ms xfer=25.8ms total=525.6ms
+2026-08-21 17:20:26+05:30 2026-08-21 11:50:26.901 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=307.4ms decode=73.3ms color+encode=23.5ms total=404.5ms batch_size=1
+2026-08-21 17:20:26+05:30 2026-08-21 11:50:26.902 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=307.4ms steps=[s0=75.0 s1=77.7 s2=74.8 s3=80.0] n_steps=4 batch_size=1
+2026-08-21 17:20:27+05:30 2026-08-21 11:50:27.856 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=301.2ms decode=73.3ms color+encode=23.5ms total=398.2ms batch_size=1
+2026-08-21 17:20:27+05:30 2026-08-21 11:50:27.857 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=301.2ms steps=[s0=76.1 s1=76.2 s2=74.2 s3=74.6] n_steps=4 batch_size=1
+2026-08-21 17:20:28+05:30 [METRICS] GPU_util=40% GPU_temp=43C GPU_mem=4.1GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=124.5s CPU_sys=16.2s sessions=1 pool=3/3
+2026-08-21 17:20:28+05:30 2026-08-21 11:50:28.825 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=310.7ms decode=73.3ms color+encode=23.6ms total=407.9ms batch_size=1
+2026-08-21 17:20:28+05:30 2026-08-21 11:50:28.825 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=310.7ms steps=[s0=78.4 s1=75.2 s2=79.6 s3=77.5] n_steps=4 batch_size=1
+2026-08-21 17:20:29+05:30 2026-08-21 11:50:29,784 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=26ebd304-59b4-447f-bb01-14c69a519b8a windowMs=5009 frames=126 effectiveFps=25.2 liveFrames=99 repeatedLiveFrames=0 idleFrames=27 desyncPct=21.4 maxGapMs=51.4 maxCaptureMs=0.9
+2026-08-21 17:20:29+05:30 2026-08-21 11:50:29.792 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=313.4ms decode=78.2ms color+encode=23.8ms total=415.8ms batch_size=1
+2026-08-21 17:20:29+05:30 2026-08-21 11:50:29.792 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=313.4ms steps=[s0=75.5 s1=76.1 s2=82.4 s3=79.4] n_steps=4 batch_size=1
+2026-08-21 17:20:30+05:30 2026-08-21 11:50:30.754 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=319.2ms decode=73.3ms color+encode=24.0ms total=416.7ms batch_size=1
+2026-08-21 17:20:30+05:30 2026-08-21 11:50:30.754 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=319.2ms steps=[s0=76.7 s1=73.8 s2=85.4 s3=83.3] n_steps=4 batch_size=1
+2026-08-21 17:20:31+05:30 2026-08-21 11:50:31.698 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=303.4ms decode=73.9ms color+encode=23.5ms total=401.1ms batch_size=1
+2026-08-21 17:20:31+05:30 2026-08-21 11:50:31.698 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=303.4ms steps=[s0=79.1 s1=76.9 s2=74.5 s3=72.9] n_steps=4 batch_size=1
+2026-08-21 17:20:32+05:30 2026-08-21 11:50:32.651 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=298.4ms decode=73.3ms color+encode=23.6ms total=395.5ms batch_size=1
+2026-08-21 17:20:32+05:30 2026-08-21 11:50:32.652 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=298.4ms steps=[s0=76.3 s1=75.2 s2=72.6 s3=74.2] n_steps=4 batch_size=1
+2026-08-21 17:20:33+05:30 2026-08-21 11:50:33.625 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=311.4ms decode=73.5ms color+encode=24.0ms total=409.2ms batch_size=1
+2026-08-21 17:20:33+05:30 2026-08-21 11:50:33.626 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=311.4ms steps=[s0=74.6 s1=74.2 s2=83.8 s3=78.8] n_steps=4 batch_size=1
+2026-08-21 17:20:33+05:30 [METRICS] GPU_util=92% GPU_temp=42C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=130.2s CPU_sys=16.4s sessions=1 pool=3/3
+2026-08-21 17:20:34+05:30 2026-08-21 11:50:34.590 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=315.1ms decode=73.0ms color+encode=23.8ms total=412.1ms batch_size=1
+2026-08-21 17:20:34+05:30 2026-08-21 11:50:34.591 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=315.1ms steps=[s0=80.0 s1=77.3 s2=84.3 s3=73.5] n_steps=4 batch_size=1
+2026-08-21 17:20:34+05:30 2026-08-21 11:50:34,785 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=26ebd304-59b4-447f-bb01-14c69a519b8a windowMs=5001 frames=125 effectiveFps=25.0 liveFrames=125 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=43.2 maxCaptureMs=3.1
+2026-08-21 17:20:35+05:30 2026-08-21 11:50:35.534 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=300.8ms decode=73.0ms color+encode=23.6ms total=397.7ms batch_size=1
+2026-08-21 17:20:35+05:30 2026-08-21 11:50:35.535 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=300.8ms steps=[s0=76.2 s1=75.5 s2=73.6 s3=75.5] n_steps=4 batch_size=1
+2026-08-21 17:20:35+05:30 2026-08-21 11:50:35,559 [INFO] BatchedStreamingEngine: cycle=20 batch=1 sessions=['26ebd304-59b4-447f-bb01-14c69a519b8a'] embed=13.7ms infer=398.4ms xfer=24.0ms total=436.2ms
+2026-08-21 17:20:36+05:30 2026-08-21 11:50:36.515 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=319.6ms decode=73.9ms color+encode=24.2ms total=418.0ms batch_size=1
+2026-08-21 17:20:36+05:30 2026-08-21 11:50:36.515 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=319.6ms steps=[s0=77.0 s1=72.7 s2=77.3 s3=92.7] n_steps=4 batch_size=1
+2026-08-21 17:20:37+05:30 2026-08-21 11:50:37.486 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=329.2ms decode=72.9ms color+encode=24.4ms total=426.8ms batch_size=1
+2026-08-21 17:20:37+05:30 2026-08-21 11:50:37.486 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=329.2ms steps=[s0=88.3 s1=88.7 s2=76.6 s3=75.6] n_steps=4 batch_size=1
+2026-08-21 17:20:37+05:30 2026-08-21 11:50:37,537 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:20:37+05:30 2026-08-21 11:50:37,537 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=pong ip=172.20.7.9
+2026-08-21 17:20:38+05:30 2026-08-21 11:50:38.422 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=303.6ms decode=73.3ms color+encode=27.8ms total=405.0ms batch_size=1
+2026-08-21 17:20:38+05:30 2026-08-21 11:50:38.422 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=303.6ms steps=[s0=79.2 s1=75.1 s2=74.6 s3=74.7] n_steps=4 batch_size=1
+2026-08-21 17:20:38+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=136.0s CPU_sys=16.6s sessions=1 pool=3/3
+2026-08-21 17:20:39+05:30 2026-08-21 11:50:39.377 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=302.1ms decode=73.4ms color+encode=23.6ms total=399.4ms batch_size=1
+2026-08-21 17:20:39+05:30 2026-08-21 11:50:39.377 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=302.1ms steps=[s0=78.8 s1=75.3 s2=74.0 s3=74.0] n_steps=4 batch_size=1
+2026-08-21 17:20:39+05:30 2026-08-21 11:50:39,826 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=26ebd304-59b4-447f-bb01-14c69a519b8a windowMs=5041 frames=126 effectiveFps=25.0 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=43.2 maxCaptureMs=1.8
+2026-08-21 17:20:40+05:30 2026-08-21 11:50:40.372 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=337.2ms decode=73.4ms color+encode=24.1ms total=435.0ms batch_size=1
+2026-08-21 17:20:40+05:30 2026-08-21 11:50:40.372 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=337.2ms steps=[s0=79.9 s1=97.8 s2=82.9 s3=76.5] n_steps=4 batch_size=1
+2026-08-21 17:20:41+05:30 2026-08-21 11:50:41.309 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=313.6ms decode=73.3ms color+encode=23.8ms total=411.0ms batch_size=1
+2026-08-21 17:20:41+05:30 2026-08-21 11:50:41.309 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=313.6ms steps=[s0=82.8 s1=81.8 s2=73.7 s3=75.3] n_steps=4 batch_size=1
+2026-08-21 17:20:42+05:30 2026-08-21 11:50:42.258 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=303.9ms decode=73.5ms color+encode=23.8ms total=401.4ms batch_size=1
+2026-08-21 17:20:42+05:30 2026-08-21 11:50:42.258 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=303.9ms steps=[s0=79.5 s1=74.9 s2=74.1 s3=75.3] n_steps=4 batch_size=1
+2026-08-21 17:20:43+05:30 2026-08-21 11:50:43.235 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=320.3ms decode=73.9ms color+encode=23.9ms total=418.3ms batch_size=1
+2026-08-21 17:20:43+05:30 2026-08-21 11:50:43.235 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=320.3ms steps=[s0=77.1 s1=77.3 s2=84.6 s3=81.2] n_steps=4 batch_size=1
+2026-08-21 17:20:43+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=141.8s CPU_sys=16.9s sessions=1 pool=3/3
+2026-08-21 17:20:44+05:30 2026-08-21 11:50:44.196 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=314.5ms decode=73.9ms color+encode=23.9ms total=412.7ms batch_size=1
+2026-08-21 17:20:44+05:30 2026-08-21 11:50:44.196 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=314.5ms steps=[s0=92.1 s1=76.5 s2=72.0 s3=74.0] n_steps=4 batch_size=1
+2026-08-21 17:20:44+05:30 2026-08-21 11:50:44,863 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=26ebd304-59b4-447f-bb01-14c69a519b8a windowMs=5036 frames=126 effectiveFps=25.0 liveFrames=126 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=43.6 maxCaptureMs=1.2
+2026-08-21 17:20:45+05:30 2026-08-21 11:50:45.143 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=308.4ms decode=73.8ms color+encode=23.8ms total=406.4ms batch_size=1
+2026-08-21 17:20:45+05:30 2026-08-21 11:50:45.143 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=308.4ms steps=[s0=85.7 s1=74.1 s2=73.4 s3=75.3] n_steps=4 batch_size=1
+2026-08-21 17:20:45+05:30 2026-08-21 11:50:45,171 [INFO] BatchedStreamingEngine: cycle=30 batch=1 sessions=['26ebd304-59b4-447f-bb01-14c69a519b8a'] embed=13.8ms infer=407.8ms xfer=26.2ms total=447.8ms
+2026-08-21 17:20:46+05:30 2026-08-21 11:50:46.106 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=311.4ms decode=73.6ms color+encode=24.1ms total=409.4ms batch_size=1
+2026-08-21 17:20:46+05:30 2026-08-21 11:50:46.106 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=311.4ms steps=[s0=75.0 s1=73.7 s2=75.4 s3=87.2] n_steps=4 batch_size=1
+2026-08-21 17:20:47+05:30 2026-08-21 11:50:47.073 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=317.3ms decode=73.8ms color+encode=23.8ms total=415.1ms batch_size=1
+2026-08-21 17:20:47+05:30 2026-08-21 11:50:47.073 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=317.3ms steps=[s0=78.2 s1=87.2 s2=76.6 s3=75.2] n_steps=4 batch_size=1
+2026-08-21 17:20:48+05:30 2026-08-21 11:50:48.020 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=305.1ms decode=74.0ms color+encode=23.5ms total=402.9ms batch_size=1
+2026-08-21 17:20:48+05:30 2026-08-21 11:50:48.020 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=305.1ms steps=[s0=76.9 s1=76.0 s2=74.8 s3=77.4] n_steps=4 batch_size=1
+2026-08-21 17:20:48+05:30 [METRICS] GPU_util=26% GPU_temp=45C GPU_mem=4.1GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=147.8s CPU_sys=17.1s sessions=1 pool=3/3
+2026-08-21 17:20:48+05:30 2026-08-21 11:50:48.989 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=312.3ms decode=75.0ms color+encode=24.1ms total=411.8ms batch_size=1
+2026-08-21 17:20:48+05:30 2026-08-21 11:50:48.989 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=312.3ms steps=[s0=77.0 s1=74.3 s2=79.0 s3=81.9] n_steps=4 batch_size=1
+2026-08-21 17:20:49+05:30 2026-08-21 11:50:49,866 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=26ebd304-59b4-447f-bb01-14c69a519b8a windowMs=5003 frames=125 effectiveFps=25.0 liveFrames=125 repeatedLiveFrames=0 idleFrames=0 desyncPct=0.0 maxGapMs=43.3 maxCaptureMs=1.8
+2026-08-21 17:20:49+05:30 2026-08-21 11:50:49.952 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=318.7ms decode=73.4ms color+encode=23.7ms total=416.1ms batch_size=1
+2026-08-21 17:20:49+05:30 2026-08-21 11:50:49.952 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=318.7ms steps=[s0=75.2 s1=93.8 s2=74.1 s3=75.6] n_steps=4 batch_size=1
+2026-08-21 17:20:50+05:30 2026-08-21 11:50:50.901 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=307.0ms decode=73.2ms color+encode=23.5ms total=404.0ms batch_size=1
+2026-08-21 17:20:50+05:30 2026-08-21 11:50:50.901 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=307.0ms steps=[s0=78.5 s1=74.4 s2=74.2 s3=79.9] n_steps=4 batch_size=1
+2026-08-21 17:20:51+05:30 2026-08-21 11:50:51.857 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:528 - [generate_batch] GPU_BREAKDOWN denoise=302.3ms decode=73.3ms color+encode=23.7ms total=399.6ms batch_size=1
+2026-08-21 17:20:51+05:30 2026-08-21 11:50:51.857 | INFO     | flash_head.src.pipeline.flash_head_pipeline:generate_batch:535 - [generate_batch] DENOISE_STEPS total=302.3ms steps=[s0=76.5 s1=79.5 s2=73.6 s3=72.6] n_steps=4 batch_size=1
+2026-08-21 17:20:51+05:30 2026-08-21 11:50:51,886 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a reactivated (keep_alive)
+2026-08-21 17:20:52+05:30 2026-08-21 11:50:52,551 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=34 ip=172.20.7.9
+2026-08-21 17:20:52+05:30 2026-08-21 11:50:52,551 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=pong ip=172.20.7.9
+2026-08-21 17:20:53+05:30 [METRICS] GPU_util=0% GPU_temp=41C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=153.6s CPU_sys=17.3s sessions=1 pool=3/3
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,189 [INFO] streaming.state_manager: [SM] LIVE -> TRANSITION_TO_IDLE (crossfade 8 frames)
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,500 [INFO] streaming.state_manager: [SM] TRANSITION_TO_IDLE -> IDLE
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,628 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=26ebd304-59b4-447f-bb01-14c69a519b8a cycles=265 elapsed=29511.1ms keep_alive=True
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,628 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=26ebd304-59b4-447f-bb01-14c69a519b8a keep_alive=True
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,628 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a marked for drain (keep_alive=True)
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,629 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a reactivated (keep_alive)
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,782 [INFO] streaming.state_manager: [SM] Adaptive caps: p95_ms=691 buffer=18 peak=42 MAX=54 TARGET=43
+2026-08-21 17:20:54+05:30 2026-08-21 11:50:54,905 [INFO] VideoPublisher: VIDEO_PUBLISH_METRICS session=26ebd304-59b4-447f-bb01-14c69a519b8a windowMs=5039 frames=126 effectiveFps=25.0 liveFrames=95 repeatedLiveFrames=12 idleFrames=19 desyncPct=24.6 maxGapMs=47.9 maxCaptureMs=1.1
+2026-08-21 17:20:55+05:30 2026-08-21 11:50:55,690 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=26ebd304-59b4-447f-bb01-14c69a519b8a cycles=1 elapsed=1061.9ms keep_alive=True
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,015 [INFO] handler: WS_FRAME_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a type=1 size=30 ip=172.20.7.9
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,016 [INFO] handler: WS_SEND_RESPONSE session=26ebd304-59b4-447f-bb01-14c69a519b8a type=ended ip=172.20.7.9
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,016 [INFO] handler: SESSION_END_RECEIVED session=26ebd304-59b4-447f-bb01-14c69a519b8a
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,016 [INFO] batched_stream_processor: BATCHED_DRAIN_STARTED session=26ebd304-59b4-447f-bb01-14c69a519b8a keep_alive=False
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,016 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a marked for drain (keep_alive=False)
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,018 [INFO] BatchedStreamingEngine: Session 26ebd304-59b4-447f-bb01-14c69a519b8a removed (total=0)
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,118 [INFO] batched_stream_processor: BATCHED_DRAIN_COMPLETED session=26ebd304-59b4-447f-bb01-14c69a519b8a cycles=1 elapsed=101.8ms keep_alive=False
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,118 [INFO] streaming.websocket_server: Unregistered WebSocket session: 26ebd304-59b4-447f-bb01-14c69a519b8a
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,118 [INFO] handler: [handler] run_batched_streaming_session() completed in 94314.7ms for 26ebd304-59b4-447f-bb01-14c69a519b8a
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,119 [INFO] handler: WS_SESSION_ENDED session=26ebd304-59b4-447f-bb01-14c69a519b8a ip=172.20.7.9
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,124 [INFO] aiohttp.access: 172.20.7.9 [21/Aug/2026:11:49:21 +0000] "GET /ws/26ebd304-59b4-447f-bb01-14c69a519b8a HTTP/1.1" 101 0 "-" "Python/3.12 aiohttp/3.14.3"
+2026-08-21 17:20:56+05:30 CONNECT /ws/26ebd304-59b4-447f-bb01-14c69a519b8a -> 101 Switching Protocols  (duration: 94.4 s, execution: 94.4 s)
+2026-08-21 17:20:56+05:30 2026-08-21 11:50:56,415 [INFO] livekit: livekit::room:1794:livekit::room - Disconnected from room "e2e-6" with reason: ClientInitiated
+2026-08-21 17:20:58+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=158.2s CPU_sys=17.4s sessions=0 pool=3/3
+2026-08-21 17:21:03+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=162.3s CPU_sys=17.5s sessions=0 pool=3/3
+2026-08-21 17:21:09+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=166.1s CPU_sys=17.6s sessions=0 pool=3/3
+2026-08-21 17:21:14+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=170.1s CPU_sys=17.7s sessions=0 pool=3/3
+2026-08-21 17:21:19+05:30 [METRICS] GPU_util=0% GPU_temp=40C GPU_mem=4.0GB/44.4GB (reserved=5.5GB) RSS=15027MB CPU_user=174.3s CPU_sys=17.8s sessions=0 pool=3/3
+2026-08-21 17:21:22+05:30 [EXIT] Starting graceful shutdown
+2026-08-21 17:21:22+05:30 2026-08-21 11:51:22,051 [INFO] BatchedStreamingEngine: Engine shutting down, draining remaining sessions...
+2026-08-21 17:21:22+05:30 2026-08-21 11:51:22,051 [INFO] BatchedStreamingEngine: Engine drain complete: 37 cycles total
+2026-08-21 17:21:22+05:30 2026-08-21 11:51:22,051 [INFO] BatchedStreamingEngine: BatchedStreamingEngine stopped
+2026-08-21 17:21:22+05:30 [EXIT] BatchedStreamingEngine stopped
+2026-08-21 17:21:22+05:30 2026-08-21 11:51:22,051 [INFO] websockets.server: server closing
+2026-08-21 17:21:22+05:30 2026-08-21 11:51:22,051 [INFO] websockets.server: server closed
+2026-08-21 17:21:22+05:30 2026-08-21 11:51:22,052 [INFO] streaming.websocket_server: WebSocket ingestion server stopped
+2026-08-21 17:21:22+05:30 [EXIT] WebSocket server stopped
+2026-08-21 17:21:22+05:30 [EXIT] Graceful shutdown complete

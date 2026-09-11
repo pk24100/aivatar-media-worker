@@ -1,8 +1,8 @@
 # Azure Slim Overlay Build Script
-# Combines the "slim" concept (no model downloads, RunPod cached-model flow) with the
+# Combines the "slim" concept (no model downloads, Modal baked-image flow) with the
 # overlay build approach (Dockerfile.worker) for the fastest possible image rebuilds.
 #
-# - No model weights are downloaded (FlashHead comes from RunPod cache at runtime).
+# - No model weights are downloaded (FlashHead comes from the Modal baked image at runtime).
 # - No dependency compilation (flash-attn, torch) happens on the builder.
 # - The VM pulls the already-published BASE image and only uploads changed app layers.
 #
@@ -41,7 +41,7 @@ $ProjectSubdirectory  = "aivatar-media-worker"
 $BaseImageTag         = "pk24100/aivatar-worker:flashhead-lite-v3"
 
 # The tag for the new overlay image (usually the same as BaseImageTag so the
-# same RunPod template points to the updated image).
+# same Modal deployment points to the updated image).
 $OverlayImageTag      = "pk24100/aivatar-worker:flashhead-lite-v3"
 
 $WorkerDockerfile     = "Dockerfile.worker"

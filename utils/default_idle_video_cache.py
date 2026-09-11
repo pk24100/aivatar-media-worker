@@ -7,6 +7,8 @@ import threading
 import boto3
 import requests
 
+from utils.ssrf_fetch import validate_url
+
 
 logger = logging.getLogger("default_idle_video_cache")
 MANIFEST_PATH = pathlib.Path(__file__).resolve().parents[1] / "config" / "default_avatars.manifest.json"
@@ -66,6 +68,13 @@ class DefaultIdleVideoCache:
 
     @staticmethod
     def _download(url: str) -> bytes:
+        try:
+            validate_url(url, "video")
+        except Exception as exc:
+            logger.warning("SSRF_WOULD_BLOCK kind=video url=%s err=%s", url, exc)
+            if os.getenv("SSRF_ENFORCE", "0").strip() == "1":
+                raise
+            # LOG-ONLY: still proceed with existing download below.
         chunks = []
         total = 0
         with requests.get(url, timeout=(5, 30), stream=True) as response:

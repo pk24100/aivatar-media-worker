@@ -39,12 +39,14 @@ class ShortenLiveKitWebSocketUrlFilter(logging.Filter):
 
 def crash_handler(signum, frame):
     """Enhanced crash handler: dumps Python + C backtraces, thread state, UCX info."""
+    import signal
     import threading
+    signal.signal(signum, signal.SIG_DFL)
     print(f"\n{'='*60}", flush=True)
     print(f"[CRASH] signal={signum} pid={os.getpid()} thread={threading.current_thread().name}", flush=True)
     print(f"[CRASH] Frame: {frame}", flush=True)
     print(f"\n[CRASH] === Python traceback (all threads) ===", flush=True)
-    faulthandler.dump_traceback(limit=50)
+    faulthandler.dump_traceback(all_threads=True)
     print(f"\n[CRASH] === Thread enumeration ===", flush=True)
     for t in threading.enumerate():
         print(f"  thread: {t.name} ident={t.ident} daemon={t.daemon} alive={t.is_alive()}", flush=True)
@@ -160,7 +162,7 @@ _ENABLE_METRICS_LOG = os.getenv("AIVATAR_LOG_METRICS", "1") == "1"
 METRICS_INTERVAL_SECONDS = float(os.getenv("METRICS_INTERVAL", "5"))
 
 
-def metrics_logger(handler_ref, interval=METRICS_INTERVAL_SECONDS):
+def metrics_logger(handler_ref, interval=METRICS_INTERVAL_SECONDS, stop_event=None):
     """Background thread that logs GPU/CPU/RAM/session metrics to stdout.
 
     Runs in a dedicated thread (not an asyncio task) so it is not affected
@@ -171,7 +173,7 @@ def metrics_logger(handler_ref, interval=METRICS_INTERVAL_SECONDS):
     import resource
     import time as _time
 
-    while True:
+    while stop_event is None or not stop_event.is_set():
         try:
             gpu_util = "n/a"
             gpu_mem_alloc = 0
@@ -225,7 +227,10 @@ def metrics_logger(handler_ref, interval=METRICS_INTERVAL_SECONDS):
         except Exception as e:
             print(f"[METRICS] error: {e}", flush=True)
 
-        _time.sleep(interval)
+        if stop_event is None:
+            _time.sleep(interval)
+        else:
+            stop_event.wait(interval)
 
 
 def install_denoise_filter():
